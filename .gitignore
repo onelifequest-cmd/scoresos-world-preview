@@ -1,0 +1,4 @@
+.DS_Store
+*.log
+probe-*.png
+smoke-*.png
