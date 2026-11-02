@@ -189,3 +189,25 @@ QA local: 1440/1280/390 + hero-12s.mp4 + SELF-CRITIQUE.md (0 Runway)
 Session closed at hard cap 100/100. Balance ~149.
 
 v5b CSS-only pass (0 Runway): reframe clear-lane, solid wall veil over filmed frames, holo opacity ~0.78 + scanlines/cyan-gold.
+
+--- v5d interaction plate ---
+2026-11-02 ~12:00 ET  v5d take1 START  gen-4-turbo 10s 16:9  task 57453379-c77e-42e9-851c-7ec6e6cc3493   50 cr reserved
+  startFrame: datasets/6a5832c9-459e-4865-b978-95f25b71951d.jpg (empty marble wall; DOM owns screens)
+  whoami before: 149 → after submit ~99
+  Cap remaining for take2: ≤50
+
+2026-11-02 ~12:07 ET  v5d take2 START  gen-4-turbo 10s 16:9  task 260aba88-5a52-4d8c-aac9-083b7dd7517b   50 cr reserved
+  startFrame: datasets/87b80355-e242-493c-87f8-578c38feaec4.jpg (fly-in midair; empty marble; Maxine left)
+  whoami before take2: 99 → after submit ~49
+  Cap: take1+take2 = 100 / 100 hard cap (stop)
+
+2026-11-02 ~12:07 ET  v5d take2 SUCCEEDED  gen-4-turbo 10s 16:9  task 260aba88-5a52-4d8c-aac9-083b7dd7517b   50 cr
+  artifact: https://dnznrvs05pmza.cloudfront.net/2d57c158-8f8f-4145-8494-4aede5d3b3ee.mp4
+  landed direct → v5/media/hero/v5d-take2-raw.mp4 (1280x720 ~10.08s)
+  QA: true fly-in from balcony OK; Maxine face away; BUT filmed cyan panel grid appears ~t4+
+  Local inpaint: empty-wall patch from t2 onto left marble after t3.2 → v5d-take2-cleaned.mp4
+  ACCEPTED cleaned take2 (fly-in + empty marble for single-layer DOM + soft spill)
+  Encoded ping-pong → hero-loop.mp4 (~20.2s) + hero-loop.webm; poster refreshed
+whoami after take2: 49
+v5d Runway spend: 100 / 100 hard cap (take1 50 + take2 50). Stop.
+Account remaining: 49

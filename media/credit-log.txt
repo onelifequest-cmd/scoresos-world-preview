@@ -110,3 +110,4 @@ Spent this step: ~5 (under 30 budget). Meshy 3D skipped (later upgrade).
 - Bug: FrontSide + yaw clamp around 0 culled characters (camera in +X/−Z).
 - Fix: base yaw π, clamp parallax, DoubleSide, rim/shadow/grade; holo B nudged toward robot.
 - Deploy: ?v=v3g8a (floating medallion) and ?v=v3g8b (robot holo). Cameos folded off.
+(see v4/media/credit-log.txt v4c entry)

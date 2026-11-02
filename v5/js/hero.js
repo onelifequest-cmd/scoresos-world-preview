@@ -15,9 +15,11 @@
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const mobile = () => matchMedia('(max-width: 859px)').matches;
 
-  // Gesture beat in forward half of ping-pong (~10s raw → beam ~5.2s)
-  const REVEAL_AT = 5.2;
+  // Robot touch / screen react beat in forward half of ping-pong (~10s raw)
+  const REVEAL_AT = 5.4;
+  const REACT_AT = 6.4;
   let revealed = false;
+  let reacted = false;
   let scoreStarted = false;
 
   let loaded = 0;
@@ -55,9 +57,15 @@
     revealed = true;
     wall?.classList.add('revealed');
     tiles.forEach((t) => t.classList.add('on'));
+  }
+
+  function reactScreens() {
+    if (reacted) return;
+    reacted = true;
+    wall?.classList.add('react');
     if (!reduce && !scoreStarted) {
       scoreStarted = true;
-      setTimeout(() => startScore(), 420);
+      startScore();
     } else if (scoreNum) {
       scoreNum.textContent = '742';
     }
@@ -72,29 +80,41 @@
       video.hidden = true;
       if (poster) poster.hidden = false;
       bump(95);
-      if (!mobile()) setTimeout(revealPanels, 600);
+      if (!mobile()) {
+        setTimeout(revealPanels, 600);
+        setTimeout(reactScreens, 1100);
+      }
     }, { once: true });
 
-    // Stagger flicker synced to gesture; hold panels after first reveal (no reset on loop)
     video.addEventListener('timeupdate', () => {
       if (!revealed && video.currentTime >= REVEAL_AT) revealPanels();
+      if (!reacted && video.currentTime >= REACT_AT) reactScreens();
     });
 
     const tryPlay = () => video.play().catch(() => {
       video.hidden = true;
       if (poster) poster.hidden = false;
-      if (!mobile()) setTimeout(revealPanels, 600);
+      if (!mobile()) {
+        setTimeout(revealPanels, 600);
+        setTimeout(reactScreens, 1100);
+      }
     });
     if (!reduce) tryPlay();
     else {
       video.hidden = true;
       if (poster) poster.hidden = false;
       bump(95);
-      if (!mobile()) revealPanels();
+      if (!mobile()) {
+        revealPanels();
+        reactScreens();
+      }
     }
   } else {
     bump(95);
-    if (!mobile()) setTimeout(revealPanels, 400);
+    if (!mobile()) {
+      setTimeout(revealPanels, 400);
+      setTimeout(reactScreens, 900);
+    }
   }
 
   let mx = 0.5, my = 0.5, scroll = 0;

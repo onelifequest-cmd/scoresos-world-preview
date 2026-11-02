@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="robots" content="noindex, nofollow, noarchive" />
+  <meta name="description" content="Preview only. Scores OS penthouse hero. Not the live scoresos.com homepage." />
+  <title>Scores OS — Penthouse Preview v5c (Not Live)</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./styles.css?v=v5c" />
+</head>
+<body>
+  <a class="skip" href="#cta">Skip to Get Started</a>
+  <div class="preview-ribbon" role="status">Preview only · not live scoresos.com</div>
+
+  <div class="loader" id="loader" aria-live="polite">
+    <div class="loader-inner">
+      <p class="loader-brand">Scores OS</p>
+      <div class="loader-bar"><i id="loader-fill"></i></div>
+      <p class="loader-pct" id="loader-pct">0%</p>
+    </div>
+  </div>
+
+  <header class="topbar">
+    <a class="brand" href="#hero">
+      <img src="./media/logo-white.svg" width="28" height="28" alt="" />
+      <span>Scores OS</span>
+    </a>
+    <nav class="nav" aria-label="Primary">
+      <a href="#hero">Open</a>
+      <a href="#wins">Wins</a>
+      <a href="#cta">Pricing</a>
+      <a class="nav-cta" href="https://checkout.square.site/merchant/MLGEBVXJC0JRS/checkout/6A2Q2LWRQHPQDXV3LPI3BSBZ">Get Started</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" id="hero" aria-label="Penthouse hero">
+      <div class="hero-stage" id="hero-stage">
+        <video
+          class="hero-video"
+          id="hero-video"
+          poster="./media/hero/poster.jpg"
+          muted
+          playsinline
+          autoplay
+          loop
+          preload="auto"
+        >
+          <source src="./media/hero/hero-loop.webm" type="video/webm" />
+          <source src="./media/hero/hero-loop.mp4" type="video/mp4" />
+        </video>
+        <img class="hero-poster-fallback" id="hero-poster" src="./media/hero/poster.jpg" alt="" hidden />
+
+        <!-- Transparent holographic 3×2 DOM panels — marble shows through -->
+        <div class="wall" id="wall" aria-label="Client wins holographic wall (demo)">
+          <div class="wall-spill" aria-hidden="true"></div>
+          <article class="tile holo" data-i="0" style="--d:0">
+            <div class="tile-glass">
+              <img src="./media/tiles/01-family-keys-768.jpg" alt="Family with kids holding keys in front of a new home" width="768" height="768" loading="eager" />
+              <span class="tile-scan" aria-hidden="true"></span>
+              <span class="tile-reflect" aria-hidden="true"></span>
+            </div>
+            <span class="demo">Demo</span>
+            <span class="cap">New home</span>
+          </article>
+          <article class="tile holo" data-i="1" style="--d:1">
+            <div class="tile-glass">
+              <img src="./media/tiles/02-new-car-768.jpg" alt="Man beside a new car" width="768" height="768" loading="eager" />
+              <span class="tile-scan" aria-hidden="true"></span>
+              <span class="tile-reflect" aria-hidden="true"></span>
+            </div>
+            <span class="demo">Demo</span>
+            <span class="cap">New car</span>
+          </article>
+          <article class="tile holo" data-i="2" style="--d:2">
+            <div class="tile-glass">
+              <img src="./media/tiles/03-funding-approved-768.jpg" alt="Funding Approved — Pre-qualified" width="461" height="800" loading="eager" />
+              <span class="tile-scan" aria-hidden="true"></span>
+              <span class="tile-reflect" aria-hidden="true"></span>
+            </div>
+            <span class="demo">Demo</span>
+            <span class="cap">Funding Approved</span>
+          </article>
+          <article class="tile holo score-tile" data-i="3" style="--d:3">
+            <div class="tile-glass">
+              <img src="./media/tiles/04-score-climb-768.jpg" alt="Credit score climbing chart" width="768" height="768" loading="eager" />
+              <span class="tile-scan" aria-hidden="true"></span>
+              <span class="tile-reflect" aria-hidden="true"></span>
+            </div>
+            <div class="score-overlay" aria-hidden="true">
+              <span class="score-num" id="score-num">612</span>
+              <span class="score-range">612 → 742</span>
+            </div>
+            <span class="demo">Demo</span>
+          </article>
+          <article class="tile holo" data-i="4" style="--d:4">
+            <div class="tile-glass">
+              <img src="./media/tiles/05-jet-takeoff-768.jpg" alt="Jet taking off at sunset" width="768" height="768" loading="eager" />
+              <span class="tile-scan" aria-hidden="true"></span>
+              <span class="tile-reflect" aria-hidden="true"></span>
+            </div>
+            <span class="demo">Demo</span>
+            <span class="cap">Takeoff</span>
+          </article>
+          <article class="tile holo" data-i="5" style="--d:5">
+            <div class="tile-glass">
+              <img src="./media/tiles/06-world-yours-768.jpg" alt="Earth at sunrise" width="768" height="768" loading="eager" />
+              <span class="tile-scan" aria-hidden="true"></span>
+              <span class="tile-reflect" aria-hidden="true"></span>
+            </div>
+            <span class="demo">Demo</span>
+            <span class="cap">The World Is Yours</span>
+          </article>
+        </div>
+
+        <div class="float-chips" id="float-chips" aria-hidden="true"></div>
+
+        <div class="hero-copy">
+          <p class="eyebrow">Built for credit repair &amp; funding agencies</p>
+          <h1 class="headline"><span class="hn-a">Scores</span> <span class="hn-b">OS</span></h1>
+          <p class="tagline">The operating system for credit repair and funding agencies</p>
+          <a class="cta" id="cta" href="https://checkout.square.site/merchant/MLGEBVXJC0JRS/checkout/6A2Q2LWRQHPQDXV3LPI3BSBZ">Get Started</a>
+          <p class="croa">Demo scenes · illustrative only · not results or guarantees</p>
+
+          <div class="hero-wins-rail" id="wins" aria-label="Demo wins">
+            <div class="carousel" id="carousel">
+              <figure class="holo-card"><img src="./media/tiles/01-family-keys-768.jpg" alt="" /><figcaption>New home <span>Demo</span></figcaption></figure>
+              <figure class="holo-card"><img src="./media/tiles/02-new-car-768.jpg" alt="" /><figcaption>New car <span>Demo</span></figcaption></figure>
+              <figure class="holo-card"><img src="./media/tiles/03-funding-approved-768.jpg" alt="" /><figcaption>Funding Approved <span>Demo</span></figcaption></figure>
+              <figure class="holo-card"><img src="./media/tiles/04-score-climb-768.jpg" alt="" /><figcaption>612 → 742 <span>Demo</span></figcaption></figure>
+              <figure class="holo-card"><img src="./media/tiles/05-jet-takeoff-768.jpg" alt="" /><figcaption>Takeoff <span>Demo</span></figcaption></figure>
+              <figure class="holo-card"><img src="./media/tiles/06-world-yours-768.jpg" alt="" /><figcaption>The World Is Yours <span>Demo</span></figcaption></figure>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="band" id="proof">
+      <div class="band-inner">
+        <h2>Built for agencies that want the win to feel real.</h2>
+        <p>Scores OS puts credit repair, funding workflows, and client wins in one operating system — so your team runs the work, and your clients see the lifestyle.</p>
+        <a class="cta ghost" href="https://checkout.square.site/merchant/MLGEBVXJC0JRS/checkout/6A2Q2LWRQHPQDXV3LPI3BSBZ">Get Started</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <p>Preview only · Scores OS · not affiliated with any credit bureau</p>
+  </footer>
+
+  <script src="./js/hero.js?v=v5c" defer></script>
+</body>
+</html>

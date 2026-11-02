@@ -5,12 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="robots" content="noindex, nofollow, noarchive" />
   <meta name="description" content="Preview only. Scores OS penthouse hero. Not the live scoresos.com homepage." />
-  <title>Scores OS — Penthouse Preview v5c (Not Live)</title>
+  <title>Scores OS — Penthouse Preview v5d (Not Live)</title>
   <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="./styles.css?v=v5c" />
+  <link rel="stylesheet" href="./styles.css?v=v5d" />
 </head>
 <body>
   <a class="skip" href="#cta">Skip to Get Started</a>
@@ -55,66 +55,69 @@
         </video>
         <img class="hero-poster-fallback" id="hero-poster" src="./media/hero/poster.jpg" alt="" hidden />
 
-        <!-- Transparent holographic 3×2 DOM panels — marble shows through -->
+        <!-- Single-layer DOM glass screens on empty filmed marble (no filmed panel outlines) -->
         <div class="wall" id="wall" aria-label="Client wins holographic wall (demo)">
           <div class="wall-spill" aria-hidden="true"></div>
-          <article class="tile holo" data-i="0" style="--d:0">
-            <div class="tile-glass">
-              <img src="./media/tiles/01-family-keys-768.jpg" alt="Family with kids holding keys in front of a new home" width="768" height="768" loading="eager" />
-              <span class="tile-scan" aria-hidden="true"></span>
-              <span class="tile-reflect" aria-hidden="true"></span>
-            </div>
-            <span class="demo">Demo</span>
-            <span class="cap">New home</span>
-          </article>
-          <article class="tile holo" data-i="1" style="--d:1">
-            <div class="tile-glass">
-              <img src="./media/tiles/02-new-car-768.jpg" alt="Man beside a new car" width="768" height="768" loading="eager" />
-              <span class="tile-scan" aria-hidden="true"></span>
-              <span class="tile-reflect" aria-hidden="true"></span>
-            </div>
-            <span class="demo">Demo</span>
-            <span class="cap">New car</span>
-          </article>
-          <article class="tile holo" data-i="2" style="--d:2">
-            <div class="tile-glass">
-              <img src="./media/tiles/03-funding-approved-768.jpg" alt="Funding Approved — Pre-qualified" width="461" height="800" loading="eager" />
-              <span class="tile-scan" aria-hidden="true"></span>
-              <span class="tile-reflect" aria-hidden="true"></span>
-            </div>
-            <span class="demo">Demo</span>
-            <span class="cap">Funding Approved</span>
-          </article>
-          <article class="tile holo score-tile" data-i="3" style="--d:3">
-            <div class="tile-glass">
-              <img src="./media/tiles/04-score-climb-768.jpg" alt="Credit score climbing chart" width="768" height="768" loading="eager" />
-              <span class="tile-scan" aria-hidden="true"></span>
-              <span class="tile-reflect" aria-hidden="true"></span>
-            </div>
-            <div class="score-overlay" aria-hidden="true">
-              <span class="score-num" id="score-num">612</span>
-              <span class="score-range">612 → 742</span>
-            </div>
-            <span class="demo">Demo</span>
-          </article>
-          <article class="tile holo" data-i="4" style="--d:4">
-            <div class="tile-glass">
-              <img src="./media/tiles/05-jet-takeoff-768.jpg" alt="Jet taking off at sunset" width="768" height="768" loading="eager" />
-              <span class="tile-scan" aria-hidden="true"></span>
-              <span class="tile-reflect" aria-hidden="true"></span>
-            </div>
-            <span class="demo">Demo</span>
-            <span class="cap">Takeoff</span>
-          </article>
-          <article class="tile holo" data-i="5" style="--d:5">
-            <div class="tile-glass">
-              <img src="./media/tiles/06-world-yours-768.jpg" alt="Earth at sunrise" width="768" height="768" loading="eager" />
-              <span class="tile-scan" aria-hidden="true"></span>
-              <span class="tile-reflect" aria-hidden="true"></span>
-            </div>
-            <span class="demo">Demo</span>
-            <span class="cap">The World Is Yours</span>
-          </article>
+          <div class="wall-main">
+            <article class="tile holo score-tile" data-i="0" style="--d:0">
+              <div class="tile-glass">
+                <img src="./media/tiles/04-score-climb-768.jpg" alt="" width="768" height="432" loading="eager" />
+                <span class="tile-scan" aria-hidden="true"></span>
+                <span class="tile-reflect" aria-hidden="true"></span>
+              </div>
+              <div class="score-overlay" aria-hidden="true">
+                <span class="score-num" id="score-num">612</span>
+                <span class="score-range">612 → 742</span>
+              </div>
+              <span class="demo">Demo</span>
+            </article>
+            <article class="tile holo funding-tile" data-i="1" style="--d:1">
+              <div class="tile-glass funding-glass">
+                <span class="tile-scan" aria-hidden="true"></span>
+                <span class="tile-reflect" aria-hidden="true"></span>
+                <p class="funding-line">Funding Approved</p>
+              </div>
+              <span class="demo">Demo</span>
+            </article>
+            <article class="tile holo" data-i="2" style="--d:2">
+              <div class="tile-glass">
+                <img src="./media/tiles/01-family-keys-768.jpg" alt="Family with kids holding keys in front of a new home" width="768" height="432" loading="eager" />
+                <span class="tile-scan" aria-hidden="true"></span>
+                <span class="tile-reflect" aria-hidden="true"></span>
+              </div>
+              <span class="demo">Demo</span>
+              <span class="cap">New home</span>
+            </article>
+          </div>
+          <div class="wall-sub" aria-hidden="false">
+            <article class="tile holo sub" data-i="3" style="--d:3">
+              <div class="tile-glass">
+                <img src="./media/tiles/02-new-car-768.jpg" alt="Man beside a new car" width="768" height="432" loading="eager" />
+                <span class="tile-scan" aria-hidden="true"></span>
+                <span class="tile-reflect" aria-hidden="true"></span>
+              </div>
+              <span class="demo">Demo</span>
+              <span class="cap">New car</span>
+            </article>
+            <article class="tile holo sub" data-i="4" style="--d:4">
+              <div class="tile-glass">
+                <img src="./media/tiles/05-jet-takeoff-768.jpg" alt="Jet taking off at sunset" width="768" height="432" loading="eager" />
+                <span class="tile-scan" aria-hidden="true"></span>
+                <span class="tile-reflect" aria-hidden="true"></span>
+              </div>
+              <span class="demo">Demo</span>
+              <span class="cap">Takeoff</span>
+            </article>
+            <article class="tile holo sub" data-i="5" style="--d:5">
+              <div class="tile-glass">
+                <img src="./media/tiles/06-world-yours-768.jpg" alt="Earth at sunrise" width="768" height="432" loading="eager" />
+                <span class="tile-scan" aria-hidden="true"></span>
+                <span class="tile-reflect" aria-hidden="true"></span>
+              </div>
+              <span class="demo">Demo</span>
+              <span class="cap">The World Is Yours</span>
+            </article>
+          </div>
         </div>
 
         <div class="float-chips" id="float-chips" aria-hidden="true"></div>
@@ -128,10 +131,10 @@
 
           <div class="hero-wins-rail" id="wins" aria-label="Demo wins">
             <div class="carousel" id="carousel">
+              <figure class="holo-card"><img src="./media/tiles/04-score-climb-768.jpg" alt="" /><figcaption>612 → 742 <span>Demo</span></figcaption></figure>
+              <figure class="holo-card"><div class="funding-card-text">Funding Approved</div><figcaption>Funding Approved <span>Demo</span></figcaption></figure>
               <figure class="holo-card"><img src="./media/tiles/01-family-keys-768.jpg" alt="" /><figcaption>New home <span>Demo</span></figcaption></figure>
               <figure class="holo-card"><img src="./media/tiles/02-new-car-768.jpg" alt="" /><figcaption>New car <span>Demo</span></figcaption></figure>
-              <figure class="holo-card"><img src="./media/tiles/03-funding-approved-768.jpg" alt="" /><figcaption>Funding Approved <span>Demo</span></figcaption></figure>
-              <figure class="holo-card"><img src="./media/tiles/04-score-climb-768.jpg" alt="" /><figcaption>612 → 742 <span>Demo</span></figcaption></figure>
               <figure class="holo-card"><img src="./media/tiles/05-jet-takeoff-768.jpg" alt="" /><figcaption>Takeoff <span>Demo</span></figcaption></figure>
               <figure class="holo-card"><img src="./media/tiles/06-world-yours-768.jpg" alt="" /><figcaption>The World Is Yours <span>Demo</span></figcaption></figure>
             </div>
@@ -153,6 +156,6 @@
     <p>Preview only · Scores OS · not affiliated with any credit bureau</p>
   </footer>
 
-  <script src="./js/hero.js?v=v5c" defer></script>
+  <script src="./js/hero.js?v=v5d" defer></script>
 </body>
 </html>
