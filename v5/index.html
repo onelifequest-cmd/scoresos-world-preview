@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="./styles.css?v=v5f3" />
+  <link rel="stylesheet" href="./styles.css?v=v5g" />
 </head>
 <body>
   <a class="skip" href="#cta">Skip to Get Started</a>
@@ -56,49 +56,65 @@
         <img class="hero-settle" id="hero-settle" src="./media/hero/settle-calm.jpg" alt="" aria-hidden="true" />
         <img class="hero-poster-mobile" id="hero-poster-mobile" src="./media/hero/poster-mobile.jpg" alt="" hidden />
 
-        <!-- Settled 2×2 true 16:9 glass screens — clear wall left of Maxine -->
+        <!-- v5g: six-screen 3×2 wall mapped onto left marble (v4g layout + v5 holo glass) -->
         <div class="wall" id="wall" aria-label="Client wins holographic wall (demo)">
           <div class="wall-spill" aria-hidden="true"></div>
-          <div class="wall-grid">
-            <article class="tile holo score-tile" data-i="0" style="--d:0">
-              <div class="tile-glass">
-                <img src="./media/tiles/04-score-climb-768.jpg" alt="" width="768" height="432" loading="eager" />
-                <span class="tile-scan" aria-hidden="true"></span>
-                <span class="tile-reflect" aria-hidden="true"></span>
-              </div>
-              <div class="score-overlay" aria-hidden="true">
-                <span class="score-num" id="score-num">612</span>
-                <span class="score-range">612 → 742</span>
-              </div>
-              <span class="demo">Demo</span>
-            </article>
-            <article class="tile holo funding-tile" data-i="1" style="--d:1">
-              <div class="tile-glass funding-glass">
-                <span class="tile-scan" aria-hidden="true"></span>
-                <span class="tile-reflect" aria-hidden="true"></span>
-                <p class="funding-line">Funding<br />Approved</p>
-              </div>
-              <span class="demo">Demo</span>
-            </article>
-            <article class="tile holo" data-i="2" style="--d:2">
-              <div class="tile-glass">
-                <img src="./media/tiles/01-family-keys-768.jpg" alt="Family with kids holding keys in front of a new home" width="768" height="432" loading="eager" />
-                <span class="tile-scan" aria-hidden="true"></span>
-                <span class="tile-reflect" aria-hidden="true"></span>
-              </div>
-              <span class="demo">Demo</span>
-              <span class="cap">New home</span>
-            </article>
-            <article class="tile holo" data-i="3" style="--d:3">
-              <div class="tile-glass">
-                <img src="./media/tiles/02-new-car-768.jpg" alt="Man beside a new car" width="768" height="432" loading="eager" />
-                <span class="tile-scan" aria-hidden="true"></span>
-                <span class="tile-reflect" aria-hidden="true"></span>
-              </div>
-              <span class="demo">Demo</span>
-              <span class="cap">New car</span>
-            </article>
-          </div>
+          <article class="tile holo" data-i="0" style="--d:0">
+            <div class="tile-glass">
+              <img src="./media/tiles/01-family-keys-768.jpg" alt="Family with kids holding keys in front of a new home" width="768" height="768" loading="eager" />
+              <span class="tile-scan" aria-hidden="true"></span>
+              <span class="tile-reflect" aria-hidden="true"></span>
+            </div>
+            <span class="demo">Demo</span>
+            <span class="cap">New home</span>
+          </article>
+          <article class="tile holo" data-i="1" style="--d:1">
+            <div class="tile-glass">
+              <img src="./media/tiles/02-new-car-768.jpg" alt="Man beside a new car" width="768" height="768" loading="eager" />
+              <span class="tile-scan" aria-hidden="true"></span>
+              <span class="tile-reflect" aria-hidden="true"></span>
+            </div>
+            <span class="demo">Demo</span>
+            <span class="cap">New car</span>
+          </article>
+          <article class="tile holo funding-tile" data-i="2" style="--d:2">
+            <div class="tile-glass funding-glass">
+              <span class="tile-scan" aria-hidden="true"></span>
+              <span class="tile-reflect" aria-hidden="true"></span>
+              <p class="funding-line">Funding<br />Approved</p>
+            </div>
+            <span class="demo">Demo</span>
+          </article>
+          <article class="tile holo score-tile" data-i="3" style="--d:3">
+            <div class="tile-glass">
+              <img src="./media/tiles/04-score-climb-768.jpg" alt="Credit score climbing chart" width="768" height="768" loading="eager" />
+              <span class="tile-scan" aria-hidden="true"></span>
+              <span class="tile-reflect" aria-hidden="true"></span>
+            </div>
+            <div class="score-overlay" aria-hidden="true">
+              <span class="score-num" id="score-num">612</span>
+              <span class="score-range">612 → 742</span>
+            </div>
+            <span class="demo">Demo</span>
+          </article>
+          <article class="tile holo" data-i="4" style="--d:4">
+            <div class="tile-glass">
+              <img src="./media/tiles/05-jet-takeoff-768.jpg" alt="Jet taking off at sunset" width="768" height="768" loading="eager" />
+              <span class="tile-scan" aria-hidden="true"></span>
+              <span class="tile-reflect" aria-hidden="true"></span>
+            </div>
+            <span class="demo">Demo</span>
+            <span class="cap">Takeoff</span>
+          </article>
+          <article class="tile holo" data-i="5" style="--d:5">
+            <div class="tile-glass">
+              <img src="./media/tiles/06-world-yours-768.jpg" alt="Earth at sunrise" width="768" height="768" loading="eager" />
+              <span class="tile-scan" aria-hidden="true"></span>
+              <span class="tile-reflect" aria-hidden="true"></span>
+            </div>
+            <span class="demo">Demo</span>
+            <span class="cap">The World Is Yours</span>
+          </article>
         </div>
 
         <!-- Soft volumetric control beam: pulse once, green-white, fade to shimmer -->
@@ -147,10 +163,10 @@
 
           <div class="hero-wins-rail" id="wins" aria-label="Demo wins">
             <div class="carousel" id="carousel">
-              <figure class="holo-card"><img src="./media/tiles/04-score-climb-768.jpg" alt="" /><figcaption>612 → 742 <span>Demo</span></figcaption></figure>
-              <figure class="holo-card"><div class="funding-card-text">Funding Approved</div><figcaption>Funding Approved <span>Demo</span></figcaption></figure>
               <figure class="holo-card"><img src="./media/tiles/01-family-keys-768.jpg" alt="" /><figcaption>New home <span>Demo</span></figcaption></figure>
               <figure class="holo-card"><img src="./media/tiles/02-new-car-768.jpg" alt="" /><figcaption>New car <span>Demo</span></figcaption></figure>
+              <figure class="holo-card"><div class="funding-card-text">Funding<br>Approved</div><figcaption>Funding Approved <span>Demo</span></figcaption></figure>
+              <figure class="holo-card"><img src="./media/tiles/04-score-climb-768.jpg" alt="" /><figcaption>612 → 742 <span>Demo</span></figcaption></figure>
               <figure class="holo-card"><img src="./media/tiles/05-jet-takeoff-768.jpg" alt="" /><figcaption>Takeoff <span>Demo</span></figcaption></figure>
               <figure class="holo-card"><img src="./media/tiles/06-world-yours-768.jpg" alt="" /><figcaption>The World Is Yours <span>Demo</span></figcaption></figure>
             </div>
@@ -172,6 +188,6 @@
     <p>Preview only · Scores OS · not affiliated with any credit bureau</p>
   </footer>
 
-  <script src="./js/hero.js?v=v5f3" defer></script>
+  <script src="./js/hero.js?v=v5g" defer></script>
 </body>
 </html>

@@ -128,49 +128,43 @@ a { color: inherit; text-decoration: none; }
   filter: blur(4px);
 }
 
-/* ---- Wall: settled 2×2 true 16:9 — x30–370 y95–335 @1024-scale ---- */
+/* ---- Wall: v5g = v4g six-screen 3×2 mapped onto left marble + holo glass ---- */
 .wall {
   position: absolute;
   z-index: 3;
-  left: max(12px, calc(30 / 1024 * 100vw));
-  top: max(70px, calc(88 / 576 * 100vh));
-  /* Right edge ≤ ~370 @1024 — clear of Maxine (~x390) and eyebrow (~y360) */
-  width: min(340px, calc(340 / 1024 * 100vw));
-  height: auto;
-  display: block;
+  /* Design lock @1440×900 — scales with vw/vh so wall stays anchored to photo */
+  left: max(28px, calc(60 / 1440 * 100vw));
+  top: calc(170 / 900 * 100vh);
+  width: calc(394 / 1440 * 100vw);
+  height: calc(400 / 900 * 100vh);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 11px;
   padding: 0;
   transform-origin: left center;
   transform:
-    perspective(1800px)
-    rotateY(5deg)
-    rotateX(0.6deg)
-    translate3d(calc((var(--mx) - 0.5) * 6px), calc((var(--my) - 0.5) * 3px + var(--scroll) * -10px), 0);
-  transition: transform .18s linear, width .55s ease;
+    perspective(1500px)
+    rotateY(22deg)
+    rotateX(1.6deg)
+    translate3d(calc((var(--mx) - 0.5) * 4px), calc((var(--my) - 0.5) * 2px + var(--scroll) * -10px), 0);
+  transition: transform .18s linear;
   pointer-events: none;
 }
-/* Mid-reveal: slightly larger, still clear of Maxine */
-.wall.mid-reveal {
-  /* Larger than settle but right edge must stay clear of Maxine (~x390) */
-  width: min(348px, calc(348 / 1024 * 100vw));
-}
+.wall.mid-reveal,
 .wall.settled {
-  width: min(340px, calc(340 / 1024 * 100vw));
-}
-.wall-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
-  width: 100%;
+  /* No width morph — keep photo-anchored size */
+  width: calc(394 / 1440 * 100vw);
 }
 .wall-spill {
   position: absolute;
-  inset: -14% -14% -24% -8%;
+  inset: -5% -5% -12% 0;
   z-index: -1;
   pointer-events: none;
   background:
     radial-gradient(ellipse 70% 55% at 48% 42%, rgba(110, 231, 183, .16), transparent 70%),
-    radial-gradient(ellipse 55% 45% at 50% 78%, rgba(240, 201, 106, .10), transparent 72%);
-  filter: blur(18px);
+    radial-gradient(ellipse 55% 45% at 50% 78%, rgba(240, 201, 106, .12), transparent 72%);
+  filter: blur(14px);
   opacity: 0;
   transition: opacity .8s ease;
 }
@@ -182,10 +176,10 @@ a { color: inherit; text-decoration: none; }
 
 .tile.holo {
   position: relative;
-  border-radius: 7px;
-  /* Force landscape 16:9 — never stretch to fill a tall cell */
-  aspect-ratio: 16 / 9;
-  width: 100%;
+  border-radius: 5px;
+  /* Fill 3×2 grid cell (portrait-ish like v4g) — no forced 16:9 */
+  aspect-ratio: auto;
+  width: auto;
   height: auto;
   max-height: none;
   min-height: 0;
@@ -290,14 +284,14 @@ a { color: inherit; text-decoration: none; }
   z-index: 4;
   font-family: Syne, sans-serif;
   font-weight: 800;
-  /* Fit "Funding"/"Approved" inside tile with padding — size to container width */
-  font-size: clamp(0.62rem, 10.5cqw, 0.98rem);
-  letter-spacing: -0.015em;
-  line-height: 1.08;
+  /* Right column is foreshortened by rotateY — keep both words fully inside */
+  font-size: clamp(0.58rem, 11.5cqw, 0.92rem);
+  letter-spacing: -0.03em;
+  line-height: 1.05;
   color: #ecfdf5;
   text-align: center;
   text-shadow: 0 0 16px rgba(52, 211, 153, .85), 0 1px 6px rgba(0,0,0,.5);
-  padding: 6px 8px;
+  padding: 8px 6px;
   white-space: normal;
   max-width: 100%;
   width: 100%;
@@ -378,7 +372,7 @@ a { color: inherit; text-decoration: none; }
 }
 .score-num {
   font-family: Syne, sans-serif; font-weight: 800;
-  font-size: clamp(1.1rem, 1.9vw, 1.85rem);
+  font-size: clamp(1.25rem, 2.1vw, 2.05rem);
   color: #ecfdf5;
   text-shadow: 0 0 16px rgba(52, 211, 153, .85), 0 2px 6px rgba(0,0,0,.45);
   line-height: 1;
@@ -532,20 +526,19 @@ a { color: inherit; text-decoration: none; }
   100% { opacity: 0; transform: translateY(-70px) scale(1); }
 }
 
-/* ---- Copy: lower-left below screens, left of Maxine (≈ x40–340 / y330–610 @1024) ---- */
+/* ---- Copy: right of wall + characters (v4g placement) — clears screens/Maxine/robot ---- */
 .hero-copy {
   position: absolute; z-index: 5;
-  left: max(14px, calc(28 / 1024 * 100vw));
-  right: auto;
-  top: auto;
-  /* Lower on the plate so headline clears Maxine/robot legs */
-  bottom: clamp(14px, 3.2vh, 40px);
-  transform: none;
-  max-width: min(300px, calc(280 / 1024 * 100vw));
-  width: min(300px, 28vw);
+  right: clamp(18px, 4.5vw, 56px);
+  left: auto;
+  top: 48%;
+  bottom: auto;
+  transform: translateY(-28%);
+  max-width: min(420px, 38vw);
+  width: auto;
   text-align: left;
   text-shadow: 0 2px 28px rgba(0,0,0,.65), 0 1px 2px rgba(0,0,0,.45);
-  padding: 14px 16px 16px;
+  padding: 22px 26px 24px;
   border-radius: 0;
   background: none;
   backdrop-filter: none;
@@ -557,14 +550,14 @@ a { color: inherit; text-decoration: none; }
   position: absolute;
   z-index: -1;
   pointer-events: none;
-  inset: -36% -40% -30% -30%;
+  inset: -55% -70% -60% -65%;
   background:
-    radial-gradient(ellipse 55% 50% at 40% 52%,
-      rgba(5,5,7,.40) 0%,
-      rgba(5,5,7,.18) 42%,
-      rgba(5,5,7,.05) 64%,
-      transparent 80%);
-  filter: blur(10px);
+    radial-gradient(ellipse 48% 42% at 58% 46%,
+      rgba(5,5,7,.42) 0%,
+      rgba(5,5,7,.18) 45%,
+      rgba(5,5,7,.05) 68%,
+      transparent 82%);
+  filter: blur(12px);
 }
 .eyebrow {
   margin: 0 0 10px; font-size: 11px; font-weight: 600;
@@ -628,22 +621,19 @@ a { color: inherit; text-decoration: none; }
 .band p { margin: 0 0 22px; color: rgba(255,255,255,.7); line-height: 1.55; }
 .foot { padding: 24px; text-align: center; font-size: 12px; color: rgba(255,255,255,.4); border-top: 1px solid rgba(255,255,255,.06); }
 
-/* Desktop mid widths — keep copy clear of Maxine/robot */
+/* Desktop mid widths — keep v4g wall lock; copy stays right, slightly tighter */
 @media (min-width: 860px) and (max-width: 1339px) {
   .hero-copy {
-    left: max(12px, calc(24 / 1024 * 100vw));
-    max-width: min(280px, 24vw);
-    width: min(280px, 24vw);
-    bottom: clamp(12px, 2.8vh, 32px);
+    right: clamp(12px, 3.2vw, 36px);
+    left: auto;
+    top: 46%;
+    bottom: auto;
+    transform: translateY(-28%);
+    max-width: min(340px, 34vw);
+    width: auto;
   }
-  .headline { font-size: clamp(2.2rem, 4.6vw, 3.6rem); }
-  .wall {
-    width: min(320px, calc(320 / 1024 * 100vw));
-    top: max(68px, calc(90 / 576 * 100vh));
-  }
-  .wall.mid-reveal {
-    width: min(328px, calc(328 / 1024 * 100vw));
-  }
+  .headline { font-size: clamp(2.1rem, 4.4vw, 3.4rem); }
+  /* Wall keeps design-lock vw/vh — do not re-cap width (that caused center drift) */
 }
 
 @media (max-width: 859px) {
