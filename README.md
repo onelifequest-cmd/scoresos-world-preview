@@ -1,10 +1,18 @@
-# Score OS — World Preview (Lusion-style scroll 3D)
+# Score OS — World Preview (not live)
 
-Preview only. **Not** live scoresos.com. noindex.
+Hybrid scroll experience: photoreal cinematic stills + Runway gen-4-turbo clips scrubbed on scroll, with Three.js only for particles, cursor glow, live demo-score HUD, and parallax.
 
-Full-screen scroll-driven Three.js world: camera flies through six 3D story beats
-(emblem → Maxine letters → bureau towers → command deck → funding city → finale/pricing).
-DOM overlays are minimal; the wow is in the WebGL scene.
+- **URL:** https://scoresos-world-preview.onrender.com
+- **Live site untouched:** https://scoresos.com
+- `noindex` / `robots.txt` — preview only, CROA-safe demo copy
 
-Stack: Three.js r170, GSAP ScrollTrigger, Lenis, postprocessing (bloom + grain/CA).
-CC0 HDRI: Poly Haven `studio_small_09_1k`. No paid services. No Runway.
+## Media
+- `media/stills/beat-01…06.jpg` — 1280×800 photographic heroes
+- `media/clips/beat-02.mp4`, `beat-03.mp4`, `beat-05.mp4` — 5s Runway I2V (75 credits)
+- `qa/` — beat screenshots, mobile, world-scroll.mp4
+
+## Run locally
+```bash
+python3 -m http.server 8765
+# open http://127.0.0.1:8765/
+```

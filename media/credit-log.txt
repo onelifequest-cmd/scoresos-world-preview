@@ -1,0 +1,16 @@
+Score OS world-preview hybrid — Runway credit log
+Started: 2026-11-01 ~19:07 America/New_York (UTC-5)
+Budget cap: 100 credits
+Opening balance (whoami): 974 (plan 649 + purchased 325)
+
+--- Generations ---
+(photographic stills via Cursor GenerateImage — 0 Runway credits)
+2026-11-01 19:08 ET  V1 Maxine shatter   gen-4-turbo 5s 16:9  task 4ad01d9d-e5a9-4fb0-83fe-ff01ae736412   25 cr  SUCCEEDED → media/clips/beat-02.mp4
+2026-11-01 19:08 ET  V2 Bureau towers    gen-4-turbo 5s 16:9  task edf4bb6f-5d6c-490f-bac3-5599a2947365   25 cr  SUCCEEDED → media/clips/beat-03.mp4
+2026-11-01 19:08 ET  V3 Funding skyline  gen-4-turbo 5s 16:9  task ae76bd6c-8286-46f4-bf97-cdc1beaecc63   25 cr  SUCCEEDED → media/clips/beat-05.mp4
+
+--- Totals ---
+Closing balance (whoami): 899 (plan 574 + purchased 325)
+Exact spend this job: 75 credits
+Cap: 100 — under budget, no retakes.
+
