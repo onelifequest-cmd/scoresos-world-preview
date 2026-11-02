@@ -83,10 +83,14 @@ function updateCameos(progress) {
 
 const gsap = window.gsap;
 const ScrollTrigger = window.ScrollTrigger;
-gsap.registerPlugin(ScrollTrigger);
+if (gsap && ScrollTrigger) {
+  gsap.registerPlugin(ScrollTrigger);
+} else {
+  console.warn('[v3] gsap/ScrollTrigger missing — scroll polish disabled; loader still completes');
+}
 
 let lenis = null;
-if (!reduced && window.Lenis) {
+if (gsap && ScrollTrigger && !reduced && window.Lenis) {
   lenis = new window.Lenis({
     duration: 1.2,
     easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -120,39 +124,40 @@ function remapProgress(p) {
   };
 }
 
-document.querySelectorAll('.beat .overlay, .calm-section').forEach((el) => {
-  const ov = el.classList?.contains('overlay') ? el : null;
-  if (ov) {
-    ScrollTrigger.create({
-      trigger: ov.closest('.beat'),
-      start: 'top 65%',
-      end: 'bottom 35%',
-      onEnter: () => ov.classList.add('on'),
-      onEnterBack: () => ov.classList.add('on'),
-      onLeave: () => { if (!ov.closest('.finale')) ov.classList.remove('on'); },
-      onLeaveBack: () => { if (!ov.closest('.finale')) ov.classList.remove('on'); },
-    });
-  }
-});
+if (ScrollTrigger) {
+  document.querySelectorAll('.beat .overlay, .calm-section').forEach((el) => {
+    const ov = el.classList?.contains('overlay') ? el : null;
+    if (ov) {
+      ScrollTrigger.create({
+        trigger: ov.closest('.beat'),
+        start: 'top 65%',
+        end: 'bottom 35%',
+        onEnter: () => ov.classList.add('on'),
+        onEnterBack: () => ov.classList.add('on'),
+        onLeave: () => { if (!ov.closest('.finale')) ov.classList.remove('on'); },
+        onLeaveBack: () => { if (!ov.closest('.finale')) ov.classList.remove('on'); },
+      });
+    }
+  });
+  ScrollTrigger.create({
+    trigger: scrollRoot,
+    start: 'top top',
+    end: 'bottom bottom',
+    onUpdate: (self) => {
+      const { heroFlight, worldProgress, inHero } = remapProgress(self.progress);
+      hero.setFlight(heroFlight);
+      world.setProgress(inHero ? 0 : worldProgress);
+      updateCameos(self.progress);
+      document.body.classList.toggle('world-visible', !inHero || heroFlight > 0.55);
+      document.body.classList.toggle('hero-done', heroFlight > 0.92);
+      hero.setVisible(heroFlight < 0.98);
+      const idx = Math.min(beats.length - 1, Math.floor(worldProgress * beats.length));
+      dots.forEach((d, i) => d.classList.toggle('on', !inHero && i === idx));
+      if (self.progress > 0.03) hint?.classList.add('hide');
+    },
+  });
+}
 document.querySelector('#beat-1 .overlay')?.classList.add('on');
-
-ScrollTrigger.create({
-  trigger: scrollRoot,
-  start: 'top top',
-  end: 'bottom bottom',
-  onUpdate: (self) => {
-    const { heroFlight, worldProgress, inHero } = remapProgress(self.progress);
-    hero.setFlight(heroFlight);
-    world.setProgress(inHero ? 0 : worldProgress);
-    updateCameos(self.progress);
-    document.body.classList.toggle('world-visible', !inHero || heroFlight > 0.55);
-    document.body.classList.toggle('hero-done', heroFlight > 0.92);
-    hero.setVisible(heroFlight < 0.98);
-    const idx = Math.min(beats.length - 1, Math.floor(worldProgress * beats.length));
-    dots.forEach((d, i) => d.classList.toggle('on', !inHero && i === idx));
-    if (self.progress > 0.03) hint?.classList.add('hide');
-  },
-});
 
 let mx = window.innerWidth / 2;
 let my = window.innerHeight / 2;
@@ -259,4 +264,4 @@ if (qaMode) {
   hint?.classList.add('hide');
 }
 
-window.addEventListener('resize', () => ScrollTrigger.refresh());
+window.addEventListener('resize', () => ScrollTrigger?.refresh?.());

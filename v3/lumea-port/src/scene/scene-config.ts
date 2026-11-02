@@ -274,7 +274,7 @@ const CHAR_BASE = new URL("assets/characters/", BUNDLE_BASE);
  * MAXINE_GLB_FILE to "maxine-ref.glb". Face must match refs/maxine-ref.png.
  * Robot: robot-b.glb is final for v3g9.
  */
-export const MAXINE_GLB_FILE = "maxine-c.glb"; // placeholder — swap to "maxine-ref.glb"
+export const MAXINE_GLB_FILE = "maxine-ref.glb"; // Patrick ref face (from maxine-ref-raw.glb)
 export const ROBOT_GLB_FILE = "robot-b.glb";
 export const MAXINE_GLB_URL = new URL(MAXINE_GLB_FILE, CHAR_BASE).href;
 export const ROBOT_GLB_URL = new URL(ROBOT_GLB_FILE, CHAR_BASE).href;
@@ -301,7 +301,7 @@ export type CharacterSlotConfig = {
 export const CHARACTERS: { maxine: CharacterSlotConfig; robot: CharacterSlotConfig } = {
   maxine: {
     url: new URL("maxine-C-cutout.png", CHAR_BASE).href,
-    /** Placeholder Meshy (maxine-c); swap MAXINE_GLB_FILE → maxine-ref.glb when raw arrives. */
+    /** Patrick-approved Meshy from maxine-f-fullbody-still / refs/maxine-ref.png — face unaltered. */
     glbUrl: MAXINE_GLB_URL,
     /** Feet on crown (~0.515); full-body with boots visible. */
     position: [-0.48, 0.515, 0.18],

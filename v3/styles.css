@@ -45,7 +45,7 @@ a:focus-visible,button:focus-visible,.btn:focus-visible{outline:2px solid var(--
   backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
 }
 .brand{display:flex;align-items:center;gap:10px;color:var(--ink);text-decoration:none;font-family:var(--display);font-weight:800;letter-spacing:0.02em;will-change:transform}
-.brand img{border-radius:50%}
+.brand img{border-radius:6px;object-fit:contain;background:transparent}
 .nav{display:flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:flex-end}
 .nav a{color:var(--muted);text-decoration:none;font-size:0.78rem;font-weight:600;min-height:44px;display:inline-flex;align-items:center;will-change:transform}
 .nav a:hover{color:var(--ink)}
@@ -360,21 +360,20 @@ body.hero-done #hero-canvas, body.hero-done #lumea-hero-root{ opacity:0; pointer
   gap: 3vw;
   background: transparent;
 }
-/* Elegant serif headline — left of emblem, tight tracking; lower edge of
-   emblem optically kisses the baseline (copy sits mid, emblem centered). */
+/* Syne display headline — left of emblem; tuned weight/tracking for legibility. */
 .hero-headline-behind{
   margin:0;
-  font-family:"Cormorant Garamond", Georgia, serif;
-  font-weight:600;
-  font-size:clamp(3.6rem, 9.5vw, 7.2rem);
-  letter-spacing:-0.045em;
-  line-height:0.9;
-  color:rgba(242, 234, 214, 0.92);
+  font-family:"Syne", var(--font), system-ui, sans-serif;
+  font-weight:800;
+  font-size:clamp(3.2rem, 8.6vw, 6.4rem);
+  letter-spacing:-0.03em;
+  line-height:0.92;
+  color:rgba(242, 234, 214, 0.94);
   text-transform:none;
   white-space:normal;
-  max-width: 9ch;
+  max-width: 11ch;
   user-select:none;
-  transform: translateY(0.8vh); /* slight drop — emblem lower edge kisses baseline of 1–2 letters */
+  transform: translateY(0.8vh);
   text-shadow: 0 2px 40px rgba(0,0,0,0.45);
 }
 .hero-headline-behind .hn-score{

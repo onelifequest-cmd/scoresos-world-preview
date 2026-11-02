@@ -8,7 +8,7 @@ OUT="$ROOT/v3/media/meshy/maxine-ref.glb"
 npx --yes @gltf-transform/cli@4.1.1 optimize "$RAW" "$OUT" \
   --compress meshopt --meshopt-level high \
   --texture-compress webp --texture-size 2048 \
-  --simplify true --simplify-ratio 0.05 --simplify-error 0.02 \
+  --simplify true --simplify-ratio 0.18 --simplify-error 0.001 \
   --weld true --join false --flatten false --instance false --palette false
 ls -lah "$OUT"
 npx --yes @gltf-transform/cli@4.1.1 inspect "$OUT" | head -40
