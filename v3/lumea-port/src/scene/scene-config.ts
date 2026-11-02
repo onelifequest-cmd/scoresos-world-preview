@@ -1,7 +1,7 @@
 /**
- * Scene configuration — Lumea defaults restored for v3g4.
- * Only asset URL resolution and a tighter debris count (visual Lumea density)
- * diverge; colour grade, camera, rings, shaft, lights match shipped Lumea.
+ * Scene configuration — Lumea defaults kept for v3g5.
+ * Emblem = single facing medallion (sway, no spin); pedestal from monk.glb;
+ * debris cleared from the upper halo / headline zone.
  */
 
 /** Asset base resolved from this module so drop-in under /hero-r3f/ works. */
@@ -74,36 +74,49 @@ export const RING = {
 } as const;
 
 /**
- * Emblem seated on the pillar top (where the monk sat).
- * Diameter ~0.62 ≈ 18% of vertical FOV at Lumea camera (≈3.0u tall).
+ * Emblem seated on the monk.glb pedestal crown (where the monk sat).
+ * Faces camera within ~15–25°; slow ±sway — no full spin.
  */
 export const EMBLEM = {
-  /** Seated clearly ABOVE the pillar crown (monk torso height). */
-  position: [0, 0.55, 0] as const,
-  /** ~18–20% of vertical FOV at Lumea camera. */
-  diameter: 0.85,
-  /** Visible thickness of the medallion body. */
-  thickness: 0.14,
-  /** Tip toward camera for a ¾ read of the dial. */
-  tiltX: -0.22,
-  /** Slow Y spin (rad/s). */
-  spinSpeed: 0.08,
+  /** Center so the bottom edge rests just above the cut crown (~0.52). */
+  position: [0, 0.88, 0] as const,
+  /** ~17–19% of vertical FOV at Lumea camera. */
+  diameter: 0.82,
+  /** Visible thickness (emblem.glb native depth scaled). */
+  thickness: 0.13,
+  /** Mild tip toward camera (~12°) — keep dial frontal. */
+  tiltX: -0.18,
+  /**
+   * Yaw so dial (+Z) faces the Lumea camera (near +X in content space after
+   * CONTENT.rotationY). ~98° keeps the face within ~15–25° of front at rest.
+   */
+  baseYaw: 1.72,
+  /** Sway amplitude ±20° (rad). */
+  swayAmp: 0.35,
+  /** Sway angular speed. */
+  swaySpeed: 0.42,
+  /** Contact-shadow Y on the pedestal crown. */
+  shadowY: 0.515,
 } as const;
 
-/** Tall dark stone pillar approximating the fused Lumea pedestal. */
+/** Pedestal cut from monk.glb mesh.001 (monk body removed above cutY). */
 export const PILLAR = {
-  /** Bottom centre in content space (pedestal foot). */
+  /** Fallback procedural placement if GLB missing. */
   position: [0, -0.95, 0] as const,
-  /** Height from foot to platform (crown below emblem). */
   height: 1.28,
   radiusBottom: 0.42,
   radiusTop: 0.34,
-  /** Dark grey stone — matches debris emissive family, no green. */
+  /** Local Y in mesh.001 where radial width collapses to the monk torso. */
+  cutY: 0.52,
+  /** Flat crown disc so the cut reads as a solid seat. */
+  capRadius: 0.55,
+  /** Warm dark stone tint over the original albedo (kills blue-CAD read). */
+  tint: "#c8c2b6",
   color: "#2a2d36",
-  roughness: 0.92,
-  metalness: 0.03,
+  roughness: 0.9,
+  metalness: 0.04,
   emissiveColor: "#5c6479",
-  emissiveIntensity: 0.12,
+  emissiveIntensity: 0.08,
 } as const;
 
 // --- Debris field ----------------------------------------------------------
@@ -112,19 +125,26 @@ export const PILLAR = {
 // resurrect a noisy field.
 export const DEBRIS = {
   count: 22,
-  minScale: 0.22,
-  maxScale: 0.72,
+  minScale: 0.18,
+  maxScale: 0.58,
   emissiveColor: "#5c6479",
   emissiveIntensity: 0.22,
   spiral: {
     turns: 5,
-    radius: 3.8,
-    radiusJitter: 1.5,
+    radius: 4.2,
+    radiusJitter: 1.6,
     yBottom: -4.0,
     ySpan: 11,
     yJitter: 0.7,
     angleJitter: 0.55,
-    zCenter: -1.6,
+    zCenter: -1.8,
+  },
+  /** Keep large shards out of the upper halo / headline column. */
+  clearZone: {
+    yMin: 0.8,
+    yMax: 5.8,
+    radius: 3.4,
+    minPushRadius: 4.2,
   },
   spinSpeed: 0.04,
   selfSpin: 0.35,

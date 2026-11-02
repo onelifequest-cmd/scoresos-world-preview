@@ -1,96 +1,133 @@
 import { useMemo } from "react";
+import { useGLTF } from "@react-three/drei";
 import * as THREE from "three";
 
-import { OCCLUDER_LAYER, PILLAR } from "./scene-config";
+import { DRACO_PATH, MODEL_URL, MONK, OCCLUDER_LAYER, PILLAR } from "./scene-config";
 
 /**
- * Tall dark stone pillar approximating the Lumea pedestal silhouette:
- * ruined column, flat crown, dark grey stone — no green, no boulder lump.
+ * Keep only triangles whose centroid is at/below cutY (local mesh space).
+ * Used to hide the fused monk body while preserving the weathered pedestal.
+ */
+function cutGeometryAboveY(source: THREE.BufferGeometry, cutY: number): THREE.BufferGeometry {
+  const geo = source.index ? source.toNonIndexed() : source.clone();
+  const pos = geo.attributes.position;
+  const nrm = geo.attributes.normal;
+  const uv = geo.attributes.uv;
+  const triCount = pos.count / 3;
+
+  const keepPos: number[] = [];
+  const keepNrm: number[] = [];
+  const keepUv: number[] = [];
+
+  for (let t = 0; t < triCount; t += 1) {
+    const i0 = t * 3;
+    const y0 = pos.getY(i0);
+    const y1 = pos.getY(i0 + 1);
+    const y2 = pos.getY(i0 + 2);
+    const cy = (y0 + y1 + y2) / 3;
+    // Keep the stone mass; drop the seated figure.
+    if (cy > cutY) continue;
+    for (let k = 0; k < 3; k += 1) {
+      const i = i0 + k;
+      keepPos.push(pos.getX(i), pos.getY(i), pos.getZ(i));
+      if (nrm) keepNrm.push(nrm.getX(i), nrm.getY(i), nrm.getZ(i));
+      if (uv) keepUv.push(uv.getX(i), uv.getY(i));
+    }
+  }
+
+  const out = new THREE.BufferGeometry();
+  out.setAttribute("position", new THREE.Float32BufferAttribute(keepPos, 3));
+  if (keepNrm.length) {
+    out.setAttribute("normal", new THREE.Float32BufferAttribute(keepNrm, 3));
+  } else {
+    out.computeVertexNormals();
+  }
+  if (keepUv.length) {
+    out.setAttribute("uv", new THREE.Float32BufferAttribute(keepUv, 2));
+  }
+  out.computeBoundingBox();
+  out.computeBoundingSphere();
+  return out;
+}
+
+/**
+ * Lumea pedestal extracted from monk.glb mesh.001 (monk body cut away).
+ * Keeps the original stone albedo + normal maps.
  */
 export const BaseRock = () => {
-  const pillar = useMemo(() => {
+  const { scene } = useGLTF(MODEL_URL, DRACO_PATH);
+
+  const pedestal = useMemo(() => {
     const group = new THREE.Group();
-    const stone = new THREE.MeshStandardMaterial({
-      color: PILLAR.color,
-      roughness: PILLAR.roughness,
-      metalness: PILLAR.metalness,
-      emissive: new THREE.Color(PILLAR.emissiveColor),
-      emissiveIntensity: PILLAR.emissiveIntensity,
+    let source: THREE.Mesh | null = null;
+    scene.traverse((object) => {
+      if (object instanceof THREE.Mesh && !object.name.startsWith("Torus")) {
+        source = object;
+      }
     });
 
-    // Main shaft
-    const shaftGeo = new THREE.CylinderGeometry(
-      PILLAR.radiusTop,
-      PILLAR.radiusBottom,
-      PILLAR.height,
-      32,
-      8,
-      false,
-    );
-    // Mild vertex noise for weathered stone
-    const pos = shaftGeo.attributes.position;
-    for (let i = 0; i < pos.count; i++) {
-      const y = pos.getY(i);
-      const x = pos.getX(i);
-      const z = pos.getZ(i);
-      // Don't distort the flat top/bottom much
-      const edge = 1 - Math.min(1, Math.abs(y) / (PILLAR.height * 0.5));
-      const n =
-        (Math.sin(x * 9.1 + y * 6.2) * 0.018 +
-          Math.cos(z * 8.4 - y * 4.7) * 0.014) *
-        edge;
-      const len = Math.hypot(x, z) || 1;
-      pos.setXYZ(i, x + (x / len) * n, y, z + (z / len) * n);
+    if (!source) {
+      // Fallback: darkened procedural shaft (should not hit if monk.glb loads).
+      const stone = new THREE.MeshStandardMaterial({
+        color: PILLAR.color,
+        roughness: PILLAR.roughness,
+        metalness: PILLAR.metalness,
+      });
+      const shaft = new THREE.Mesh(
+        new THREE.CylinderGeometry(
+          PILLAR.radiusTop,
+          PILLAR.radiusBottom,
+          PILLAR.height,
+          32,
+        ),
+        stone,
+      );
+      shaft.position.y = PILLAR.height / 2;
+      group.add(shaft);
+      group.position.set(...PILLAR.position);
+      return group;
     }
-    pos.needsUpdate = true;
-    shaftGeo.computeVertexNormals();
 
-    const shaft = new THREE.Mesh(shaftGeo, stone);
-    shaft.castShadow = true;
-    shaft.receiveShadow = true;
-    shaft.layers.enable(OCCLUDER_LAYER);
-    shaft.position.y = PILLAR.height / 2;
-    group.add(shaft);
+    const mesh = source as THREE.Mesh;
+    const cutY = PILLAR.cutY;
+    const geometry = cutGeometryAboveY(mesh.geometry, cutY);
 
-    // Flat crown the emblem sits on
-    const crown = new THREE.Mesh(
-      new THREE.CylinderGeometry(
-        PILLAR.radiusTop * 1.22,
-        PILLAR.radiusTop * 1.08,
-        0.09,
-        32,
-      ),
-      stone.clone(),
+    // Preserve original PBR maps; nudge color toward warm dark stone (not blue-CAD).
+    const srcMat = mesh.material as THREE.MeshStandardMaterial;
+    const material = srcMat.clone();
+    material.color = new THREE.Color(PILLAR.tint);
+    material.roughness = Math.max(srcMat.roughness ?? 0.85, 0.78);
+    material.metalness = Math.min(srcMat.metalness ?? 0.05, 0.08);
+    material.envMapIntensity = 0.35;
+    material.needsUpdate = true;
+
+    const pedestalMesh = new THREE.Mesh(geometry, material);
+    pedestalMesh.castShadow = true;
+    pedestalMesh.receiveShadow = true;
+    pedestalMesh.layers.enable(OCCLUDER_LAYER);
+    // Match source local transform if any.
+    pedestalMesh.position.copy(mesh.position);
+    pedestalMesh.quaternion.copy(mesh.quaternion);
+    pedestalMesh.scale.copy(mesh.scale);
+    group.add(pedestalMesh);
+
+    // Cap the cut so the crown reads as a solid flat seat for the emblem.
+    const capR = PILLAR.capRadius;
+    const cap = new THREE.Mesh(
+      new THREE.CylinderGeometry(capR, capR * 0.98, 0.04, 48),
+      material.clone(),
     );
-    crown.castShadow = true;
-    crown.receiveShadow = true;
-    crown.layers.enable(OCCLUDER_LAYER);
-    crown.position.y = PILLAR.height + 0.02;
-    group.add(crown);
+    cap.position.set(0, cutY - 0.01, 0);
+    cap.castShadow = true;
+    cap.receiveShadow = true;
+    cap.layers.enable(OCCLUDER_LAYER);
+    group.add(cap);
 
-    // Foot flare
-    const foot = new THREE.Mesh(
-      new THREE.CylinderGeometry(
-        PILLAR.radiusBottom * 1.12,
-        PILLAR.radiusBottom * 1.38,
-        0.16,
-        32,
-      ),
-      stone.clone(),
-    );
-    foot.castShadow = true;
-    foot.receiveShadow = true;
-    foot.layers.enable(OCCLUDER_LAYER);
-    foot.position.y = 0.06;
-    group.add(foot);
-
-    group.position.set(
-      PILLAR.position[0],
-      PILLAR.position[1],
-      PILLAR.position[2],
-    );
+    group.position.set(MONK.position[0], MONK.position[1], MONK.position[2]);
     return group;
-  }, []);
+  }, [scene]);
 
-  return <primitive object={pillar} />;
+  return <primitive object={pedestal} />;
 };
+
+useGLTF.preload(MODEL_URL, DRACO_PATH);

@@ -98,11 +98,39 @@ export const DebrisField = () => {
     const angleStep = (spiral.turns * Math.PI * 2) / count;
     const euler = new THREE.Euler();
 
+    const clear = DEBRIS.clearZone;
     for (let i = 0; i < count; i += 1) {
       const t = i / count;
-      const angle = i * angleStep + (rng() - 0.5) * spiral.angleJitter;
-      const radius = spiral.radius + (rng() - 0.5) * spiral.radiusJitter;
-      const y = spiral.yBottom + t * spiral.ySpan + (rng() - 0.5) * spiral.yJitter;
+      let angle = i * angleStep + (rng() - 0.5) * spiral.angleJitter;
+      let radius = spiral.radius + (rng() - 0.5) * spiral.radiusJitter;
+      let y = spiral.yBottom + t * spiral.ySpan + (rng() - 0.5) * spiral.yJitter;
+      const sizeRand = rng();
+      const scale = minScale + sizeRand * (maxScale - minScale);
+
+      // Large shards: bias to frame edges / background, never the upper halo column.
+      if (sizeRand > 0.45) {
+        radius = Math.max(radius, clear.minPushRadius + rng() * 1.1);
+        // Prefer background (more -Z) and avoid mid-height near the shaft.
+        if (y > clear.yMin && y < clear.yMax) {
+          y = rng() < 0.5
+            ? clear.yMin - 0.4 - rng() * 1.8
+            : clear.yMax + 0.3 + rng() * 1.5;
+        }
+      }
+
+      let x = Math.cos(angle) * radius;
+      let z = Math.sin(angle) * radius + spiral.zCenter;
+      const radial = Math.hypot(x, z - spiral.zCenter);
+      if (
+        scale > (minScale + maxScale) * 0.45 &&
+        y > clear.yMin &&
+        y < clear.yMax &&
+        radial < clear.radius
+      ) {
+        const boost = clear.minPushRadius / Math.max(radial, 0.15);
+        x *= boost;
+        z = (z - spiral.zCenter) * boost + spiral.zCenter;
+      }
 
       euler.set(rng() * Math.PI * 2, rng() * Math.PI * 2, rng() * Math.PI * 2);
       const spinAxis = new THREE.Vector3(
@@ -111,17 +139,12 @@ export const DebrisField = () => {
         rng() * 2 - 1,
       ).normalize();
       const spinRate = (rng() * 2 - 1) * DEBRIS.selfSpin;
-      const sizeRand = rng();
       const shard: Shard = {
-        basePos: new THREE.Vector3(
-          Math.cos(angle) * radius,
-          y,
-          Math.sin(angle) * radius + spiral.zCenter,
-        ),
+        basePos: new THREE.Vector3(x, y, z),
         quat: new THREE.Quaternion().setFromEuler(euler),
         spinAxis,
         spinRate,
-        scale: minScale + sizeRand * (maxScale - minScale),
+        scale,
         offset: new THREE.Vector3(),
         velocity: new THREE.Vector3(),
         // Bigger rocks (higher sizeRand) get a lower natural frequency → heavier.
