@@ -1,22 +1,13 @@
-
-
 import { useLayoutEffect, useMemo, useRef } from "react";
-import { useFrame, useThree } from "@react-three/fiber";
-import { useGLTF } from "@react-three/drei";
+import { useFrame } from "@react-three/fiber";
+import { useTexture } from "@react-three/drei";
 import * as THREE from "three";
 
-import {
-  DEBRIS,
-  DRACO_PATH,
-  MASK_LAYER,
-  OCCLUDER_LAYER,
-  ROCKS_URL,
-} from "./scene-config";
+import { CREDIT_ICONS, DEBRIS, MASK_LAYER, OCCLUDER_LAYER } from "./scene-config";
 import { DEBRIS_COUNTS, deviceTier } from "./device";
 import { hasPointer } from "./pointer-state";
 import { useDebrisStore } from "./debris-store";
 
-/** Deterministic PRNG so the spiral layout is identical on every load. */
 const mulberry32 = (seed: number) => {
   let a = seed;
   return () => {
@@ -30,75 +21,55 @@ const mulberry32 = (seed: number) => {
 
 interface Shard {
   basePos: THREE.Vector3;
-  /** Accumulating orientation — spun on `spinAxis` at `spinRate` each frame. */
   quat: THREE.Quaternion;
   spinAxis: THREE.Vector3;
   spinRate: number;
   scale: number;
-  /** Current cursor-push displacement (spring-damped back to zero). */
   offset: THREE.Vector3;
-  /** Velocity of `offset` — the momentum that makes the rock feel heavy. */
   velocity: THREE.Vector3;
-  /** Natural frequency of the spring (∝ 1/size): big rocks are slower = heavier. */
   omega: number;
+  iconIndex: number;
+  aspect: number;
 }
 
-type MeshRef = { current: THREE.InstancedMesh | null };
-
 /**
- * The user's rocks (rocks.glb) wound onto a vertical spiral, one InstancedMesh
- * per geometry. The whole field spins slowly, and each rock is pushed away from
- * the cursor (a ray cast into the field), springing back when the cursor leaves.
+ * Credit-themed floating objects (score chips, house, card, $, key, trend,
+ * APPROVED) — same cursor-parting spring as the old rock field.
  */
 export const DebrisField = () => {
-  const { scene } = useGLTF(ROCKS_URL, DRACO_PATH);
   const groupRef = useRef<THREE.Group>(null);
-  const gl = useThree((state) => state.gl);
+  const urls = CREDIT_ICONS.map((c) => c.url);
+  const textures = useTexture(urls) as THREE.Texture[];
 
-  // Rock geometries (sorted for a stable mapping) + one shared, emissive-lifted,
-  // anisotropically-filtered material.
-  const { geometries, material } = useMemo(() => {
-    const found: { name: string; geometry: THREE.BufferGeometry }[] = [];
-    let source: THREE.Material | null = null;
-    scene.traverse((object) => {
-      if (object instanceof THREE.Mesh) {
-        found.push({ name: object.name, geometry: object.geometry });
-        if (!source) source = object.material as THREE.Material;
-      }
+  const materials = useMemo(() => {
+    return textures.map((tex, i) => {
+      tex.colorSpace = THREE.SRGBColorSpace;
+      tex.anisotropy = 4;
+      tex.needsUpdate = true;
+      return new THREE.MeshStandardMaterial({
+        map: tex,
+        transparent: true,
+        alphaTest: 0.2,
+        roughness: 0.35,
+        metalness: 0.45,
+        emissive: new THREE.Color(DEBRIS.emissiveColor),
+        emissiveIntensity: DEBRIS.emissiveIntensity,
+        envMapIntensity: 0.9,
+        side: THREE.DoubleSide,
+        depthWrite: false,
+      });
     });
-    found.sort((a, b) => a.name.localeCompare(b.name));
+  }, [textures]);
 
-    const debrisMaterial = (source as THREE.Material | null)?.clone();
-    if (debrisMaterial instanceof THREE.MeshStandardMaterial) {
-      debrisMaterial.emissive = new THREE.Color(DEBRIS.emissiveColor);
-      debrisMaterial.emissiveIntensity = DEBRIS.emissiveIntensity;
-      if (debrisMaterial.map) {
-        const map = debrisMaterial.map.clone();
-        map.anisotropy = gl.capabilities.getMaxAnisotropy();
-        map.needsUpdate = true;
-        debrisMaterial.map = map;
-      }
-    }
-
-    return {
-      geometries: found.map((entry) => entry.geometry),
-      material: debrisMaterial ?? new THREE.MeshStandardMaterial(),
-    };
-  }, [scene, gl]);
-
-  // Build the helix and bucket each shard by geometry index.
-  const perGeo = useMemo<Shard[][]>(() => {
-    const result: Shard[][] = geometries.map(() => []);
-    if (geometries.length === 0) return result;
-
+  const shards = useMemo<Shard[]>(() => {
     const rng = mulberry32(DEBRIS.seed);
     const { minScale, maxScale, spiral } = DEBRIS;
-    // Fewer shards on the fill-bound tiers (read once at construction).
     const count = DEBRIS_COUNTS[deviceTier()];
     const angleStep = (spiral.turns * Math.PI * 2) / count;
     const euler = new THREE.Euler();
-
     const clear = DEBRIS.clearZone;
+    const list: Shard[] = [];
+
     for (let i = 0; i < count; i += 1) {
       const t = i / count;
       let angle = i * angleStep + (rng() - 0.5) * spiral.angleJitter;
@@ -106,19 +77,21 @@ export const DebrisField = () => {
       let y = spiral.yBottom + t * spiral.ySpan + (rng() - 0.5) * spiral.yJitter;
       const sizeRand = rng();
       const scale = minScale + sizeRand * (maxScale - minScale);
+      const iconIndex = Math.floor(rng() * CREDIT_ICONS.length);
+      const aspect = CREDIT_ICONS[iconIndex].aspect;
 
-      // Large + mid shards: bias to frame edges / background; keep clear zone
-      // around the upper halo / headline. Mid pieces fill Lumea's far L/R look.
       if (sizeRand > 0.28) {
-        radius = Math.max(radius, clear.minPushRadius * (sizeRand > 0.55 ? 1.0 : 0.85) + rng() * 1.2);
+        radius = Math.max(
+          radius,
+          clear.minPushRadius * (sizeRand > 0.55 ? 1.0 : 0.85) + rng() * 1.2,
+        );
         if (y > clear.yMin && y < clear.yMax) {
-          // Prefer horizontal edges over vertical dodge for mid sizes.
           if (sizeRand > 0.55) {
-            y = rng() < 0.5
-              ? clear.yMin - 0.4 - rng() * 1.8
-              : clear.yMax + 0.3 + rng() * 1.5;
+            y =
+              rng() < 0.5
+                ? clear.yMin - 0.4 - rng() * 1.8
+                : clear.yMax + 0.3 + rng() * 1.5;
           } else {
-            // Mid: keep height but shove outward (far left/right / background).
             radius = Math.max(radius, clear.minPushRadius * 0.9 + rng() * 1.4);
           }
         }
@@ -138,38 +111,30 @@ export const DebrisField = () => {
         z = (z - spiral.zCenter) * boost + spiral.zCenter;
       }
 
-      euler.set(rng() * Math.PI * 2, rng() * Math.PI * 2, rng() * Math.PI * 2);
-      const spinAxis = new THREE.Vector3(
-        rng() * 2 - 1,
-        rng() * 2 - 1,
-        rng() * 2 - 1,
-      ).normalize();
-      const spinRate = (rng() * 2 - 1) * DEBRIS.selfSpin;
-      const shard: Shard = {
+      euler.set(rng() * 0.4 - 0.2, rng() * Math.PI * 2, rng() * 0.3 - 0.15);
+      list.push({
         basePos: new THREE.Vector3(x, y, z),
         quat: new THREE.Quaternion().setFromEuler(euler),
-        spinAxis,
-        spinRate,
+        spinAxis: new THREE.Vector3(
+          rng() * 2 - 1,
+          rng() * 2 - 1,
+          rng() * 2 - 1,
+        ).normalize(),
+        spinRate: (rng() * 2 - 1) * DEBRIS.selfSpin,
         scale,
         offset: new THREE.Vector3(),
         velocity: new THREE.Vector3(),
-        // Bigger rocks (higher sizeRand) get a lower natural frequency → heavier.
         omega:
           DEBRIS.repel.freqLight +
           sizeRand * (DEBRIS.repel.freqHeavy - DEBRIS.repel.freqLight),
-      };
-      result[Math.floor(rng() * geometries.length)].push(shard);
+        iconIndex,
+        aspect,
+      });
     }
+    return list;
+  }, []);
 
-    return result;
-  }, [geometries]);
-
-  const meshRefs = useMemo<MeshRef[]>(
-    () => geometries.map(() => ({ current: null })),
-    [geometries],
-  );
-
-  // Reusable temporaries.
+  const meshRefs = useRef<(THREE.Mesh | null)[]>([]);
   const tmp = useMemo(
     () => ({
       raycaster: new THREE.Raycaster(),
@@ -182,31 +147,23 @@ export const DebrisField = () => {
       accel: new THREE.Vector3(),
       pos: new THREE.Vector3(),
       scale: new THREE.Vector3(),
-      matrix: new THREE.Matrix4(),
       spin: new THREE.Quaternion(),
     }),
     [],
   );
 
   useLayoutEffect(() => {
-    perGeo.forEach((shards, gi) => {
-      const mesh = meshRefs[gi].current;
+    shards.forEach((_, i) => {
+      const mesh = meshRefs.current[i];
       if (!mesh) return;
       mesh.layers.enable(MASK_LAYER);
       mesh.layers.enable(OCCLUDER_LAYER);
-      shards.forEach((shard, i) => {
-        tmp.matrix.compose(shard.basePos, shard.quat, tmp.scale.setScalar(shard.scale));
-        mesh.setMatrixAt(i, tmp.matrix);
-      });
-      mesh.instanceMatrix.needsUpdate = true;
-      mesh.computeBoundingSphere();
     });
-  }, [perGeo, meshRefs, tmp]);
+  }, [shards]);
 
   useFrame(({ camera, pointer }, delta) => {
     const group = groupRef.current;
     if (!group) return;
-
     const {
       repelRadius: radius,
       repelStrength: strength,
@@ -217,89 +174,71 @@ export const DebrisField = () => {
     group.rotation.y += drift * delta;
     group.updateWorldMatrix(true, false);
 
-    // The cursor ray, expressed in the field's LOCAL space so it lines up with
-    // each shard's rest position (basePos). Repulsion keys off a shard's
-    // perpendicular distance to this ray — i.e. how close it is to the cursor ON
-    // SCREEN, at ANY depth — so the rocks under the pointer part smoothly and
-    // distant ones stay put, instead of depending on a single fixed-depth point.
     tmp.raycaster.setFromCamera(pointer, camera);
     tmp.invMatrix.copy(group.matrixWorld).invert();
     tmp.localRay.copy(tmp.raycaster.ray).applyMatrix4(tmp.invMatrix);
     tmp.localRay.direction.normalize();
 
-    // Damped-oscillator integration. dt is clamped so a dropped frame (e.g. tab
-    // refocus) can't blow the integrator up.
     const dt = Math.min(delta, 1 / 30);
     const zeta = DEBRIS.repel.damping;
-    // Gate on hasPointer: before the first real move the cursor is NDC (0,0) —
-    // dead centre — so an ungated field would punch a hole through the middle on
-    // touch devices and untouched loads. Off entirely on the mobile tier.
     const active = radius > 0 && strength > 0 && hasPointer();
 
-    perGeo.forEach((shards, gi) => {
-      const mesh = meshRefs[gi].current;
+    shards.forEach((shard, i) => {
+      const mesh = meshRefs.current[i];
       if (!mesh) return;
-      shards.forEach((shard, i) => {
-        // Per-rock tumble on its own axis (speed scaled live from the panel).
-        tmp.spin.setFromAxisAngle(shard.spinAxis, shard.spinRate * spinScale * delta);
-        shard.quat.multiply(tmp.spin);
+      tmp.spin.setFromAxisAngle(shard.spinAxis, shard.spinRate * spinScale * delta);
+      shard.quat.multiply(tmp.spin);
 
-        // Target push: radially away from the cursor ray, magnitude bounded by
-        // `strength` (no 1/d spike) and faded to zero at the radius edge with a
-        // smoothstep, so every affected rock eases rather than snapping.
-        tmp.push.setScalar(0);
-        if (active) {
-          tmp.toShard.subVectors(shard.basePos, tmp.localRay.origin);
-          const along = tmp.toShard.dot(tmp.localRay.direction);
-          if (along > 0) {
-            tmp.closest
-              .copy(tmp.localRay.direction)
-              .multiplyScalar(along)
-              .add(tmp.localRay.origin);
-            tmp.perp.subVectors(shard.basePos, tmp.closest);
-            const d = tmp.perp.length();
-            if (d > 1e-3 && d < radius) {
-              const f = 1 - d / radius;
-              const falloff = f * f * (3 - 2 * f);
-              tmp.push.copy(tmp.perp).multiplyScalar((strength * falloff) / d);
-            }
+      tmp.push.setScalar(0);
+      if (active) {
+        tmp.toShard.subVectors(shard.basePos, tmp.localRay.origin);
+        const along = tmp.toShard.dot(tmp.localRay.direction);
+        if (along > 0) {
+          tmp.closest
+            .copy(tmp.localRay.direction)
+            .multiplyScalar(along)
+            .add(tmp.localRay.origin);
+          tmp.perp.subVectors(shard.basePos, tmp.closest);
+          const d = tmp.perp.length();
+          if (d > 1e-3 && d < radius) {
+            const f = 1 - d / radius;
+            const falloff = f * f * (3 - 2 * f);
+            tmp.push.copy(tmp.perp).multiplyScalar((strength * falloff) / d);
           }
         }
+      }
 
-        // Mass-normalized damped oscillator toward the target (semi-implicit
-        // Euler):  accel = −ω²·(offset − target) − 2ζω·velocity
-        // Low ω (esp. big rocks) + underdamped ζ → the rock is slow to get moving,
-        // carries momentum, overshoots, and settles heavily instead of snapping.
-        const omega = shard.omega;
-        tmp.accel
-          .copy(shard.offset)
-          .sub(tmp.push)
-          .multiplyScalar(-omega * omega)
-          .addScaledVector(shard.velocity, -2 * zeta * omega);
-        shard.velocity.addScaledVector(tmp.accel, dt);
-        shard.offset.addScaledVector(shard.velocity, dt);
+      const omega = shard.omega;
+      tmp.accel
+        .copy(shard.offset)
+        .sub(tmp.push)
+        .multiplyScalar(-omega * omega)
+        .addScaledVector(shard.velocity, -2 * zeta * omega);
+      shard.velocity.addScaledVector(tmp.accel, dt);
+      shard.offset.addScaledVector(shard.velocity, dt);
 
-        tmp.pos.copy(shard.basePos).add(shard.offset);
-        tmp.matrix.compose(tmp.pos, shard.quat, tmp.scale.setScalar(shard.scale));
-        mesh.setMatrixAt(i, tmp.matrix);
-      });
-      mesh.instanceMatrix.needsUpdate = true;
+      tmp.pos.copy(shard.basePos).add(shard.offset);
+      mesh.position.copy(tmp.pos);
+      mesh.quaternion.copy(shard.quat);
+      const h = shard.scale;
+      mesh.scale.set(h * shard.aspect, h, 1);
     });
   });
 
   return (
     <group ref={groupRef}>
-      {geometries.map((geometry, gi) => (
-        <instancedMesh
-          key={gi}
-          ref={meshRefs[gi]}
-          args={[geometry, material, perGeo[gi].length]}
+      {shards.map((shard, i) => (
+        <mesh
+          key={i}
+          ref={(el) => {
+            meshRefs.current[i] = el;
+          }}
+          material={materials[shard.iconIndex]}
           castShadow
-          receiveShadow
-        />
+        >
+          <planeGeometry args={[1, 1]} />
+        </mesh>
       ))}
     </group>
   );
 };
-
-useGLTF.preload(ROCKS_URL, DRACO_PATH);

@@ -1,5 +1,5 @@
 /**
- * Scene configuration — Lumea defaults kept for v3g7.
+ * Scene configuration — v3g8 Maxine+robot billboards + credit debris.
  * Emblem = single facing medallion (sway, no spin); pedestal from monk.glb;
  * debris cleared from the upper halo / headline zone.
  */
@@ -80,10 +80,13 @@ export const RING = {
  * Faces camera within ~15–25°; slow ±sway — no full spin.
  */
 export const EMBLEM = {
-  /** Center so the bottom edge rests just above the cut crown (~0.52). */
-  position: [0, 1.00, 0] as const,
-  /** ~20–22% of vertical FOV — ~18% larger than v3g6, clears top halo. */
-  diameter: 0.97,
+  /**
+   * Mode A: floats just above + between Maxine and the robot (crown ~0.52,
+   * characters ~1.15 tall → head ~1.67; medallion center ~1.95).
+   */
+  position: [0, 1.95, 0.05] as const,
+  /** Slightly smaller so it reads as the glowing focal point between them. */
+  diameter: 0.78,
   /** Visible thickness (emblem.glb native depth scaled). */
   thickness: 0.13,
   /** Mild tip toward camera (~12°) — keep dial frontal. */
@@ -129,8 +132,8 @@ export const DEBRIS = {
   count: 34,
   minScale: 0.16,
   maxScale: 0.55,
-  emissiveColor: "#4a6b5e",
-  emissiveIntensity: 0.28,
+  emissiveColor: "#3d7a62",
+  emissiveIntensity: 0.42,
   spiral: {
     turns: 5,
     radius: 4.2,
@@ -143,10 +146,10 @@ export const DEBRIS = {
   },
   /** Keep large shards out of the upper halo / headline column. */
   clearZone: {
-    yMin: 0.8,
+    yMin: 0.4,
     yMax: 5.8,
-    radius: 3.0,
-    minPushRadius: 3.8,
+    radius: 3.2,
+    minPushRadius: 3.9,
   },
   spinSpeed: 0.04,
   selfSpin: 0.35,
@@ -256,3 +259,71 @@ export const POST = {
     opacity: 0.21,
   },
 } as const;
+
+// --- Characters (alpha billboards on pillar crown) -------------------------
+const CHAR_BASE = new URL("assets/characters/", BUNDLE_BASE);
+export const CHARACTERS = {
+  maxine: {
+    url: new URL("maxine-C-cutout.png", CHAR_BASE).href,
+    /** Feet on crown (~0.515). */
+    position: [-0.36, 0.515, 0.14] as const,
+    height: 1.28,
+    aspect: 0.305,
+    yawBias: 0.08,
+  },
+  robot: {
+    url: new URL("robot-B-cutout.png", CHAR_BASE).href,
+    /** Thighs-up cutout — seat bottom near crown; reads as standing in the shaft. */
+    position: [0.38, 0.42, 0.12] as const,
+    height: 1.35,
+    aspect: 0.504,
+    yawBias: -0.06,
+  },
+} as const;
+
+/** Credit-themed floating debris icons (replace rocks). */
+const ICON_BASE = new URL("assets/credit-icons/", BUNDLE_BASE);
+export const CREDIT_ICONS = [
+  { url: new URL("chip-680.png", ICON_BASE).href, aspect: 256 / 160 },
+  { url: new URL("chip-720.png", ICON_BASE).href, aspect: 256 / 160 },
+  { url: new URL("chip-742.png", ICON_BASE).href, aspect: 256 / 160 },
+  { url: new URL("chip-801.png", ICON_BASE).href, aspect: 256 / 160 },
+  { url: new URL("chip-up.png", ICON_BASE).href, aspect: 256 / 160 },
+  { url: new URL("house.png", ICON_BASE).href, aspect: 1 },
+  { url: new URL("card.png", ICON_BASE).href, aspect: 200 / 128 },
+  { url: new URL("dollar.png", ICON_BASE).href, aspect: 1 },
+  { url: new URL("key.png", ICON_BASE).href, aspect: 192 / 96 },
+  { url: new URL("trend.png", ICON_BASE).href, aspect: 192 / 128 },
+  { url: new URL("approved.png", ICON_BASE).href, aspect: 220 / 100 },
+  { url: new URL("check.png", ICON_BASE).href, aspect: 1 },
+] as const;
+
+/**
+ * Animated 3D gauge needle — dial arc is ~270° with gap at bottom
+ * (300 at ~7:30, 850 at ~4:30). Short pointer from hub so it never
+ * crosses the big "742" numeral.
+ */
+export const GAUGE = {
+  scoreMin: 300,
+  scoreMax: 850,
+  restScore: 742,
+  /** Seconds to climb from startScore → restScore. */
+  climbDuration: 3.6,
+  startScore: 520,
+  /** Local dial-plane: 0 = 12 o'clock; negative = CCW toward 300. */
+  startAngle: (-135 * Math.PI) / 180,
+  sweep: (270 * Math.PI) / 180,
+  /** Hub sits slightly below dial center (matches painted hub). */
+  hubY: -0.06,
+  /** Short outer pointer length in dial-local units (pre-scale). */
+  length: 0.78,
+  thickness: 0.045,
+} as const;
+
+export function scoreToNeedleAngle(score: number): number {
+  const t = Math.min(
+    1,
+    Math.max(0, (score - GAUGE.scoreMin) / (GAUGE.scoreMax - GAUGE.scoreMin)),
+  );
+  return GAUGE.startAngle + t * GAUGE.sweep;
+}

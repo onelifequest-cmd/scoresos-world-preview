@@ -51,17 +51,10 @@ const world = await createWorld(canvas, {
 });
 setLoad(0.98);
 
-// Cameos: robot right after hero flight; Maxine on dispute beat
+// Cameos folded into the 3D hero (Maxine + robot billboards). Keep layer hidden.
 const robotVid = document.getElementById('cameo-robot');
 const maxineVid = document.getElementById('cameo-maxine');
-if (robotVid && isMobile) robotVid.src = './media/clips/cameo-robot-mobile.mp4';
-if (maxineVid && isMobile) maxineVid.src = './media/clips/cameo-maxine-mobile.mp4';
-
-// Progress windows remapped: hero ~0–0.14, then runway beats
-const cameos = [
-  { el: robotVid, start: 0.12, end: 0.18, played: false, name: 'robot' },
-  { el: maxineVid, start: 0.28, end: 0.36, played: false, name: 'maxine' },
-];
+const cameos = [];
 
 function updateCameos(progress) {
   if (reduced) return;

@@ -29,6 +29,7 @@ import {
   type MaskedDispersionEffect,
 } from "./masked-dispersion";
 import { EmblemModel } from "./emblem-model";
+import { CharacterBillboards } from "./character-billboards";
 import { BaseRock } from "./base-rock";
 import { Prewarm } from "./prewarm";
 import { usePostStore } from "./post-store";
@@ -90,6 +91,7 @@ const MonkScene = () => {
         <Lighting />
         <Suspense fallback={null}>
           <BaseRock />
+          <CharacterBillboards />
           <EmblemModel />
           <DebrisField />
           <Prewarm composerRef={composerRef} />

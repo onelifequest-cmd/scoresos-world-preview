@@ -96,3 +96,17 @@ Face compare: media/cameos/compare/face-compare-final.png — PASS (not celebrit
 - Installed: media/cameos/maxine-still.jpg, media/clips/cameo-maxine{,-mobile}.mp4
 
 [2026-11-01 20:05 ET] Deploy v3g1: 3D SCORE OS plate behind extruded emblem (bloom-safe). No new Runway spend. Balance ~359.
+
+--- v3g8 Maxine+robot billboards (America/New_York 2026-11-01 ~22:30) ---
+Start credits: 359
+- nano-banana-2.1 1K Maxine full-body (task 7e380152-57d4-480d-9445-f00690ab7ea9): ~4 cr
+- birefnet-v2 robot B remove_background (task 9e04674b-db87-4d20-9438-7d1a138f9e8a): ~1 cr
+- Maxine rembg: local u2net (0)
+End credits: 354
+Spent this step: ~5 (under 30 budget). Meshy 3D skipped (later upgrade).
+
+[2026-11-01 ~23:10 ET] v3g8a/b billboard facing fix + dual QA
+- No new Runway spend (balance still ~354).
+- Bug: FrontSide + yaw clamp around 0 culled characters (camera in +X/−Z).
+- Fix: base yaw π, clamp parallax, DoubleSide, rim/shadow/grade; holo B nudged toward robot.
+- Deploy: ?v=v3g8a (floating medallion) and ?v=v3g8b (robot holo). Cameos folded off.

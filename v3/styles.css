@@ -403,7 +403,7 @@ body.hero-done #hero-canvas, body.hero-done #lumea-hero-root{ opacity:0; pointer
   font-family: Inter, system-ui, sans-serif;
   font-size: 14.5px;
   font-weight: 500;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.1em;
   line-height: 1.65;
   text-transform: uppercase;
   color: #E8E2D0;
@@ -412,23 +412,24 @@ body.hero-done #hero-canvas, body.hero-done #lumea-hero-root{ opacity:0; pointer
   display:inline-flex;
   align-items:center;
   width:fit-content;
-  padding:0.78rem 1.45rem;
+  padding:14px 26px;
   border:1px solid #C9A24A;
   border-radius:999px;
   font-family: Inter, system-ui, sans-serif;
-  font-size:0.92rem;
-  font-weight:700;
-  letter-spacing:0.1em;
+  font-size:15px;
+  font-weight:600;
+  letter-spacing:0.08em;
   text-transform:uppercase;
   text-decoration:none;
-  color:#141210;
-  background:#C9A24A;
+  color:#141210 !important;
+  background:#C9A24A !important;
   transition: background 160ms ease, border-color 160ms ease, transform 160ms ease;
   pointer-events:auto;
 }
 .hero-aside-cta:hover{
-  background:#d4b05a;
+  background:#d4b05a !important;
   border-color:#d4b05a;
+  color:#141210 !important;
 }
 .hero-copy{
   position:relative;
