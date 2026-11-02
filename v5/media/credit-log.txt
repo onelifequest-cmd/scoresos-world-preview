@@ -238,3 +238,5 @@ Fixes vs v5l:
   4) Mobile intro 720x720 CRF~17 + mild unsharp; CSS scale≤1
   5) True max video source remains 1280x720 (hero-loop ~4.1MB). start-frame.jpg is 1920x1080 still only — not used as video.
 v5l kept reachable via ?v=v5l
+
+v5m patch: settle/ambient restored to landed plate (settle-calm.jpg lineage); prior v5m settle was mid-fly frame from cleaned@~7.8 by mistake.
