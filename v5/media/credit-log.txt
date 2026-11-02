@@ -222,3 +222,8 @@ v5f3 in-place patch (0 Runway). Commit 6b14bf1. Deploy dep-dbkdb059fdbs73ch6uhg 
 URL: https://scoresos-world-preview.onrender.com/v5/?v=v5f3
 2026-11-02T13:36:47-05:00 v5g: restore v4g six-screen wall layout; 0 Runway credits
 2026-11-02T13:41:19-05:00 v5h: Funding clamp ~15% smaller + 8% pad + check icon; 0 Runway
+
+2026-11-02 15:24 EST
+v5l: sharp fly-in-first hero (0 Runway). Commit 67ebede. Deploy dep-dbkf262jnfac739b38p0.
+URL: https://scoresos-world-preview.onrender.com/v5/?v=v5l
+Intro desk 1280x720 ~1.73Mbps stream-copy; mobile 720x720 track; CSS scale=1; poster=t0 fly-in; hold play until loader done.
