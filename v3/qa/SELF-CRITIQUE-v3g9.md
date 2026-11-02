@@ -28,3 +28,10 @@ Patrick wants Maxine face = `refs/maxine-ref.png`. Current hero uses **placehold
 `maxine-c.glb`. When `v3/media/meshy/maxine-ref-raw.glb` arrives: optimize →
 `maxine-ref.glb`, copy into `assets/characters/`, set `MAXINE_GLB_FILE = "maxine-ref.glb"`
 in `scene-config.ts` (single constant). Do not retexture or use maxine-still.png.
+
+## Live QA (America/New_York, 2026-11-01 ~midnight / 2026-11-02 00:05)
+- Deploy `dep-dbk1is942hec73ec0qj0` (commit `1dc6e80`) **live** on scoresos-world-preview only.
+- Live stills: `hero-v3g9-live-1280x800.png`, `hero-v3g9-live-1440x900.png`, `chars-crop-v3g9-live.png`.
+- Character GLBs 200 OK: `robot-b.glb` (~2.0 MB), `maxine-c.glb` (~1.2 MB placeholder).
+- Loader stuck at 0% in headless until forced `.done` — vendor scripts 404 (`gsap`/`ScrollTrigger`/`lenis`/`three.module.min.js` MIME/path); hero canvas + Meshy meshes still load via bundled `lumea-hero.js`.
+- Maxine face on live is still **maxine-c** Meshy (placeholder). Patrick wants `refs/maxine-ref.png` — waiting on `v3/media/meshy/maxine-ref-raw.glb`. Swap via `MAXINE_GLB_FILE` or `v3/media/meshy/swap-maxine-ref.sh`.
