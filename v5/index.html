@@ -5,12 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="robots" content="noindex, nofollow, noarchive" />
   <meta name="description" content="Preview only. Scores OS penthouse hero. Not the live scoresos.com homepage." />
-  <title>Scores OS — Penthouse Preview v5e (Not Live)</title>
+  <title>Scores OS — Penthouse Preview v5f (Not Live)</title>
   <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="./styles.css?v=v5e2" />
+  <link rel="stylesheet" href="./styles.css?v=v5f" />
 </head>
 <body>
   <a class="skip" href="#cta">Skip to Get Started</a>
@@ -47,19 +47,19 @@
           muted
           playsinline
           autoplay
-          loop
           preload="auto"
         >
           <source src="./media/hero/hero-loop.webm" type="video/webm" />
           <source src="./media/hero/hero-loop.mp4" type="video/mp4" />
         </video>
         <img class="hero-poster-fallback" id="hero-poster" src="./media/hero/poster.jpg" alt="" hidden />
+        <img class="hero-settle" id="hero-settle" src="./media/hero/settle-calm.jpg" alt="" aria-hidden="true" />
         <img class="hero-poster-mobile" id="hero-poster-mobile" src="./media/hero/poster-mobile.jpg" alt="" hidden />
 
-        <!-- Single-layer DOM glass 16:9 screens on empty filmed marble -->
+        <!-- Settled 2×2 true 16:9 glass screens — clear wall left of Maxine -->
         <div class="wall" id="wall" aria-label="Client wins holographic wall (demo)">
           <div class="wall-spill" aria-hidden="true"></div>
-          <div class="wall-main">
+          <div class="wall-grid">
             <article class="tile holo score-tile" data-i="0" style="--d:0">
               <div class="tile-glass">
                 <img src="./media/tiles/04-score-climb-768.jpg" alt="" width="768" height="432" loading="eager" />
@@ -76,7 +76,7 @@
               <div class="tile-glass funding-glass">
                 <span class="tile-scan" aria-hidden="true"></span>
                 <span class="tile-reflect" aria-hidden="true"></span>
-                <p class="funding-line">Funding Approved</p>
+                <p class="funding-line">Funding<br />Approved</p>
               </div>
               <span class="demo">Demo</span>
             </article>
@@ -89,9 +89,7 @@
               <span class="demo">Demo</span>
               <span class="cap">New home</span>
             </article>
-          </div>
-          <div class="wall-sub" aria-hidden="false">
-            <article class="tile holo sub" data-i="3" style="--d:3">
+            <article class="tile holo" data-i="3" style="--d:3">
               <div class="tile-glass">
                 <img src="./media/tiles/02-new-car-768.jpg" alt="Man beside a new car" width="768" height="432" loading="eager" />
                 <span class="tile-scan" aria-hidden="true"></span>
@@ -100,55 +98,46 @@
               <span class="demo">Demo</span>
               <span class="cap">New car</span>
             </article>
-            <article class="tile holo sub" data-i="4" style="--d:4">
-              <div class="tile-glass">
-                <img src="./media/tiles/05-jet-takeoff-768.jpg" alt="Jet taking off at sunset" width="768" height="432" loading="eager" />
-                <span class="tile-scan" aria-hidden="true"></span>
-                <span class="tile-reflect" aria-hidden="true"></span>
-              </div>
-              <span class="demo">Demo</span>
-              <span class="cap">Takeoff</span>
-            </article>
-            <article class="tile holo sub" data-i="5" style="--d:5">
-              <div class="tile-glass">
-                <img src="./media/tiles/06-world-yours-768.jpg" alt="Earth at sunrise" width="768" height="432" loading="eager" />
-                <span class="tile-scan" aria-hidden="true"></span>
-                <span class="tile-reflect" aria-hidden="true"></span>
-              </div>
-              <span class="demo">Demo</span>
-              <span class="cap">The World Is Yours</span>
-            </article>
           </div>
         </div>
 
-        <!-- Thin holographic control beam: robot hand → score screen (CSS/SVG, 0 Runway) -->
+        <!-- Soft volumetric control beam: pulse once, green-white, fade to shimmer -->
         <svg class="control-beam" id="control-beam" viewBox="0 0 1440 900" preserveAspectRatio="none" aria-hidden="true">
           <defs>
-            <linearGradient id="beamGrad" x1="100%" y1="50%" x2="0%" y2="30%">
-              <stop offset="0%" stop-color="rgba(240,201,106,0.05)" />
-              <stop offset="35%" stop-color="rgba(153,246,228,0.45)" />
-              <stop offset="100%" stop-color="rgba(94,234,212,0.7)" />
+            <linearGradient id="beamGrad" x1="100%" y1="55%" x2="15%" y2="35%">
+              <stop offset="0%" stop-color="rgba(236,253,245,0.85)" />
+              <stop offset="28%" stop-color="rgba(167,243,208,0.55)" />
+              <stop offset="62%" stop-color="rgba(110,231,183,0.22)" />
+              <stop offset="100%" stop-color="rgba(110,231,183,0)" />
             </linearGradient>
-            <filter id="beamSoft" x="-20%" y="-40%" width="140%" height="180%">
-              <feGaussianBlur stdDeviation="1.6" result="b" />
-              <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
+            <radialGradient id="handGlow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="rgba(236,253,245,0.9)" />
+              <stop offset="40%" stop-color="rgba(167,243,208,0.45)" />
+              <stop offset="100%" stop-color="rgba(110,231,183,0)" />
+            </radialGradient>
+            <filter id="beamVol" x="-40%" y="-80%" width="180%" height="260%">
+              <feGaussianBlur stdDeviation="6" result="b" />
+              <feGaussianBlur in="SourceGraphic" stdDeviation="1.2" result="c" />
+              <feMerge>
+                <feMergeNode in="b" />
+                <feMergeNode in="c" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
             </filter>
           </defs>
-          <path class="beam-core" d="M 1020 395 C 720 310, 420 240, 175 195" fill="none"
-            stroke="url(#beamGrad)" stroke-width="2.2" stroke-linecap="round" filter="url(#beamSoft)" />
-          <path class="beam-soft" d="M 1020 395 C 720 310, 420 240, 175 195" fill="none"
-            stroke="rgba(94,234,212,0.22)" stroke-width="7" stroke-linecap="round" />
-          <circle class="beam-particle p1" cx="0" cy="0" r="2.4" fill="rgba(236,253,245,0.85)" />
-          <circle class="beam-particle p2" cx="0" cy="0" r="1.8" fill="rgba(240,201,106,0.7)" />
-          <circle class="beam-particle p3" cx="0" cy="0" r="2.1" fill="rgba(153,246,228,0.75)" />
+          <!-- Soft volumetric cone — brightest at hand, dies mid-span; no hard line -->
+          <path class="beam-volume" d="M 980 400 C 780 340, 560 290, 420 270" fill="none"
+            stroke="url(#beamGrad)" stroke-width="42" stroke-linecap="round" filter="url(#beamVol)" opacity="0.7" />
+          <path class="beam-core" d="M 980 400 C 820 350, 640 310, 520 290" fill="none"
+            stroke="rgba(236,253,245,0.28)" stroke-width="6" stroke-linecap="round" filter="url(#beamVol)" />
+          <circle class="beam-hand" cx="980" cy="400" r="18" fill="url(#handGlow)" />
+          <circle class="beam-particle p1" cx="0" cy="0" r="2.6" fill="rgba(236,253,245,0.9)" />
+          <circle class="beam-particle p2" cx="0" cy="0" r="2" fill="rgba(167,243,208,0.75)" />
         </svg>
 
-        <!-- Maxine tablet swipe pulse (subtle) -->
         <div class="tablet-pulse" id="tablet-pulse" aria-hidden="true"></div>
-
         <div class="float-chips" id="float-chips" aria-hidden="true"></div>
 
-        <!-- Copy: lower-left below screens, left of Maxine — clear of robot on right -->
         <div class="hero-copy">
           <p class="eyebrow">Built for credit repair &amp; funding agencies</p>
           <h1 class="headline"><span class="hn-a">Scores</span> <span class="hn-b">OS</span></h1>
@@ -183,6 +172,6 @@
     <p>Preview only · Scores OS · not affiliated with any credit bureau</p>
   </footer>
 
-  <script src="./js/hero.js?v=v5e2" defer></script>
+  <script src="./js/hero.js?v=v5f" defer></script>
 </body>
 </html>

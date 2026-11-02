@@ -8,6 +8,7 @@
   const stage = $('#hero-stage');
   const video = $('#hero-video');
   const poster = $('#hero-poster');
+  const settle = $('#hero-settle');
   const wall = $('#wall');
   const tiles = $$('.tile');
   const scoreNum = $('#score-num');
@@ -21,11 +22,13 @@
   const REVEAL_AT = 5.4;
   const SWIPE_AT = 5.55;
   const BEAM_AT = 5.85;
-  const REACT_AT = 6.45; // beam lands → score climb
+  const REACT_AT = 6.45;
+  const SETTLE_AT = 7.35; // crossfade off mid-leap → upright calm still
   let revealed = false;
   let swiped = false;
   let beamed = false;
   let reacted = false;
+  let settled = false;
   let scoreStarted = false;
 
   let loaded = 0;
@@ -46,7 +49,7 @@
 
   setTimeout(() => bump(100), 4500);
 
-  const imgs = $$('.tile img, #hero-poster, .hero-poster-fallback, #hero-poster-mobile');
+  const imgs = $$('.tile img, #hero-poster, .hero-poster-fallback, #hero-poster-mobile, #hero-settle');
   let imgDone = 0;
   const totalImgs = Math.max(1, imgs.length);
   imgs.forEach((img) => {
@@ -62,6 +65,7 @@
     if (revealed) return;
     revealed = true;
     wall?.classList.add('revealed');
+    wall?.classList.add('mid-reveal');
     tiles.forEach((t) => t.classList.add('on'));
   }
 
@@ -76,7 +80,15 @@
   function fireBeam() {
     if (beamed || mobile()) return;
     beamed = true;
+    beam?.classList.remove('on', 'shimmer');
+    void beam?.offsetWidth;
     beam?.classList.add('on');
+    // After one-shot pulse, leave a faint shimmer (or nothing)
+    setTimeout(() => {
+      if (!beam) return;
+      beam.classList.remove('on');
+      beam.classList.add('shimmer');
+    }, 2400);
   }
 
   function reactScreens() {
@@ -92,15 +104,47 @@
     }
   }
 
+  function settlePose() {
+    if (settled || mobile()) return;
+    settled = true;
+    wall?.classList.remove('mid-reveal');
+    wall?.classList.add('settled');
+    // Seek back to earlier hovering frame in the same plate, then hold.
+    // Crossfade the calm still underneath so mid-leap never freezes on screen.
+    const CALM_AT = 1.05;
+    if (video) {
+      const onSeeked = () => {
+        try { video.pause(); } catch (_) {}
+        stage?.classList.add('settled');
+        video.removeEventListener('seeked', onSeeked);
+      };
+      video.addEventListener('seeked', onSeeked);
+      try {
+        video.currentTime = CALM_AT;
+      } catch (_) {
+        stage?.classList.add('settled');
+        try { video.pause(); } catch (__) {}
+      }
+      // Safety: ensure still shows even if seek stalls
+      setTimeout(() => stage?.classList.add('settled'), 700);
+    } else {
+      stage?.classList.add('settled');
+    }
+  }
+
   function runDesktopBeats() {
     if (mobile()) return;
     revealPanels();
     setTimeout(fireSwipe, 120);
     setTimeout(fireBeam, 280);
     setTimeout(reactScreens, 780);
+    setTimeout(settlePose, 1600);
   }
 
   if (video) {
+    // No infinite loop — we settle to calm still after the leap beat
+    video.loop = false;
+
     const onReady = () => bump(95);
     if (video.readyState >= 2) onReady();
     video.addEventListener('loadeddata', onReady, { once: true });
@@ -111,6 +155,7 @@
       bump(95);
       if (!mobile()) {
         setTimeout(runDesktopBeats, 500);
+        setTimeout(settlePose, 900);
       }
     }, { once: true });
 
@@ -121,27 +166,39 @@
       if (!swiped && t >= SWIPE_AT) fireSwipe();
       if (!beamed && t >= BEAM_AT) fireBeam();
       if (!reacted && t >= REACT_AT) reactScreens();
+      if (!settled && t >= SETTLE_AT) settlePose();
     }
     video.addEventListener('timeupdate', syncBeatsFromTime);
     video.addEventListener('seeked', syncBeatsFromTime);
-    // If autoplay lands past the settle beat (or QA seeks), catch up once ready
     video.addEventListener('playing', syncBeatsFromTime);
+    video.addEventListener('ended', () => {
+      if (!settled) settlePose();
+    });
 
     const tryPlay = () => video.play().catch(() => {
       video.hidden = true;
       if (poster) poster.hidden = false;
-      if (!mobile()) setTimeout(runDesktopBeats, 500);
+      if (!mobile()) {
+        setTimeout(runDesktopBeats, 500);
+        setTimeout(settlePose, 900);
+      }
     });
     if (!reduce) tryPlay();
     else {
       video.hidden = true;
       if (poster) poster.hidden = false;
       bump(95);
-      if (!mobile()) runDesktopBeats();
+      if (!mobile()) {
+        runDesktopBeats();
+        settlePose();
+      }
     }
   } else {
     bump(95);
-    if (!mobile()) setTimeout(runDesktopBeats, 400);
+    if (!mobile()) {
+      setTimeout(runDesktopBeats, 400);
+      setTimeout(settlePose, 800);
+    }
   }
 
   let mx = 0.5, my = 0.5, scroll = 0;
