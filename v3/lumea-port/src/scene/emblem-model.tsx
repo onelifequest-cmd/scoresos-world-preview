@@ -11,6 +11,7 @@ import {
   MODEL_URL,
   MONK,
   OCCLUDER_LAYER,
+  SOFT_SHADOW_URL,
 } from "./scene-config";
 import { useRingStore } from "./ring-store";
 
@@ -23,6 +24,37 @@ const GOLD = "#e8c96a";
 const GOLD_DEEP = "#b8923a";
 
 /**
+ * Planar UVs on the dial face (XY → 0–1), centered, repeat 1, so the full
+ * dial-face.png reads inside the gold rim (not a zoomed atlas quarter).
+ */
+function applyPlanarDialUVs(geometry: THREE.BufferGeometry) {
+  const pos = geometry.attributes.position;
+  if (!pos) return;
+  geometry.computeBoundingBox();
+  const bb = geometry.boundingBox!;
+  const x0 = bb.min.x;
+  const y0 = bb.min.y;
+  const sx = Math.max(bb.max.x - bb.min.x, 1e-6);
+  const sy = Math.max(bb.max.y - bb.min.y, 1e-6);
+  // Use the larger axis so the circular face maps to a square without stretch.
+  const span = Math.max(sx, sy);
+  const cx = (bb.min.x + bb.max.x) * 0.5;
+  const cy = (bb.min.y + bb.max.y) * 0.5;
+  const uvs = new Float32Array(pos.count * 2);
+  for (let i = 0; i < pos.count; i += 1) {
+    const x = pos.getX(i);
+    const y = pos.getY(i);
+    uvs[i * 2] = (x - cx) / span + 0.5;
+    // flipY=true on the texture → keep V unflipped in attribute space
+    uvs[i * 2 + 1] = (y - cy) / span + 0.5;
+  }
+  geometry.setAttribute("uv", new THREE.BufferAttribute(uvs, 2));
+  geometry.attributes.uv.needsUpdate = true;
+  void x0;
+  void y0;
+}
+
+/**
  * Score OS emblem — ONE thick medallion from emblem.glb (bezel + painted dial),
  * plus Lumea halo toruses from monk.glb.
  * Yaw tracks the camera with a slow ±20° sway so the dial stays readable.
@@ -33,6 +65,7 @@ export const EmblemModel = () => {
   const groupRef = useRef<THREE.Group>(null);
   const coinRef = useRef<THREE.Group>(null);
   const dialTex = useTexture(DIAL_URL);
+  const softShadowTex = useTexture(SOFT_SHADOW_URL);
   const tmp = useMemo(
     () => ({
       world: new THREE.Vector3(),
@@ -46,8 +79,21 @@ export const EmblemModel = () => {
     dialTex.colorSpace = THREE.SRGBColorSpace;
     dialTex.anisotropy = 8;
     dialTex.flipY = true;
+    dialTex.wrapS = THREE.ClampToEdgeWrapping;
+    dialTex.wrapT = THREE.ClampToEdgeWrapping;
+    dialTex.repeat.set(1, 1);
+    dialTex.offset.set(0, 0);
+    dialTex.rotation = 0;
+    dialTex.center.set(0.5, 0.5);
     dialTex.needsUpdate = true;
   }, [dialTex]);
+
+  useMemo(() => {
+    softShadowTex.colorSpace = THREE.SRGBColorSpace;
+    softShadowTex.wrapS = THREE.ClampToEdgeWrapping;
+    softShadowTex.wrapT = THREE.ClampToEdgeWrapping;
+    softShadowTex.needsUpdate = true;
+  }, [softShadowTex]);
 
   const { ringsRoot, rings } = useMemo(() => {
     const root = monkScene.clone(true);
@@ -82,7 +128,7 @@ export const EmblemModel = () => {
   const coin = useMemo(() => {
     const root = emblemScene.clone(true);
     // Keep only the thick body: Bezel + Dial + Glass + Lip. Hide duplicate art
-    // and extra rings that read as a second coin / horizontal band when tilted.
+    // and extra rings / cubes that read as a second coin or legs when tilted.
     const HIDE = new Set([
       "ScoreLogo",
       "ScoreArc",
@@ -94,6 +140,8 @@ export const EmblemModel = () => {
       "HubCap",
       "Jewel",
       "StepRing",
+      "Cube",
+      "Cube_1",
     ]);
     root.traverse((object) => {
       if (HIDE.has(object.name)) {
@@ -109,15 +157,15 @@ export const EmblemModel = () => {
       const name = (mat?.name || object.name || "").toLowerCase();
 
       if (name === "dial" || object.name === "Dial") {
-        // Enamel dial — painted face, deeper emerald multiply (less neon).
+        applyPlanarDialUVs(object.geometry);
         const m = new THREE.MeshPhysicalMaterial({
           map: dialTex,
-          color: new THREE.Color(0.72, 0.9, 0.78),
+          color: new THREE.Color(0.78, 0.92, 0.84),
           metalness: 0.05,
-          roughness: 0.38,
+          roughness: 0.36,
           clearcoat: 0.95,
-          clearcoatRoughness: 0.14,
-          envMapIntensity: 0.85,
+          clearcoatRoughness: 0.12,
+          envMapIntensity: 0.9,
           toneMapped: true,
         });
         object.material = m;
@@ -149,7 +197,6 @@ export const EmblemModel = () => {
 
     const native = 2.344;
     root.scale.setScalar(EMBLEM.diameter / native);
-    // Mild tip so the rim reads with depth but the dial stays frontal.
     root.rotation.x = EMBLEM.tiltX;
     return root;
   }, [emblemScene, dialTex]);
@@ -166,7 +213,6 @@ export const EmblemModel = () => {
 
     const c = coinRef.current;
     if (!c || !c.parent) return;
-    // Face the camera in the parent local frame, then add a slow ±sway.
     c.parent.updateWorldMatrix(true, false);
     tmp.inv.copy(c.parent.matrixWorld).invert();
     tmp.localCam.copy(camera.position).applyMatrix4(tmp.inv);
@@ -174,6 +220,10 @@ export const EmblemModel = () => {
     const sway = Math.sin(clock.getElapsedTime() * EMBLEM.swaySpeed) * EMBLEM.swayAmp;
     c.rotation.y = yaw + sway;
   });
+
+  // Soft contact blob on the crown — cheap, opacity kept low so it doesn't
+  // read as a plate (the v3g4 ContactShadows failure mode).
+  const shadowY = EMBLEM.shadowY;
 
   return (
     <group
@@ -189,6 +239,21 @@ export const EmblemModel = () => {
       >
         <primitive object={coin} />
       </group>
+      {/* Soft radial contact blob — no hard slab edge. */}
+      <mesh
+        position={[0, shadowY + 0.001, 0]}
+        rotation={[-Math.PI / 2, 0, 0]}
+        renderOrder={-1}
+      >
+        <planeGeometry args={[0.95, 0.95]} />
+        <meshBasicMaterial
+          map={softShadowTex}
+          transparent
+          opacity={0.55}
+          depthWrite={false}
+          toneMapped={false}
+        />
+      </mesh>
     </group>
   );
 };
@@ -196,3 +261,4 @@ export const EmblemModel = () => {
 useGLTF.preload(MODEL_URL, DRACO_PATH);
 useGLTF.preload(EMBLEM_URL, DRACO_PATH);
 useTexture.preload?.(DIAL_URL);
+useTexture.preload?.(SOFT_SHADOW_URL);

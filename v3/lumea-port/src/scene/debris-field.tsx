@@ -107,14 +107,20 @@ export const DebrisField = () => {
       const sizeRand = rng();
       const scale = minScale + sizeRand * (maxScale - minScale);
 
-      // Large shards: bias to frame edges / background, never the upper halo column.
-      if (sizeRand > 0.45) {
-        radius = Math.max(radius, clear.minPushRadius + rng() * 1.1);
-        // Prefer background (more -Z) and avoid mid-height near the shaft.
+      // Large + mid shards: bias to frame edges / background; keep clear zone
+      // around the upper halo / headline. Mid pieces fill Lumea's far L/R look.
+      if (sizeRand > 0.28) {
+        radius = Math.max(radius, clear.minPushRadius * (sizeRand > 0.55 ? 1.0 : 0.85) + rng() * 1.2);
         if (y > clear.yMin && y < clear.yMax) {
-          y = rng() < 0.5
-            ? clear.yMin - 0.4 - rng() * 1.8
-            : clear.yMax + 0.3 + rng() * 1.5;
+          // Prefer horizontal edges over vertical dodge for mid sizes.
+          if (sizeRand > 0.55) {
+            y = rng() < 0.5
+              ? clear.yMin - 0.4 - rng() * 1.8
+              : clear.yMax + 0.3 + rng() * 1.5;
+          } else {
+            // Mid: keep height but shove outward (far left/right / background).
+            radius = Math.max(radius, clear.minPushRadius * 0.9 + rng() * 1.4);
+          }
         }
       }
 

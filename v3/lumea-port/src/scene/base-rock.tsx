@@ -25,7 +25,6 @@ function cutGeometryAboveY(source: THREE.BufferGeometry, cutY: number): THREE.Bu
     const y1 = pos.getY(i0 + 1);
     const y2 = pos.getY(i0 + 2);
     const cy = (y0 + y1 + y2) / 3;
-    // Keep the stone mass; drop the seated figure.
     if (cy > cutY) continue;
     for (let k = 0; k < 3; k += 1) {
       const i = i0 + k;
@@ -52,7 +51,7 @@ function cutGeometryAboveY(source: THREE.BufferGeometry, cutY: number): THREE.Bu
 
 /**
  * Lumea pedestal extracted from monk.glb mesh.001 (monk body cut away).
- * Keeps the original stone albedo + normal maps.
+ * Keeps the original stone albedo + normal maps. No thick plate on the crown.
  */
 export const BaseRock = () => {
   const { scene } = useGLTF(MODEL_URL, DRACO_PATH);
@@ -67,7 +66,6 @@ export const BaseRock = () => {
     });
 
     if (!source) {
-      // Fallback: darkened procedural shaft (should not hit if monk.glb loads).
       const stone = new THREE.MeshStandardMaterial({
         color: PILLAR.color,
         roughness: PILLAR.roughness,
@@ -92,7 +90,6 @@ export const BaseRock = () => {
     const cutY = PILLAR.cutY;
     const geometry = cutGeometryAboveY(mesh.geometry, cutY);
 
-    // Preserve original PBR maps; nudge color toward warm dark stone (not blue-CAD).
     const srcMat = mesh.material as THREE.MeshStandardMaterial;
     const material = srcMat.clone();
     material.color = new THREE.Color(PILLAR.tint);
@@ -105,23 +102,11 @@ export const BaseRock = () => {
     pedestalMesh.castShadow = true;
     pedestalMesh.receiveShadow = true;
     pedestalMesh.layers.enable(OCCLUDER_LAYER);
-    // Match source local transform if any.
     pedestalMesh.position.copy(mesh.position);
     pedestalMesh.quaternion.copy(mesh.quaternion);
     pedestalMesh.scale.copy(mesh.scale);
     group.add(pedestalMesh);
 
-    // Cap the cut so the crown reads as a solid flat seat for the emblem.
-    const capR = PILLAR.capRadius;
-    const cap = new THREE.Mesh(
-      new THREE.CylinderGeometry(capR, capR * 0.98, 0.04, 48),
-      material.clone(),
-    );
-    cap.position.set(0, cutY - 0.01, 0);
-    cap.castShadow = true;
-    cap.receiveShadow = true;
-    cap.layers.enable(OCCLUDER_LAYER);
-    group.add(cap);
 
     group.position.set(MONK.position[0], MONK.position[1], MONK.position[2]);
     return group;

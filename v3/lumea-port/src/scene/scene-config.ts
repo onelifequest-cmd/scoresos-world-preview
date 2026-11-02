@@ -1,5 +1,5 @@
 /**
- * Scene configuration — Lumea defaults kept for v3g5.
+ * Scene configuration — Lumea defaults kept for v3g6.
  * Emblem = single facing medallion (sway, no spin); pedestal from monk.glb;
  * debris cleared from the upper halo / headline zone.
  */
@@ -13,6 +13,7 @@ export const MODEL_URL = new URL("assets/monk.glb", BUNDLE_BASE).href;
 export const EMBLEM_URL = new URL("assets/emblem.glb", BUNDLE_BASE).href;
 export const ROCKS_URL = new URL("assets/rocks-lite.glb", BUNDLE_BASE).href;
 export const DIAL_URL = new URL("assets/dial-face.png", BUNDLE_BASE).href;
+export const SOFT_SHADOW_URL = new URL("assets/soft-shadow.png", BUNDLE_BASE).href;
 
 /** Local Draco decoder (public/draco/). */
 export const DRACO_PATH = new URL("draco/", BUNDLE_BASE).href;
@@ -79,7 +80,7 @@ export const RING = {
  */
 export const EMBLEM = {
   /** Center so the bottom edge rests just above the cut crown (~0.52). */
-  position: [0, 0.88, 0] as const,
+  position: [0, 0.92, 0] as const,
   /** ~17–19% of vertical FOV at Lumea camera. */
   diameter: 0.82,
   /** Visible thickness (emblem.glb native depth scaled). */
@@ -121,12 +122,12 @@ export const PILLAR = {
 
 // --- Debris field ----------------------------------------------------------
 // Lumea's config ships count 300; on-screen the still shows ~15–25 pieces at
-// the edges. v3g4 uses that visual density explicitly so green wash can't
+// the edges. v3g6 uses denser edge debris (~34) explicitly so green wash can't
 // resurrect a noisy field.
 export const DEBRIS = {
-  count: 22,
-  minScale: 0.18,
-  maxScale: 0.58,
+  count: 34,
+  minScale: 0.16,
+  maxScale: 0.55,
   emissiveColor: "#5c6479",
   emissiveIntensity: 0.22,
   spiral: {
@@ -143,8 +144,8 @@ export const DEBRIS = {
   clearZone: {
     yMin: 0.8,
     yMax: 5.8,
-    radius: 3.4,
-    minPushRadius: 4.2,
+    radius: 3.0,
+    minPushRadius: 3.8,
   },
   spinSpeed: 0.04,
   selfSpin: 0.35,
