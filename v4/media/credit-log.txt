@@ -137,3 +137,13 @@ End credits: 299
 Spent this build: 50 (under 60 budget). No re-roll; frames clean.
 No tile Runway animations (budget reserved; static photoreal tiles + live DOM).
 
+
+--- v4c penthouse hero (America/New_York 2026-11-02 ~02:30–02:40) ---
+Start credits: 299
+Budget cap this pass: 50
+- gen-4-turbo I2V 10s take1 FAILED INTERNAL.BAD_OUTPUT (task ecdbe67d-3421-49d6-998b-7215d15f06b8): 0 cr charged
+- gen-4-turbo I2V 10s take2 SUCCEEDED (task c411332e-ca7e-415b-9c54-cca60a3ff685): 50 cr (299→249)
+- Plate: plate-v4c.jpg (GenerateImage edit of goals-wall-v5; table hologram frame-painted; empty marble recesses)
+- Encoded ping-pong ~20.2s → hero-loop.mp4 + hero-loop.webm; poster refreshed
+End credits: 249
+Spent this pass: 50 (at cap). CSS: wall ~1.7×, no grey ::before, rotateY 26°, croa 75% + copy scrim, ribbon text, green 612→742.
