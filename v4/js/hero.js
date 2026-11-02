@@ -127,7 +127,7 @@
 
   function spawnChips() {
     if (!chips || !wall) return;
-    const labels = ['+15', '+22', '+8', '742', '+18', 'Approved'];
+    const labels = ['+15', '+8', '+18', '+12'];
     let i = 0;
     const fire = () => {
       if (document.hidden || mobile()) return;
@@ -136,8 +136,8 @@
       el.textContent = labels[i % labels.length];
       i += 1;
       // Place roughly over the wall region
-      const x = 5 + Math.random() * 22;
-      const y = 24 + Math.random() * 34;
+      const x = 3 + Math.random() * 16;
+      const y = 18 + Math.random() * 16;
       el.style.setProperty('--x', x + '%');
       el.style.setProperty('--y', y + '%');
       chips.appendChild(el);
