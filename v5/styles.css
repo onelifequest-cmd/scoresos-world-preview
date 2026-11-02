@@ -108,7 +108,8 @@ a { color: inherit; text-decoration: none; }
   z-index: 3;
   left: max(16px, calc(36 / 1440 * 100vw));
   top: calc(118 / 900 * 100vh);
-  width: min(620px, calc(620 / 1440 * 100vw));
+  /* Right edge ≤ ~320 @1024 (~450 @1440) — clear of Maxine hair by ≥20px */
+  width: min(420px, calc(300 / 1024 * 100vw));
   height: auto;
   display: flex;
   flex-direction: column;
@@ -117,7 +118,7 @@ a { color: inherit; text-decoration: none; }
   transform-origin: left center;
   transform:
     perspective(1800px)
-    rotateY(8deg)
+    rotateY(5deg)
     rotateX(0.6deg)
     translate3d(calc((var(--mx) - 0.5) * 6px), calc((var(--my) - 0.5) * 3px + var(--scroll) * -10px), 0);
   transition: transform .18s linear;
@@ -127,7 +128,7 @@ a { color: inherit; text-decoration: none; }
 .wall-sub {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 9px;
+  gap: 7px;
   width: 100%;
   flex: none;
   min-height: 0;
@@ -262,13 +263,13 @@ a { color: inherit; text-decoration: none; }
   font-family: Syne, sans-serif;
   font-weight: 800;
   /* Fixed fit: measured 14px overflowed 226>201; 11px clears at 1440/1280 */
-  font-size: 11px;
-  letter-spacing: 0.01em;
+  font-size: 7.5px;
+  letter-spacing: -0.01em;
   line-height: 1.05;
   color: #ecfdf5;
   text-align: center;
   text-shadow: 0 0 14px rgba(52, 211, 153, .8), 0 1px 6px rgba(0,0,0,.5);
-  padding: 0 4px;
+  padding: 0 2px;
   white-space: nowrap;
   max-width: 100%;
   width: 100%;
@@ -276,7 +277,7 @@ a { color: inherit; text-decoration: none; }
   overflow: visible;
 }
 @media (min-width: 1400px) {
-  .funding-line { font-size: 12px; }
+  .funding-line { font-size: 8.5px; }
 }
 .funding-card-text {
   aspect-ratio: 16/9;
@@ -565,7 +566,7 @@ a { color: inherit; text-decoration: none; }
   }
   .headline { font-size: clamp(2.2rem, 4.6vw, 3.6rem); }
   .wall {
-    width: min(540px, calc(540 / 1280 * 100vw));
+    width: min(380px, calc(300 / 1024 * 100vw));
     top: calc(100 / 800 * 100vh);
   }
 }
@@ -581,7 +582,7 @@ a { color: inherit; text-decoration: none; }
     flex-direction: column;
     justify-content: flex-start;
     overflow: hidden;
-    background: #24180e;
+    background: #4a3422;
   }
   .hero-stage::after {
     height: 55vh;
@@ -619,8 +620,8 @@ a { color: inherit; text-decoration: none; }
     margin-top: 0;
     padding: 18px 16px 24px;
     text-align: left;
-    /* Bright local scrim — warm, not a black void */
-    background: linear-gradient(180deg, rgba(50,34,18,.55) 0%, rgba(32,22,12,.88) 35%, rgba(22,14,8,.96) 100%);
+    /* Warm brown scrim — brighter than near-black */
+    background: linear-gradient(180deg, #5a3e28 0%, #4e3622 45%, #45301e 100%);
     border-radius: 0;
     box-shadow: none;
     backdrop-filter: none;

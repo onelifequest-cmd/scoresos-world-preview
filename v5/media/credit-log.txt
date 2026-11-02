@@ -213,3 +213,5 @@ v5d Runway spend: 100 / 100 hard cap (take1 50 + take2 50). Stop.
 Account remaining: 49
 
 v5e (2026-11-02): 0 Runway spend. CSS/SVG beam + seekable remux + mobile poster. Account remaining: 49
+
+v5e patch (v5e2 stills, 2026-11-02): shrink wall clear of Maxine (≥20px); warm mobile brown scrim. 0 Runway. remaining 49

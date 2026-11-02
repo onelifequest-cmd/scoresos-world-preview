@@ -1,0 +1,36 @@
+{
+  "m1440": {
+    "wallRight": 446,
+    "maxTileRight": 446,
+    "target370": 520,
+    "clearVs370": 74,
+    "fund": {
+      "fs": "8.5px",
+      "sw": 135,
+      "cw": 135,
+      "fits": true
+    },
+    "ar": [
+      1.761,
+      1.75,
+      1.739
+    ]
+  },
+  "m1280": {
+    "wallRight": 399,
+    "maxTileRight": 399,
+    "target370": 463,
+    "clearVs370": 63,
+    "fund": {
+      "fs": "7.5px",
+      "sw": 120,
+      "cw": 120,
+      "fits": true
+    },
+    "ar": [
+      1.762,
+      1.752,
+      1.742
+    ]
+  }
+}
