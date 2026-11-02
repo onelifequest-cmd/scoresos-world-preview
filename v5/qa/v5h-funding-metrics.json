@@ -1,0 +1,126 @@
+{
+  "1280": {
+    "text": "Funding Approved",
+    "fontSize": "10.7218px",
+    "tileProjected": {
+      "w": 90,
+      "h": 162,
+      "x": 262,
+      "y": 162
+    },
+    "lineProjected": {
+      "w": 74,
+      "h": 22
+    },
+    "check": {
+      "w": 18,
+      "h": 21,
+      "visible": true
+    },
+    "tileLayoutW": 109,
+    "stackClientW": 109,
+    "lineScrollW": 92,
+    "lineClientW": 92,
+    "padL": 9,
+    "padR": 9,
+    "padPctEach": 8,
+    "contentW": 83.7,
+    "sparePx": 25.3,
+    "sparePct": 23.2,
+    "overflows": false,
+    "fitsWithSpare": true
+  },
+  "1366": {
+    "text": "Funding Approved",
+    "fontSize": "11.4905px",
+    "tileProjected": {
+      "w": 96,
+      "h": 155,
+      "x": 278,
+      "y": 156
+    },
+    "lineProjected": {
+      "w": 79,
+      "h": 24
+    },
+    "check": {
+      "w": 19,
+      "h": 22,
+      "visible": true
+    },
+    "tileLayoutW": 117,
+    "stackClientW": 117,
+    "lineScrollW": 99,
+    "lineClientW": 99,
+    "padL": 9,
+    "padR": 9,
+    "padPctEach": 8,
+    "contentW": 89.6,
+    "sparePx": 27.4,
+    "sparePct": 23.4,
+    "overflows": false,
+    "fitsWithSpare": true
+  },
+  "1440": {
+    "text": "Funding Approved",
+    "fontSize": "12.152px",
+    "tileProjected": {
+      "w": 101,
+      "h": 182,
+      "x": 292,
+      "y": 183
+    },
+    "lineProjected": {
+      "w": 83,
+      "h": 25
+    },
+    "check": {
+      "w": 20,
+      "h": 23,
+      "visible": true
+    },
+    "tileLayoutW": 124,
+    "stackClientW": 124,
+    "lineScrollW": 104,
+    "lineClientW": 104,
+    "padL": 10,
+    "padR": 10,
+    "padPctEach": 8,
+    "contentW": 94.8,
+    "sparePx": 29.2,
+    "sparePct": 23.6,
+    "overflows": false,
+    "fitsWithSpare": true
+  },
+  "1920": {
+    "text": "Funding Approved",
+    "fontSize": "12.48px",
+    "tileProjected": {
+      "w": 130,
+      "h": 215,
+      "x": 381,
+      "y": 225
+    },
+    "lineProjected": {
+      "w": 106,
+      "h": 26
+    },
+    "check": {
+      "w": 20,
+      "h": 24,
+      "visible": true
+    },
+    "tileLayoutW": 168,
+    "stackClientW": 168,
+    "lineScrollW": 141,
+    "lineClientW": 141,
+    "padL": 13,
+    "padR": 13,
+    "padPctEach": 8,
+    "contentW": 97.3,
+    "sparePx": 70.7,
+    "sparePct": 42.1,
+    "overflows": false,
+    "fitsWithSpare": true
+  }
+}

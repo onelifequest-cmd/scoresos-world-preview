@@ -278,20 +278,43 @@ a { color: inherit; text-decoration: none; }
   background:
     linear-gradient(160deg, rgba(8, 28, 22, .28), rgba(6, 18, 16, .18)) !important;
 }
+.funding-stack {
+  position: relative;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(4px, 4cqh, 10px);
+  /* ~8% inner padding each side — text stays clear of bezel + foreshorten */
+  width: 100%;
+  max-width: 100%;
+  padding: 6% 8%;
+  box-sizing: border-box;
+  pointer-events: none;
+}
+.funding-check {
+  width: clamp(12px, 20cqw, 26px);
+  height: clamp(12px, 20cqw, 26px);
+  color: #6ee7b7;
+  opacity: 0.55;
+  flex-shrink: 0;
+  filter: drop-shadow(0 0 6px rgba(110, 231, 183, .45));
+}
 .funding-line {
   margin: 0;
   position: relative;
   z-index: 4;
   font-family: Syne, sans-serif;
   font-weight: 800;
-  /* Right column is foreshortened by rotateY — keep both words fully inside */
-  font-size: clamp(0.58rem, 11.5cqw, 0.92rem);
-  letter-spacing: -0.03em;
+  /* ~15% smaller than v5g 11.5cqw — tied to tile width via cqw */
+  font-size: clamp(0.5rem, 9.8cqw, 0.78rem);
+  letter-spacing: -0.035em;
   line-height: 1.05;
   color: #ecfdf5;
   text-align: center;
   text-shadow: 0 0 16px rgba(52, 211, 153, .85), 0 1px 6px rgba(0,0,0,.5);
-  padding: 8px 6px;
+  padding: 0;
   white-space: normal;
   max-width: 100%;
   width: 100%;
