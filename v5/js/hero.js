@@ -7,9 +7,11 @@
   const pctEl = $('#loader-pct');
   const stage = $('#hero-stage');
   const video = $('#hero-video');
+  const ambient = $('#hero-ambient');
   const poster = $('#hero-poster');
   const settle = $('#hero-settle');
   const posterMobile = $('#hero-poster-mobile');
+  const dust = $('#hero-dust');
   const wall = $('#wall');
   const tiles = $$('.tile');
   const scoreNum = $('#score-num');
@@ -17,28 +19,38 @@
   const beam = $('#control-beam');
   const tabletPulse = $('#tablet-pulse');
   const railCards = $$('.holo-card');
-  const railFunding = $('.rail-funding');
+  const replayBtn = $('#hero-replay');
 
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const mobile = () => matchMedia('(max-width: 859px)').matches;
-  const isMobile = mobile();
+  let isMobile = mobile();
 
-  // Plate settle / reach beat (forward half of ping-pong ~10s raw)
+  const INTRO_WEBM = './media/hero/hero-intro-v5k.webm';
+  const INTRO_MP4 = './media/hero/hero-intro-v5k.mp4';
+  const INTRO_MOBILE = './media/hero/hero-loop-mobile.mp4';
+  const AMBIENT_DESK = './media/hero/ambient-calm-v5k.mp4';
+  const AMBIENT_MOBILE = './media/hero/ambient-calm-mobile-v5k.mp4';
+
+  // Plate settle / reach beat (intro encode ~8.5s; settle ~7.35)
   const REVEAL_AT = 5.4;
   const SWIPE_AT = 5.55;
   const BEAM_AT = 5.85;
   const REACT_AT = 6.45;
-  const SETTLE_AT = 7.35; // crossfade off mid-leap → upright calm still
+  const SETTLE_AT = 7.35;
   const MOBILE_RAIL_AT = 1.1;
   const MOBILE_SETTLE_AT = 7.35;
+
   let revealed = false;
   let swiped = false;
   let beamed = false;
   let reacted = false;
   let settled = false;
+  let ambientOn = false;
   let scoreStarted = false;
   let scoreDone = false;
   let railStarted = false;
+  let dustRaf = 0;
+  let pulseTimer = 0;
 
   let loaded = 0;
   const bump = (n) => {
@@ -70,21 +82,47 @@
     }
   });
 
-  // Mobile: swap to portrait plate + settle so autoplay stays small & framed
-  if (isMobile && video) {
+  function setIntroSources() {
+    if (!video) return;
     try {
       while (video.firstChild) video.removeChild(video.firstChild);
       video.removeAttribute('src');
-      video.poster = './media/hero/poster-mobile-v5j.jpg';
-      video.src = './media/hero/hero-loop-mobile.mp4';
+      if (mobile()) {
+        video.poster = './media/hero/poster-mobile-v5j.jpg';
+        video.src = INTRO_MOBILE;
+      } else {
+        video.poster = './media/hero/poster.jpg';
+        const w = document.createElement('source');
+        w.src = INTRO_WEBM; w.type = 'video/webm';
+        const m = document.createElement('source');
+        m.src = INTRO_MP4; m.type = 'video/mp4';
+        video.appendChild(w);
+        video.appendChild(m);
+      }
       video.load();
     } catch (_) {}
-    if (settle) settle.src = './media/hero/settle-calm-mobile.jpg';
-    if (posterMobile) {
-      posterMobile.src = './media/hero/poster-mobile-v5j.jpg';
-      posterMobile.hidden = false;
+  }
+
+  function setAmbientSource() {
+    if (!ambient) return;
+    try {
+      ambient.src = mobile() ? AMBIENT_MOBILE : AMBIENT_DESK;
+      ambient.load();
+    } catch (_) {}
+  }
+
+  // Initial mobile / desktop media
+  if (video) {
+    if (isMobile) {
+      setIntroSources();
+      if (settle) settle.src = './media/hero/settle-calm-mobile.jpg';
+      if (posterMobile) {
+        posterMobile.src = './media/hero/poster-mobile-v5j.jpg';
+        posterMobile.hidden = false;
+      }
     }
   }
+  setAmbientSource();
 
   function revealPanels() {
     if (revealed) return;
@@ -120,14 +158,11 @@
     reacted = true;
     wall?.classList.add('react');
     wall?.classList.add('beam-hit');
-    if (scoreDone) {
-      lockScore742();
-    } else if (!reduce && !scoreStarted) {
+    if (scoreDone) lockScore742();
+    else if (!reduce && !scoreStarted) {
       scoreStarted = true;
       startScore();
-    } else {
-      lockScore742();
-    }
+    } else lockScore742();
   }
 
   function lockScore742() {
@@ -170,7 +205,7 @@
       lockScore742();
       return;
     }
-    if (scoreStarted && !mobile()) return; // desktop wall owns the climb
+    if (scoreStarted && !mobile()) return;
     scoreStarted = true;
     const from = 612, to = 742;
     const dur = 2200;
@@ -190,6 +225,114 @@
     requestAnimationFrame(step);
   }
 
+  function pulse742() {
+    if (reduce || !ambientOn) return;
+    const targets = [scoreNum, railScoreNum].filter(Boolean);
+    targets.forEach((el) => {
+      el.classList.remove('score-pulse');
+      void el.offsetWidth;
+      el.classList.add('score-pulse');
+    });
+    wall?.classList.remove('glow-breath');
+    void wall?.offsetWidth;
+    wall?.classList.add('glow-breath');
+  }
+
+  function startDust() {
+    if (!dust || reduce || dustRaf) return;
+    const ctx = dust.getContext('2d');
+    if (!ctx) return;
+    const particles = [];
+    const N = mobile() ? 18 : 36;
+    const resize = () => {
+      const r = dust.parentElement?.getBoundingClientRect();
+      if (!r) return;
+      const dpr = Math.min(2, window.devicePixelRatio || 1);
+      dust.width = Math.floor(r.width * dpr);
+      dust.height = Math.floor(r.height * dpr);
+      dust.style.width = r.width + 'px';
+      dust.style.height = r.height + 'px';
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+    resize();
+    window.addEventListener('resize', resize, { passive: true });
+    for (let i = 0; i < N; i++) {
+      particles.push({
+        x: 0.45 + Math.random() * 0.5,
+        y: 0.05 + Math.random() * 0.7,
+        r: 0.4 + Math.random() * 1.4,
+        a: 0.12 + Math.random() * 0.28,
+        vx: (Math.random() - 0.35) * 0.00025,
+        vy: -0.00012 - Math.random() * 0.00022,
+        tw: Math.random() * Math.PI * 2,
+      });
+    }
+    const tick = () => {
+      if (!ambientOn) { dustRaf = 0; return; }
+      const w = dust.clientWidth || 1;
+      const h = dust.clientHeight || 1;
+      ctx.clearRect(0, 0, w, h);
+      for (const p of particles) {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.tw += 0.02;
+        if (p.y < -0.02) { p.y = 0.75; p.x = 0.5 + Math.random() * 0.45; }
+        if (p.x < 0.4 || p.x > 1.05) p.x = 0.5 + Math.random() * 0.45;
+        const alpha = p.a * (0.65 + 0.35 * Math.sin(p.tw));
+        ctx.beginPath();
+        ctx.fillStyle = `rgba(255, 220, 160, ${alpha.toFixed(3)})`;
+        ctx.arc(p.x * w, p.y * h, p.r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      dustRaf = requestAnimationFrame(tick);
+    };
+    dustRaf = requestAnimationFrame(tick);
+  }
+
+  function stopDust() {
+    ambientOn = false;
+    if (dustRaf) cancelAnimationFrame(dustRaf);
+    dustRaf = 0;
+    if (dust) {
+      const ctx = dust.getContext('2d');
+      if (ctx) ctx.clearRect(0, 0, dust.width, dust.height);
+    }
+    if (pulseTimer) { clearInterval(pulseTimer); pulseTimer = 0; }
+  }
+
+  function startAmbient() {
+    if (reduce || ambientOn) {
+      if (replayBtn) replayBtn.hidden = false;
+      return;
+    }
+    ambientOn = true;
+    stage?.classList.add('ambient');
+    wall?.classList.add('ambient');
+    if (replayBtn) replayBtn.hidden = false;
+
+    // Soft continuous life on holograms
+    tiles.forEach((t) => t.classList.add('alive'));
+    railCards.forEach((c) => c.classList.add('alive'));
+
+    // Loop calm ambient plate under settle (Ken Burns CSS also on settle)
+    if (ambient) {
+      setAmbientSource();
+      ambient.muted = true;
+      ambient.defaultMuted = true;
+      ambient.playsInline = true;
+      ambient.loop = true;
+      ambient.play().then(() => {
+        stage?.classList.add('ambient-video');
+      }).catch(() => {
+        // CSS Ken Burns on settle is enough
+      });
+    }
+
+    startDust();
+    pulse742();
+    pulseTimer = setInterval(pulse742, 5200);
+  }
+
   function settlePose() {
     if (settled) return;
     settled = true;
@@ -204,11 +347,13 @@
       stage?.classList.add('settled-solid');
       if (video) {
         try { video.pause(); } catch (_) {}
+        // Keep in DOM for Replay; hide visually
         video.style.visibility = 'hidden';
         video.style.opacity = '0';
       }
       if (scoreDone || scoreStarted) lockScore742();
       else setTimeout(lockScore742, 2400);
+      startAmbient();
     };
     if (settle) {
       const onEnd = (e) => {
@@ -232,9 +377,7 @@
 
   function runMobileBeats() {
     if (!mobile()) return;
-    // Cards glow in while the plate plays; settle when leap beat hits
     setTimeout(revealRail, 700);
-    // Safety settle if timeupdate misses (short mobile encode ends ~9.2s)
     setTimeout(() => { if (!settled) settlePose(); }, 8200);
   }
 
@@ -251,35 +394,104 @@
     video.playsInline = true;
     video.setAttribute('playsinline', '');
     video.setAttribute('webkit-playsinline', '');
+    video.setAttribute('muted', '');
+    video.setAttribute('autoplay', '');
     return video.play().then(() => {
       stage?.classList.remove('mobile-fallback');
-      if (mobile() && posterMobile) {
-        // keep poster under video for first-frame gaps, hide once playing
-        posterMobile.style.opacity = '0';
-      }
+      if (mobile() && posterMobile) posterMobile.style.opacity = '0';
+      if (poster) poster.hidden = true;
+      video.hidden = false;
+      video.style.visibility = '';
+      video.style.opacity = '';
     }).catch(() => {
       if (mobile()) {
         showMobileFallback();
       } else {
-        video.hidden = true;
+        // Desktop: keep trying; show poster underneath but don't abort intro forever
         if (poster) poster.hidden = false;
-        setTimeout(runDesktopBeats, 500);
-        setTimeout(settlePose, 900);
+        setTimeout(() => tryPlay(), 600);
       }
     });
   }
 
-  // iOS Safari: retry play on first user gesture
   function armPlayRetry() {
-    if (!mobile() || reduce) return;
-    const resume = () => { tryPlay(); };
+    if (reduce) return;
+    const resume = () => {
+      if (!settled && video && video.paused) tryPlay();
+    };
+    window.addEventListener('pointerdown', resume, { passive: true });
+    window.addEventListener('pointermove', resume, { passive: true });
+    window.addEventListener('keydown', resume, { passive: true });
     window.addEventListener('touchstart', resume, { passive: true });
     window.addEventListener('touchend', resume, { passive: true });
     window.addEventListener('scroll', resume, { passive: true });
     document.addEventListener('visibilitychange', () => {
-      if (!document.hidden) tryPlay();
+      if (!document.hidden) {
+        if (!settled) tryPlay();
+        else if (ambient && ambient.paused) ambient.play().catch(() => {});
+      }
     });
   }
+
+  function resetBeatFlags() {
+    revealed = false;
+    swiped = false;
+    beamed = false;
+    reacted = false;
+    settled = false;
+    scoreStarted = false;
+    scoreDone = false;
+    railStarted = false;
+    tiles.forEach((t) => {
+      t.classList.remove('on', 'alive', 'hot', 'score-filled');
+    });
+    railCards.forEach((c) => c.classList.remove('on', 'checked', 'alive'));
+    wall?.classList.remove('revealed', 'mid-reveal', 'settled', 'react', 'beam-hit', 'ambient', 'glow-breath');
+    beam?.classList.remove('on', 'shimmer');
+    tabletPulse?.classList.remove('on');
+    if (scoreNum) {
+      scoreNum.textContent = '612';
+      scoreNum.classList.remove('climbing', 'settled-score', 'score-pulse');
+    }
+    if (railScoreNum) {
+      railScoreNum.textContent = '612';
+      railScoreNum.classList.remove('climbing', 'settled-score', 'score-pulse');
+    }
+  }
+
+  function replayIntro() {
+    if (reduce) return;
+    stopDust();
+    stage?.classList.remove('settled', 'settled-solid', 'ambient', 'ambient-video', 'mobile-fallback');
+    if (ambient) {
+      try { ambient.pause(); } catch (_) {}
+      stage?.classList.remove('ambient-video');
+    }
+    if (replayBtn) replayBtn.hidden = true;
+    resetBeatFlags();
+    isMobile = mobile();
+    setIntroSources();
+    setAmbientSource();
+    if (video) {
+      video.hidden = false;
+      video.style.visibility = '';
+      video.style.opacity = '';
+      video.loop = false;
+      video.currentTime = 0;
+    }
+    if (settle) {
+      // force settle hidden until next settle
+      settle.style.opacity = '';
+    }
+    tryPlay().then(() => {
+      if (mobile()) runMobileBeats();
+    });
+  }
+
+  replayBtn?.addEventListener('click', (e) => {
+    e.preventDefault();
+    replayIntro();
+  });
 
   if (video) {
     video.loop = false;
@@ -295,11 +507,11 @@
         if (!reduce) runMobileBeats();
         else { revealRail(); lockScore742(); }
       } else {
-        video.hidden = true;
         if (poster) poster.hidden = false;
         bump(95);
+        // Fall back to beats so wall still animates even if video fails
         setTimeout(runDesktopBeats, 500);
-        setTimeout(settlePose, 900);
+        setTimeout(settlePose, 2800);
       }
     }, { once: true });
 
@@ -327,7 +539,6 @@
     });
 
     if (!reduce) {
-      // Show poster under video until first frame on mobile
       if (isMobile) showMobileFallback();
       tryPlay();
       armPlayRetry();
@@ -344,6 +555,7 @@
         runDesktopBeats();
         settlePose();
       }
+      if (replayBtn) replayBtn.hidden = true;
     }
   } else {
     bump(95);
