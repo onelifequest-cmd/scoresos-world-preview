@@ -37,7 +37,8 @@
       });
       if (!reduce) startScore();
       else if (scoreNum) scoreNum.textContent = '742';
-      if (!reduce && !mobile()) spawnChips();
+      // v4g: float +15 chips read as a New-car badge — disabled
+      // if (!reduce && !mobile()) spawnChips();
       // after longest tile delay (5*140+200) + transition 550ms ≈ 1.45s — snap full opacity
       setTimeout(() => {
         tiles.forEach((t) => {
