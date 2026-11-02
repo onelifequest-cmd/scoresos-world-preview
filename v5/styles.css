@@ -82,8 +82,9 @@ a { color: inherit; text-decoration: none; }
   position: absolute; inset: 0;
   width: 100%; height: 100%;
   object-fit: cover;
-  /* v5l: framing via object-position ONLY — never CSS scale > 1 on the plate */
-  object-position: 14% 38%;
+  /* v5m: framing via object-position ONLY — never CSS scale > 1 on the plate.
+     ox→0% pushes Maxine right (crop city) so wall can clear her; oy keeps heads under nav. */
+  object-position: 0% 36%;
   transform: none;
   transform-origin: center center;
   transition: opacity 1.45s ease;
@@ -220,15 +221,15 @@ a { color: inherit; text-decoration: none; }
   filter: blur(4px);
 }
 
-/* ---- Wall: v5i wider 3×2 — ~3%→37% @1440, stop ~2% before Maxine ---- */
+/* ---- Wall: v5m re-register — left of Maxine with clear gap @ scale=1 plate ---- */
 .wall {
   position: absolute;
   z-index: 3;
-  /* Wider cover of left marble; scales with vw/vh (same lock at every desktop size) */
-  left: max(20px, calc(43 / 1440 * 100vw)); /* ~3% */
+  /* Narrower than v5i 3–37%: without scale(1.22) Maxine sits ~28% @1440; wall must end before her */
+  left: max(16px, calc(36 / 1440 * 100vw)); /* ~2.5% */
   top: calc(165 / 900 * 100vh); /* under nav, above floor */
-  width: calc(610 / 1440 * 100vw); /* layout; perspective → ~37% right @1440 */
-  height: calc(360 / 900 * 100vh); /* shorter band → wider tile AR (~4:3-ish) */
+  width: calc(380 / 1440 * 100vw); /* layout; perspective → ~26% right @1440, clear of Maxine */
+  height: calc(380 / 900 * 100vh); /* slightly taller so tiles stay readable when narrower */
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(2, 1fr);
@@ -245,7 +246,7 @@ a { color: inherit; text-decoration: none; }
 }
 .wall.mid-reveal,
 .wall.settled {
-  width: calc(610 / 1440 * 100vw);
+  width: calc(380 / 1440 * 100vw);
 }
 .wall-spill {
   position: absolute;
@@ -708,6 +709,24 @@ a { color: inherit; text-decoration: none; }
   backdrop-filter: none;
   box-shadow: none;
   isolation: isolate;
+  /* v5m: hidden during fly-in so robot is fully uncovered; fades in after land clear */
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.55s ease;
+}
+.hero-stage.copy-ready .hero-copy {
+  opacity: 1;
+  pointer-events: auto;
+}
+@media (max-width: 859px) {
+  /* Mobile copy sits below plate — show once plate is ready (not over fly-in path) */
+  .hero-copy {
+    opacity: 0;
+  }
+  .hero-stage.copy-ready .hero-copy,
+  .hero-stage.settled .hero-copy {
+    opacity: 1;
+  }
 }
 .hero-copy::before {
   content: "";

@@ -24,15 +24,15 @@
   const mobile = () => matchMedia('(max-width: 859px)').matches;
   let isMobile = mobile();
 
-  // v5l: original-quality intro (stream-copy of hero-loop) + sharp settle micro-pan ambient
-  const INTRO_DESK = './media/hero/hero-intro-v5l.mp4';
-  const INTRO_MOBILE = './media/hero/hero-intro-mobile-v5l.mp4';
-  const AMBIENT_DESK = './media/hero/ambient-calm-v5l.mp4';
-  const AMBIENT_MOBILE = './media/hero/ambient-calm-mobile-v5l.mp4';
-  const POSTER_DESK = './media/hero/poster-v5l.jpg';
-  const POSTER_MOBILE = './media/hero/poster-mobile-v5l.jpg';
-  const SETTLE_DESK = './media/hero/settle-calm.jpg';
-  const SETTLE_MOBILE = './media/hero/settle-calm-mobile-v5l.jpg';
+  // v5m: sharp intro (max source 1280x720) + copy deferred until robot clears + wall re-registered
+  const INTRO_DESK = './media/hero/hero-intro-v5m.mp4';
+  const INTRO_MOBILE = './media/hero/hero-intro-mobile-v5m.mp4';
+  const AMBIENT_DESK = './media/hero/ambient-calm-v5m.mp4';
+  const AMBIENT_MOBILE = './media/hero/ambient-calm-mobile-v5m.mp4';
+  const POSTER_DESK = './media/hero/poster-v5m.jpg';
+  const POSTER_MOBILE = './media/hero/poster-mobile-v5m.jpg';
+  const SETTLE_DESK = './media/hero/settle-calm-v5m.jpg';
+  const SETTLE_MOBILE = './media/hero/settle-calm-mobile-v5m.jpg';
 
   const REVEAL_AT = 5.4;
   const SWIPE_AT = 5.55;
@@ -41,12 +41,15 @@
   const SETTLE_AT = 7.35;
   const MOBILE_RAIL_AT = 1.1;
   const MOBILE_SETTLE_AT = 7.35;
+  /* Robot clears right copy zone ~2.0s; fade copy in ~0.4–0.5s later */
+  const COPY_REVEAL_AT = 2.5;
 
   let revealed = false;
   let swiped = false;
   let beamed = false;
   let reacted = false;
   let settled = false;
+  let copyReady = false;
   let ambientOn = false;
   let scoreStarted = false;
   let scoreDone = false;
@@ -86,6 +89,14 @@
     // slight delay so poster (t0 fly-in) paints under the dismiss, then play from 0
     setTimeout(kick, 140);
   }
+
+  function revealCopy() {
+    if (copyReady) return;
+    copyReady = true;
+    stage?.classList.add('copy-ready');
+  }
+  if (reduce) revealCopy();
+
 
   // Fallback only — prefer canplay bumping to 100
   setTimeout(() => bump(100), 4500);
@@ -302,6 +313,7 @@
   function settlePose() {
     if (settled) return;
     settled = true;
+    revealCopy();
     wall?.classList.remove('mid-reveal');
     wall?.classList.add('settled');
     if (video) {
@@ -413,6 +425,8 @@
     beamed = false;
     reacted = false;
     settled = false;
+    copyReady = false;
+    stage?.classList.remove('copy-ready');
     scoreStarted = false;
     scoreDone = false;
     railStarted = false;
@@ -488,6 +502,7 @@
 
     function syncBeatsFromTime() {
       const t = video.currentTime || 0;
+      if (!copyReady && t >= COPY_REVEAL_AT) revealCopy();
       if (mobile()) {
         if (!railStarted && t >= MOBILE_RAIL_AT) revealRail();
         if (!settled && t >= MOBILE_SETTLE_AT) settlePose();
