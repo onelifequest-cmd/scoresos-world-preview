@@ -70,28 +70,42 @@ a { color: inherit; text-decoration: none; }
   isolation: isolate;
   --mx: 0.5; --my: 0.5; --scroll: 0;
 }
-.hero-video, .hero-poster-fallback, .hero-poster-mobile {
+.hero-video, .hero-poster-fallback, .hero-poster-mobile, .hero-settle {
   position: absolute; inset: 0;
   width: 100%; height: 100%;
   object-fit: cover;
-  object-position: 42% 40%;
-  transform: scale(calc(1.0 + var(--scroll) * 0.03)) translate3d(calc((var(--mx) - 0.5) * -8px), calc((var(--my) - 0.5) * -5px), 0);
-  transition: transform .15s linear;
+  /* Shared registration — same OP + transform so crossfade never doubles edges */
+  object-position: 8% 36%;
+  /* Scale up for pan room; nudge right so Maxine/robot sit right of ~x330 @1024 */
+  transform-origin: 28% 40%;
+  transform: scale(calc(1.22 + var(--scroll) * 0.03)) translate3d(
+    calc(5.5% + (var(--mx) - 0.5) * -8px),
+    calc((var(--my) - 0.5) * -5px),
+    0
+  );
+  transition: transform .15s linear, opacity 1.45s ease;
   z-index: 0;
 }
 .hero-poster-mobile { display: none; }
 .hero-settle {
-  position: absolute; inset: 0;
-  width: 100%; height: 100%;
-  object-fit: cover;
-  object-position: 46% 42%;
-  z-index: 0;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 1.65s ease;
+  /* settle inherits transform from shared rule — critical for no ghost */
 }
 .hero-stage.settled .hero-settle { opacity: 1; }
-.hero-stage.settled .hero-video { opacity: 0; transition: opacity 1.65s ease; }
+.hero-stage.settled .hero-video { opacity: 0; }
+/* After fade completes: settle is solid, video gone — no ghost */
+.hero-stage.settled-solid .hero-settle {
+  opacity: 1;
+  transition: none;
+}
+.hero-stage.settled-solid .hero-video {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  display: none !important;
+  pointer-events: none;
+  transition: none;
+}
 .hero-stage::after {
   content: "";
   position: absolute; inset: 0; z-index: 1; pointer-events: none;
@@ -371,6 +385,18 @@ a { color: inherit; text-decoration: none; }
   transition: color .2s ease;
 }
 .score-num.climbing { color: #4ade80; }
+.score-num.settled-score {
+  color: #4ade80;
+  text-shadow: 0 0 18px rgba(74, 222, 128, .95), 0 2px 6px rgba(0,0,0,.45);
+}
+.score-tile.score-filled img {
+  opacity: .55;
+  filter: saturate(1.25) contrast(1.08) brightness(1.14);
+}
+.score-tile.score-filled .score-range {
+  background: rgba(6, 50, 28, .45);
+  border-color: rgba(74, 222, 128, .55);
+}
 .score-range {
   font-size: clamp(8px, 0.62vw, 10px);
   font-weight: 700;
@@ -509,10 +535,11 @@ a { color: inherit; text-decoration: none; }
 /* ---- Copy: lower-left below screens, left of Maxine (≈ x40–340 / y330–610 @1024) ---- */
 .hero-copy {
   position: absolute; z-index: 5;
-  left: max(16px, calc(36 / 1024 * 100vw));
+  left: max(14px, calc(28 / 1024 * 100vw));
   right: auto;
   top: auto;
-  bottom: clamp(28px, 6.5vh, 64px);
+  /* Lower on the plate so headline clears Maxine/robot legs */
+  bottom: clamp(14px, 3.2vh, 40px);
   transform: none;
   max-width: min(300px, calc(280 / 1024 * 100vw));
   width: min(300px, 28vw);
@@ -604,10 +631,10 @@ a { color: inherit; text-decoration: none; }
 /* Desktop mid widths — keep copy clear of Maxine/robot */
 @media (min-width: 860px) and (max-width: 1339px) {
   .hero-copy {
-    left: max(14px, calc(32 / 1024 * 100vw));
-    max-width: min(290px, 26vw);
-    width: min(290px, 26vw);
-    bottom: clamp(28px, 6vh, 56px);
+    left: max(12px, calc(24 / 1024 * 100vw));
+    max-width: min(280px, 24vw);
+    width: min(280px, 24vw);
+    bottom: clamp(12px, 2.8vh, 32px);
   }
   .headline { font-size: clamp(2.2rem, 4.6vw, 3.6rem); }
   .wall {
@@ -630,13 +657,15 @@ a { color: inherit; text-decoration: none; }
     flex-direction: column;
     justify-content: flex-start;
     overflow: hidden;
-    background: #4a3422;
+    background: #45301e;
   }
   .hero-stage::after {
+    /* Track poster; fade into copy overlap — no hard brown band */
     height: min(70vh, calc(100vw * 1.5));
     min-height: 280px;
     background:
-      linear-gradient(180deg, rgba(5,5,7,.12) 0%, transparent 20%, transparent 70%, rgba(36,24,14,.25) 100%);
+      linear-gradient(180deg, rgba(5,5,7,.10) 0%, transparent 18%, transparent 72%, rgba(69, 48, 30, 0.35) 100%);
+    pointer-events: none;
   }
   .hero-stage::before { display: none; }
   /* Hide landscape loop on mobile — it always shows full plate height so legs spill into copy.
@@ -653,14 +682,14 @@ a { color: inherit; text-decoration: none; }
     aspect-ratio: 2 / 3;
     max-height: 70vh;
     min-height: 280px;
-    /* Poster is pre-cropped 2:3 with Maxine+robot + margin; same ratio → no clip */
     object-fit: cover;
     object-position: 50% 42%;
     transform: none;
     z-index: 0;
     image-rendering: auto;
     filter: none;
-    background: #4a3422;
+    background: transparent;
+    margin-bottom: 0;
   }
   .hero-copy {
     position: relative;
@@ -668,20 +697,41 @@ a { color: inherit; text-decoration: none; }
     transform: none;
     max-width: none;
     width: 100%;
-    margin-top: 0;
-    padding: 18px 16px 24px;
+    /* Sit on top of poster bottom ~20%; scrim starts BELOW eyebrow so poster shows through */
+    margin-top: calc(-0.20 * min(70vh, 100vw * 1.5));
+    padding: 28px 16px 28px;
     text-align: left;
-    /* Warm brown scrim — brighter than near-black */
-    background: linear-gradient(180deg, #5a3e28 0%, #4e3622 45%, #45301e 100%);
+    z-index: 3;
+    background: transparent;
     border-radius: 0;
     box-shadow: none;
     backdrop-filter: none;
   }
+  /* Scrim fades from transparent (over poster+eyebrow) into solid brown under headline */
+  .hero-copy::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    top: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: linear-gradient(
+      180deg,
+      rgba(69, 48, 30, 0) 0%,
+      rgba(69, 48, 30, 0.05) 14%,
+      rgba(69, 48, 30, 0.35) 32%,
+      rgba(90, 62, 40, 0.78) 48%,
+      #5a3e28 62%,
+      #4e3622 82%,
+      #45301e 100%
+    );
+  }
   .hero-copy .eyebrow,
-  .hero-copy .headline {
+  .hero-copy .headline,
+  .hero-copy .tagline {
     position: relative;
     z-index: 2;
-    text-shadow: 0 2px 18px rgba(0,0,0,.85), 0 1px 2px rgba(0,0,0,.6);
+    text-shadow: 0 2px 18px rgba(0,0,0,.9), 0 1px 3px rgba(0,0,0,.7);
   }
   .hero-copy::before { display: none; }
   .headline { font-size: clamp(2.4rem, 12vw, 3.4rem); }

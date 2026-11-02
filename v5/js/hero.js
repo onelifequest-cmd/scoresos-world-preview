@@ -30,6 +30,7 @@
   let reacted = false;
   let settled = false;
   let scoreStarted = false;
+  let scoreDone = false;
 
   let loaded = 0;
   const bump = (n) => {
@@ -96,12 +97,24 @@
     reacted = true;
     wall?.classList.add('react');
     wall?.classList.add('beam-hit');
-    if (!reduce && !scoreStarted) {
+    if (scoreDone) {
+      lockScore742();
+    } else if (!reduce && !scoreStarted) {
       scoreStarted = true;
       startScore();
-    } else if (scoreNum) {
-      scoreNum.textContent = '742';
+    } else {
+      lockScore742();
     }
+  }
+
+  function lockScore742() {
+    scoreDone = true;
+    scoreStarted = true;
+    if (!scoreNum) return;
+    scoreNum.textContent = '742';
+    scoreNum.classList.remove('climbing');
+    scoreNum.classList.add('settled-score');
+    scoreNum.closest('.score-tile')?.classList.add('score-filled');
   }
 
   function settlePose() {
@@ -111,10 +124,35 @@
     wall?.classList.add('settled');
     // Plate has no upright frame (robot mid-leap throughout). Pause video and
     // slow-crossfade to v4 standing still (settle-calm.jpg). 0 Runway.
+    // After fade, hide video completely so nothing doubles (no ghost).
     if (video) {
-      try { video.pause(); } catch (_) {}
+      try { video.pause(); video.loop = false; } catch (_) {}
     }
     stage?.classList.add('settled');
+    const finishFade = () => {
+      stage?.classList.add('settled-solid');
+      if (video) {
+        try { video.pause(); } catch (_) {}
+        video.style.visibility = 'hidden';
+        video.style.opacity = '0';
+      }
+      // Score must read 742 on the settled frame
+      if (scoreDone || scoreStarted) lockScore742();
+      else {
+        // Climb still running — snap to final once its duration elapses
+        setTimeout(lockScore742, 2400);
+      }
+    };
+    if (settle) {
+      const onEnd = (e) => {
+        if (e.propertyName && e.propertyName !== 'opacity') return;
+        settle.removeEventListener('transitionend', onEnd);
+        finishFade();
+      };
+      settle.addEventListener('transitionend', onEnd);
+    }
+    // Safety if transitionend misses
+    setTimeout(finishFade, 1800);
   }
 
   function runDesktopBeats() {
@@ -222,20 +260,21 @@
   }
 
   function startScore() {
-    if (!scoreNum) return;
+    if (!scoreNum || scoreDone) {
+      lockScore742();
+      return;
+    }
     const from = 612, to = 742;
     const dur = 2200;
     const t0 = performance.now();
     scoreNum.classList.add('climbing');
     const step = (now) => {
+      if (scoreDone) return; // locked — never reset to 612
       const p = Math.min(1, (now - t0) / dur);
       const eased = 1 - Math.pow(1 - p, 3);
       scoreNum.textContent = String(Math.round(from + (to - from) * eased));
       if (p < 1) requestAnimationFrame(step);
-      else {
-        scoreNum.textContent = '742';
-        scoreNum.classList.remove('climbing');
-      }
+      else lockScore742();
     };
     requestAnimationFrame(step);
   }

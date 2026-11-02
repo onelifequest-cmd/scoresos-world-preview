@@ -1,0 +1,122 @@
+{
+  "r1440": {
+    "vw": 1440,
+    "vh": 900,
+    "score": "742",
+    "settled": true,
+    "settledSolid": true,
+    "videoOpacity": "0",
+    "videoVis": "hidden",
+    "settleOpacity": "1",
+    "videoOP": "8% 36%",
+    "settleOP": "8% 36%",
+    "copy": {
+      "x": 39,
+      "y": 521,
+      "w": 300,
+      "h": 350,
+      "bottom": 871
+    },
+    "h1": {
+      "x": 55,
+      "y": 559,
+      "w": 268,
+      "h": 134,
+      "right": 323,
+      "bottom": 693
+    },
+    "wall": {
+      "x": 40,
+      "y": 137,
+      "w": 334,
+      "h": 195
+    },
+    "poster": {
+      "y": 0,
+      "h": 0,
+      "bottom": 0
+    },
+    "overlapPx": -521,
+    "copyMarginTop": "0px"
+  },
+  "r1280": {
+    "vw": 1280,
+    "vh": 800,
+    "score": "742",
+    "settled": true,
+    "settledSolid": true,
+    "videoOpacity": "0",
+    "videoVis": "hidden",
+    "settleOpacity": "1",
+    "videoOP": "8% 36%",
+    "settleOP": "8% 36%",
+    "copy": {
+      "x": 30,
+      "y": 440,
+      "w": 280,
+      "h": 337,
+      "bottom": 778
+    },
+    "h1": {
+      "x": 46,
+      "y": 492,
+      "w": 248,
+      "h": 109,
+      "right": 294,
+      "bottom": 602
+    },
+    "wall": {
+      "x": 35,
+      "y": 125,
+      "w": 334,
+      "h": 195
+    },
+    "poster": {
+      "y": 0,
+      "h": 0,
+      "bottom": 0
+    },
+    "overlapPx": -440,
+    "copyMarginTop": "0px"
+  },
+  "r390": {
+    "vw": 390,
+    "vh": 844,
+    "score": "742",
+    "settled": false,
+    "settledSolid": false,
+    "videoOpacity": "0",
+    "videoVis": "hidden",
+    "settleOpacity": "0",
+    "videoOP": "8% 36%",
+    "settleOP": "8% 36%",
+    "copy": {
+      "x": 0,
+      "y": 468,
+      "w": 390,
+      "h": 533,
+      "bottom": 1001
+    },
+    "h1": {
+      "x": 16,
+      "y": 520,
+      "w": 358,
+      "h": 89,
+      "right": 374,
+      "bottom": 609
+    },
+    "wall": {
+      "x": 0,
+      "y": 0,
+      "w": 0,
+      "h": 0
+    },
+    "poster": {
+      "y": 0,
+      "h": 585,
+      "bottom": 585
+    },
+    "overlapPx": 117,
+    "copyMarginTop": "-117px"
+  }
+}
