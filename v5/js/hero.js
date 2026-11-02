@@ -11,14 +11,20 @@
   const wall = $('#wall');
   const tiles = $$('.tile');
   const scoreNum = $('#score-num');
+  const beam = $('#control-beam');
+  const tabletPulse = $('#tablet-pulse');
 
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const mobile = () => matchMedia('(max-width: 859px)').matches;
 
-  // Robot touch / screen react beat in forward half of ping-pong (~10s raw)
+  // Plate settle / reach beat (forward half of ping-pong ~10s raw)
   const REVEAL_AT = 5.4;
-  const REACT_AT = 6.4;
+  const SWIPE_AT = 5.55;
+  const BEAM_AT = 5.85;
+  const REACT_AT = 6.45; // beam lands → score climb
   let revealed = false;
+  let swiped = false;
+  let beamed = false;
   let reacted = false;
   let scoreStarted = false;
 
@@ -40,7 +46,7 @@
 
   setTimeout(() => bump(100), 4500);
 
-  const imgs = $$('.tile img, #hero-poster, .hero-poster-fallback');
+  const imgs = $$('.tile img, #hero-poster, .hero-poster-fallback, #hero-poster-mobile');
   let imgDone = 0;
   const totalImgs = Math.max(1, imgs.length);
   imgs.forEach((img) => {
@@ -59,16 +65,39 @@
     tiles.forEach((t) => t.classList.add('on'));
   }
 
+  function fireSwipe() {
+    if (swiped || mobile()) return;
+    swiped = true;
+    tabletPulse?.classList.remove('on');
+    void tabletPulse?.offsetWidth;
+    tabletPulse?.classList.add('on');
+  }
+
+  function fireBeam() {
+    if (beamed || mobile()) return;
+    beamed = true;
+    beam?.classList.add('on');
+  }
+
   function reactScreens() {
     if (reacted) return;
     reacted = true;
     wall?.classList.add('react');
+    wall?.classList.add('beam-hit');
     if (!reduce && !scoreStarted) {
       scoreStarted = true;
       startScore();
     } else if (scoreNum) {
       scoreNum.textContent = '742';
     }
+  }
+
+  function runDesktopBeats() {
+    if (mobile()) return;
+    revealPanels();
+    setTimeout(fireSwipe, 120);
+    setTimeout(fireBeam, 280);
+    setTimeout(reactScreens, 780);
   }
 
   if (video) {
@@ -81,40 +110,38 @@
       if (poster) poster.hidden = false;
       bump(95);
       if (!mobile()) {
-        setTimeout(revealPanels, 600);
-        setTimeout(reactScreens, 1100);
+        setTimeout(runDesktopBeats, 500);
       }
     }, { once: true });
 
-    video.addEventListener('timeupdate', () => {
-      if (!revealed && video.currentTime >= REVEAL_AT) revealPanels();
-      if (!reacted && video.currentTime >= REACT_AT) reactScreens();
-    });
+    function syncBeatsFromTime() {
+      if (mobile()) return;
+      const t = video.currentTime || 0;
+      if (!revealed && t >= REVEAL_AT) revealPanels();
+      if (!swiped && t >= SWIPE_AT) fireSwipe();
+      if (!beamed && t >= BEAM_AT) fireBeam();
+      if (!reacted && t >= REACT_AT) reactScreens();
+    }
+    video.addEventListener('timeupdate', syncBeatsFromTime);
+    video.addEventListener('seeked', syncBeatsFromTime);
+    // If autoplay lands past the settle beat (or QA seeks), catch up once ready
+    video.addEventListener('playing', syncBeatsFromTime);
 
     const tryPlay = () => video.play().catch(() => {
       video.hidden = true;
       if (poster) poster.hidden = false;
-      if (!mobile()) {
-        setTimeout(revealPanels, 600);
-        setTimeout(reactScreens, 1100);
-      }
+      if (!mobile()) setTimeout(runDesktopBeats, 500);
     });
     if (!reduce) tryPlay();
     else {
       video.hidden = true;
       if (poster) poster.hidden = false;
       bump(95);
-      if (!mobile()) {
-        revealPanels();
-        reactScreens();
-      }
+      if (!mobile()) runDesktopBeats();
     }
   } else {
     bump(95);
-    if (!mobile()) {
-      setTimeout(revealPanels, 400);
-      setTimeout(reactScreens, 900);
-    }
+    if (!mobile()) setTimeout(runDesktopBeats, 400);
   }
 
   let mx = 0.5, my = 0.5, scroll = 0;

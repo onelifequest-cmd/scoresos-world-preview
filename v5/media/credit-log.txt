@@ -211,3 +211,5 @@ v5b CSS-only pass (0 Runway): reframe clear-lane, solid wall veil over filmed fr
 whoami after take2: 49
 v5d Runway spend: 100 / 100 hard cap (take1 50 + take2 50). Stop.
 Account remaining: 49
+
+v5e (2026-11-02): 0 Runway spend. CSS/SVG beam + seekable remux + mobile poster. Account remaining: 49

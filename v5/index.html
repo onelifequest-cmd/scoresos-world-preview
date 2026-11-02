@@ -5,12 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="robots" content="noindex, nofollow, noarchive" />
   <meta name="description" content="Preview only. Scores OS penthouse hero. Not the live scoresos.com homepage." />
-  <title>Scores OS — Penthouse Preview v5d (Not Live)</title>
+  <title>Scores OS — Penthouse Preview v5e (Not Live)</title>
   <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="./styles.css?v=v5d" />
+  <link rel="stylesheet" href="./styles.css?v=v5e" />
 </head>
 <body>
   <a class="skip" href="#cta">Skip to Get Started</a>
@@ -54,8 +54,9 @@
           <source src="./media/hero/hero-loop.mp4" type="video/mp4" />
         </video>
         <img class="hero-poster-fallback" id="hero-poster" src="./media/hero/poster.jpg" alt="" hidden />
+        <img class="hero-poster-mobile" id="hero-poster-mobile" src="./media/hero/poster-mobile.jpg" alt="" hidden />
 
-        <!-- Single-layer DOM glass screens on empty filmed marble (no filmed panel outlines) -->
+        <!-- Single-layer DOM glass 16:9 screens on empty filmed marble -->
         <div class="wall" id="wall" aria-label="Client wins holographic wall (demo)">
           <div class="wall-spill" aria-hidden="true"></div>
           <div class="wall-main">
@@ -120,8 +121,34 @@
           </div>
         </div>
 
+        <!-- Thin holographic control beam: robot hand → score screen (CSS/SVG, 0 Runway) -->
+        <svg class="control-beam" id="control-beam" viewBox="0 0 1440 900" preserveAspectRatio="none" aria-hidden="true">
+          <defs>
+            <linearGradient id="beamGrad" x1="100%" y1="50%" x2="0%" y2="30%">
+              <stop offset="0%" stop-color="rgba(240,201,106,0.05)" />
+              <stop offset="35%" stop-color="rgba(153,246,228,0.45)" />
+              <stop offset="100%" stop-color="rgba(94,234,212,0.7)" />
+            </linearGradient>
+            <filter id="beamSoft" x="-20%" y="-40%" width="140%" height="180%">
+              <feGaussianBlur stdDeviation="1.6" result="b" />
+              <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
+            </filter>
+          </defs>
+          <path class="beam-core" d="M 1020 395 C 720 310, 420 240, 175 195" fill="none"
+            stroke="url(#beamGrad)" stroke-width="2.2" stroke-linecap="round" filter="url(#beamSoft)" />
+          <path class="beam-soft" d="M 1020 395 C 720 310, 420 240, 175 195" fill="none"
+            stroke="rgba(94,234,212,0.22)" stroke-width="7" stroke-linecap="round" />
+          <circle class="beam-particle p1" cx="0" cy="0" r="2.4" fill="rgba(236,253,245,0.85)" />
+          <circle class="beam-particle p2" cx="0" cy="0" r="1.8" fill="rgba(240,201,106,0.7)" />
+          <circle class="beam-particle p3" cx="0" cy="0" r="2.1" fill="rgba(153,246,228,0.75)" />
+        </svg>
+
+        <!-- Maxine tablet swipe pulse (subtle) -->
+        <div class="tablet-pulse" id="tablet-pulse" aria-hidden="true"></div>
+
         <div class="float-chips" id="float-chips" aria-hidden="true"></div>
 
+        <!-- Copy: lower-left below screens, left of Maxine — clear of robot on right -->
         <div class="hero-copy">
           <p class="eyebrow">Built for credit repair &amp; funding agencies</p>
           <h1 class="headline"><span class="hn-a">Scores</span> <span class="hn-b">OS</span></h1>
@@ -156,6 +183,6 @@
     <p>Preview only · Scores OS · not affiliated with any credit bureau</p>
   </footer>
 
-  <script src="./js/hero.js?v=v5d" defer></script>
+  <script src="./js/hero.js?v=v5e" defer></script>
 </body>
 </html>
