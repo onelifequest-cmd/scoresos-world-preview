@@ -1,50 +1,96 @@
 import { useMemo } from "react";
-import { useGLTF } from "@react-three/drei";
 import * as THREE from "three";
 
-import { DRACO_PATH, OCCLUDER_LAYER, ROCKS_URL } from "./scene-config";
+import { OCCLUDER_LAYER, PILLAR } from "./scene-config";
 
+/**
+ * Tall dark stone pillar approximating the Lumea pedestal silhouette:
+ * ruined column, flat crown, dark grey stone — no green, no boulder lump.
+ */
 export const BaseRock = () => {
-  const { scene } = useGLTF(ROCKS_URL, DRACO_PATH);
-
-  const rock = useMemo(() => {
-    const meshes: THREE.Mesh[] = [];
-    scene.traverse((o) => {
-      if (o instanceof THREE.Mesh) meshes.push(o);
+  const pillar = useMemo(() => {
+    const group = new THREE.Group();
+    const stone = new THREE.MeshStandardMaterial({
+      color: PILLAR.color,
+      roughness: PILLAR.roughness,
+      metalness: PILLAR.metalness,
+      emissive: new THREE.Color(PILLAR.emissiveColor),
+      emissiveIntensity: PILLAR.emissiveIntensity,
     });
-    meshes.sort(
-      (a, b) =>
-        (b.geometry.attributes.position?.count || 0) -
-        (a.geometry.attributes.position?.count || 0),
+
+    // Main shaft
+    const shaftGeo = new THREE.CylinderGeometry(
+      PILLAR.radiusTop,
+      PILLAR.radiusBottom,
+      PILLAR.height,
+      32,
+      8,
+      false,
     );
-    const source = meshes[0];
-    if (!source) return null;
-
-    const mesh = source.clone();
-    mesh.castShadow = true;
-    mesh.receiveShadow = true;
-    mesh.layers.enable(OCCLUDER_LAYER);
-    if (mesh.material instanceof THREE.MeshStandardMaterial) {
-      const mat = mesh.material.clone();
-      mat.roughness = Math.min(1, (mat.roughness || 0.8) + 0.05);
-      mat.metalness = 0.04;
-      mat.emissive = new THREE.Color("#142418");
-      mat.emissiveIntensity = 0.18;
-      mesh.material = mat;
+    // Mild vertex noise for weathered stone
+    const pos = shaftGeo.attributes.position;
+    for (let i = 0; i < pos.count; i++) {
+      const y = pos.getY(i);
+      const x = pos.getX(i);
+      const z = pos.getZ(i);
+      // Don't distort the flat top/bottom much
+      const edge = 1 - Math.min(1, Math.abs(y) / (PILLAR.height * 0.5));
+      const n =
+        (Math.sin(x * 9.1 + y * 6.2) * 0.018 +
+          Math.cos(z * 8.4 - y * 4.7) * 0.014) *
+        edge;
+      const len = Math.hypot(x, z) || 1;
+      pos.setXYZ(i, x + (x / len) * n, y, z + (z / len) * n);
     }
-    return mesh;
-  }, [scene]);
+    pos.needsUpdate = true;
+    shaftGeo.computeVertexNormals();
 
-  if (!rock) return null;
+    const shaft = new THREE.Mesh(shaftGeo, stone);
+    shaft.castShadow = true;
+    shaft.receiveShadow = true;
+    shaft.layers.enable(OCCLUDER_LAYER);
+    shaft.position.y = PILLAR.height / 2;
+    group.add(shaft);
 
-  return (
-    <primitive
-      object={rock}
-      position={[0, -1.05, 0.08]}
-      scale={4.15}
-      rotation={[0.18, 0.9, 0.1]}
-    />
-  );
+    // Flat crown the emblem sits on
+    const crown = new THREE.Mesh(
+      new THREE.CylinderGeometry(
+        PILLAR.radiusTop * 1.22,
+        PILLAR.radiusTop * 1.08,
+        0.09,
+        32,
+      ),
+      stone.clone(),
+    );
+    crown.castShadow = true;
+    crown.receiveShadow = true;
+    crown.layers.enable(OCCLUDER_LAYER);
+    crown.position.y = PILLAR.height + 0.02;
+    group.add(crown);
+
+    // Foot flare
+    const foot = new THREE.Mesh(
+      new THREE.CylinderGeometry(
+        PILLAR.radiusBottom * 1.12,
+        PILLAR.radiusBottom * 1.38,
+        0.16,
+        32,
+      ),
+      stone.clone(),
+    );
+    foot.castShadow = true;
+    foot.receiveShadow = true;
+    foot.layers.enable(OCCLUDER_LAYER);
+    foot.position.y = 0.06;
+    group.add(foot);
+
+    group.position.set(
+      PILLAR.position[0],
+      PILLAR.position[1],
+      PILLAR.position[2],
+    );
+    return group;
+  }, []);
+
+  return <primitive object={pillar} />;
 };
-
-useGLTF.preload(ROCKS_URL, DRACO_PATH);

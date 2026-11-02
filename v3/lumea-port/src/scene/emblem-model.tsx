@@ -1,135 +1,191 @@
-import { useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import { useGLTF, Environment, useTexture } from "@react-three/drei";
 import * as THREE from "three";
 
-import { DRACO_PATH, MODEL_URL, MONK, OCCLUDER_LAYER } from "./scene-config";
-import { OrbitRings } from "./orbit-rings";
+import {
+  DRACO_PATH,
+  DIAL_URL,
+  EMBLEM,
+  MODEL_URL,
+  MONK,
+  OCCLUDER_LAYER,
+} from "./scene-config";
+import { useRingStore } from "./ring-store";
 
 const GOLD = "#e8c96a";
-const DIAL_URL = new URL("assets/dial-face.png", import.meta.url).href;
+const GOLD_DEEP = "#9a7828";
+
+interface RingEntry {
+  material: THREE.MeshStandardMaterial;
+  secondary: boolean;
+}
 
 /**
- * Jewelry-grade Score OS coin — painted dial uses MeshBasicMaterial so the
- * gauge reads on software GL (transmission glass was washing the face white).
+ * Score OS emblem on the Lumea pillar + two baked halo toruses from monk.glb.
+ * Green only on the painted dial. No emblem.glb overlay (it was covering the face).
  */
 export const EmblemModel = () => {
-  const { scene } = useGLTF(MODEL_URL, DRACO_PATH);
+  const { scene: monkScene } = useGLTF(MODEL_URL, DRACO_PATH);
   const groupRef = useRef<THREE.Group>(null);
+  const coinRef = useRef<THREE.Group>(null);
   const dialTex = useTexture(DIAL_URL);
+
   useMemo(() => {
     dialTex.colorSpace = THREE.SRGBColorSpace;
     dialTex.anisotropy = 8;
     dialTex.needsUpdate = true;
   }, [dialTex]);
 
-  // Gold rim only from the GLB bezel
-  const bezel = useMemo(() => {
-    const root = scene.clone(true);
+  const { ringsRoot, rings } = useMemo(() => {
+    const root = monkScene.clone(true);
+    const ringEntries: RingEntry[] = [];
     root.traverse((object) => {
       if (!(object instanceof THREE.Mesh)) return;
-      const name = object.name.toLowerCase();
-      if (!name.includes("bezel")) {
+      if (object.name.startsWith("Torus")) {
+        object.castShadow = false;
+        object.receiveShadow = false;
+        const material = new THREE.MeshStandardMaterial({
+          roughness: 0.4,
+          metalness: 0.2,
+          toneMapped: false,
+        });
+        object.material = material;
+        ringEntries.push({
+          material,
+          secondary: object.name.includes("002"),
+        });
+      } else {
         object.visible = false;
-        return;
       }
-      object.castShadow = true;
-      object.receiveShadow = true;
-      object.layers.enable(OCCLUDER_LAYER);
-      object.material = new THREE.MeshPhysicalMaterial({
-        color: GOLD,
-        metalness: 1,
-        roughness: 0.14,
-        clearcoat: 0.9,
-        clearcoatRoughness: 0.08,
-        envMapIntensity: 2.2,
-        toneMapped: false,
-      });
     });
-    root.scale.setScalar(0.5);
-    root.position.set(0, 0.82, 0);
-    root.rotation.set(-0.12, 0, 0);
-    return root;
-  }, [scene]);
+    return { ringsRoot: root, rings: ringEntries };
+  }, [monkScene]);
+
+  const ringsRef = useRef<RingEntry[]>([]);
+  useEffect(() => {
+    ringsRef.current = rings;
+  }, [rings]);
 
   const coin = useMemo(() => {
     const g = new THREE.Group();
+    const r = EMBLEM.diameter / 2;
+    const t = EMBLEM.thickness;
 
+    // Thick gold body
     const body = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.98, 0.98, 0.26, 64),
+      new THREE.CylinderGeometry(r, r, t, 72),
       new THREE.MeshPhysicalMaterial({
-        color: "#9a7828",
+        color: GOLD_DEEP,
         metalness: 1,
-        roughness: 0.28,
-        clearcoat: 0.45,
-        envMapIntensity: 1.2,
+        roughness: 0.26,
+        clearcoat: 0.5,
+        clearcoatRoughness: 0.12,
+        envMapIntensity: 1.4,
         toneMapped: false,
       }),
     );
     body.rotation.x = Math.PI / 2;
-    body.position.z = -0.05;
     body.castShadow = true;
+    body.receiveShadow = true;
     body.layers.enable(OCCLUDER_LAYER);
     g.add(body);
 
-    // Unlit painted dial — always readable
-    const dial = new THREE.Mesh(
-      new THREE.CircleGeometry(0.86, 64),
-      new THREE.MeshBasicMaterial({
-        map: dialTex,
-        toneMapped: false,
-        side: THREE.DoubleSide,
-      }),
+    // Front beveled rim
+    const rimMat = new THREE.MeshPhysicalMaterial({
+      color: GOLD,
+      metalness: 1,
+      roughness: 0.12,
+      clearcoat: 1,
+      clearcoatRoughness: 0.06,
+      envMapIntensity: 2.2,
+      toneMapped: false,
+    });
+    const frontRim = new THREE.Mesh(
+      new THREE.TorusGeometry(r * 0.93, t * 0.32, 20, 80),
+      rimMat,
     );
-    dial.position.z = 0.12;
+    frontRim.position.z = t * 0.38;
+    frontRim.castShadow = true;
+    frontRim.layers.enable(OCCLUDER_LAYER);
+    g.add(frontRim);
+
+    const backRim = new THREE.Mesh(
+      new THREE.TorusGeometry(r * 0.93, t * 0.32, 20, 80),
+      rimMat.clone(),
+    );
+    backRim.position.z = -t * 0.38;
+    backRim.layers.enable(OCCLUDER_LAYER);
+    g.add(backRim);
+
+    // Outer lip ring for thickness read
+    const lip = new THREE.Mesh(
+      new THREE.TorusGeometry(r * 0.98, t * 0.18, 12, 72),
+      rimMat.clone(),
+    );
+    lip.rotation.x = Math.PI / 2;
+    lip.layers.enable(OCCLUDER_LAYER);
+    g.add(lip);
+
+    // Painted dial on BOTH faces — MeshBasic so green gauge reads on swiftshader
+    const dialMat = new THREE.MeshBasicMaterial({
+      map: dialTex,
+      color: new THREE.Color(1.25, 1.25, 1.25),
+      toneMapped: false,
+      side: THREE.FrontSide,
+    });
+    const dial = new THREE.Mesh(new THREE.CircleGeometry(r * 0.84, 64), dialMat);
+    dial.position.z = t * 0.52 + 0.002;
     dial.renderOrder = 2;
     g.add(dial);
+    const dialBack = new THREE.Mesh(
+      new THREE.CircleGeometry(r * 0.84, 64),
+      dialMat.clone(),
+    );
+    dialBack.position.z = -(t * 0.52 + 0.002);
+    dialBack.rotation.y = Math.PI;
+    dialBack.renderOrder = 2;
+    g.add(dialBack);
 
-    // Soft clearcoat plate WITHOUT transmission (swiftshader-safe)
+    // Soft clearcoat over dial
     const coat = new THREE.Mesh(
-      new THREE.CircleGeometry(0.87, 64),
+      new THREE.CircleGeometry(r * 0.85, 64),
       new THREE.MeshPhysicalMaterial({
         color: "#ffffff",
         metalness: 0,
         roughness: 0.05,
         transparent: true,
-        opacity: 0.12,
+        opacity: 0.1,
         clearcoat: 1,
         clearcoatRoughness: 0.02,
-        envMapIntensity: 1.8,
+        envMapIntensity: 1.4,
         depthWrite: false,
         toneMapped: false,
       }),
     );
-    coat.position.z = 0.125;
+    coat.position.z = t * 0.54;
     coat.renderOrder = 3;
     g.add(coat);
 
-    const lip = new THREE.Mesh(
-      new THREE.TorusGeometry(0.9, 0.048, 16, 80),
-      new THREE.MeshPhysicalMaterial({
-        color: GOLD,
-        metalness: 1,
-        roughness: 0.12,
-        clearcoat: 1,
-        envMapIntensity: 2,
-        toneMapped: false,
-      }),
-    );
-    lip.position.z = 0.12;
-    lip.castShadow = true;
-    g.add(lip);
-
-    g.scale.setScalar(0.5);
-    g.position.set(0, 0.82, 0);
-    g.rotation.x = -0.12;
+    // Tip toward camera; upright medallion
+    g.rotation.x = EMBLEM.tiltX;
     return g;
   }, [dialTex]);
 
   useFrame(({ clock }) => {
-    const grp = groupRef.current;
-    if (!grp) return;
-    grp.rotation.z = Math.sin(clock.getElapsedTime() * 0.15) * 0.02;
+    const r = useRingStore.getState();
+    for (const entry of ringsRef.current) {
+      const intensity = entry.secondary
+        ? r.emissiveIntensity * r.secondaryFactor
+        : r.emissiveIntensity;
+      entry.material.color.set(r.baseColor);
+      entry.material.emissive.set(r.emissiveColor).multiplyScalar(intensity);
+    }
+    const c = coinRef.current;
+    if (c) {
+      // Slow yaw around a camera-facing bias (¾ starts readable)
+      c.rotation.y = 0.35 + clock.getElapsedTime() * EMBLEM.spinSpeed;
+    }
   });
 
   return (
@@ -138,13 +194,14 @@ export const EmblemModel = () => {
       position={[MONK.position[0], MONK.position[1], MONK.position[2]]}
       rotation-y={MONK.rotationY}
     >
-      <Environment preset="warehouse" environmentIntensity={0.55} />
-      <primitive object={bezel} />
-      <primitive object={coin} />
-      <OrbitRings />
-      <pointLight color="#c8f0a8" intensity={14} distance={5} decay={2} position={[0.25, 1.45, 2.0]} />
-      <pointLight color="#f5e0a0" intensity={12} distance={4.5} decay={2} position={[-0.55, 1.2, 1.7]} />
-      <pointLight color="#f3ffe8" intensity={22} distance={10} decay={1.6} position={[0.2, 4.0, 1.6]} />
+      <Environment preset="warehouse" environmentIntensity={0.35} />
+      <primitive object={ringsRoot} />
+      <group
+        ref={coinRef}
+        position={[EMBLEM.position[0], EMBLEM.position[1], EMBLEM.position[2]]}
+      >
+        <primitive object={coin} />
+      </group>
     </group>
   );
 };

@@ -1,3 +1,4 @@
+
 import { useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
@@ -19,33 +20,30 @@ uniform float uOpacity;
 varying vec2 vUv;
 void main() {
   // Bright near the top (source), fading down; soft Gaussian across the width.
-  float lengthFade = pow(clamp(vUv.y, 0.0, 1.0), 1.15) * smoothstep(0.0, 0.1, vUv.y);
-  float across = exp(-pow((vUv.x - 0.5) * 3.8, 2.0));
-  float a = uOpacity * lengthFade * across;
-  gl_FragColor = vec4(uColor * a, a);
+  float lengthFade = pow(clamp(vUv.y, 0.0, 1.0), 1.3) * smoothstep(0.0, 0.12, vUv.y);
+  float across = exp(-pow((vUv.x - 0.5) * 4.5, 2.0));
+  gl_FragColor = vec4(uColor, uOpacity * lengthFade * across);
 }
 `;
 
 /**
- * Soft vertical light beam onto the emblem, billboarded around Y.
- * Dual planes (core + soft halo) so the shaft reads in stills like the reel.
+ * One soft vertical light beam onto the monk, billboarded to face the camera.
+ *
+ * It renders as a BACKGROUND element: `transparent:false` + `renderOrder -1`
+ * puts it in the opaque queue AFTER the backdrop (renderOrder -2) and BEFORE the
+ * solid geometry (renderOrder 0), so every opaque object (figure, pedestal,
+ * rocks) cleanly draws over it. The beam is therefore always behind them and can
+ * never cut a hard seam into the geometry — no depth pre-pass, no intersection
+ * artifacts at any orbit angle.
  */
 export const LightRays = () => {
   const groupRef = useRef<THREE.Group>(null);
-  const coreRef = useRef<THREE.ShaderMaterial>(null);
-  const softRef = useRef<THREE.ShaderMaterial>(null);
+  const materialRef = useRef<THREE.ShaderMaterial>(null);
 
-  const coreUniforms = useMemo(
+  const uniforms = useMemo(
     () => ({
       uColor: { value: new THREE.Color(RAYS.color) },
       uOpacity: { value: RAYS.opacity },
-    }),
-    [],
-  );
-  const softUniforms = useMemo(
-    () => ({
-      uColor: { value: new THREE.Color(RAYS.color) },
-      uOpacity: { value: RAYS.opacity * 0.45 },
     }),
     [],
   );
@@ -53,19 +51,19 @@ export const LightRays = () => {
   useFrame(({ camera }) => {
     const group = groupRef.current;
     if (!group) return;
+    // Billboard around Y so the beam stays the same broad vertical shaft.
     group.rotation.y = Math.atan2(
       camera.position.x - group.position.x,
       camera.position.z - group.position.z,
     );
 
-    const s = useRaysStore.getState();
-    if (coreRef.current) {
-      coreRef.current.uniforms.uColor.value.set(s.color);
-      coreRef.current.uniforms.uOpacity.value = s.opacity;
-    }
-    if (softRef.current) {
-      softRef.current.uniforms.uColor.value.set(s.color);
-      softRef.current.uniforms.uOpacity.value = s.opacity * 0.45;
+    // Live colour + opacity from the panel (read via the material ref, so the
+    // scene graph never re-renders on a tweak).
+    const material = materialRef.current;
+    if (material) {
+      const s = useRaysStore.getState();
+      material.uniforms.uColor.value.set(s.color);
+      material.uniforms.uOpacity.value = s.opacity;
     }
   });
 
@@ -74,24 +72,11 @@ export const LightRays = () => {
       <mesh position-y={-RAYS.length / 2} renderOrder={-1}>
         <planeGeometry args={[RAYS.width, RAYS.length]} />
         <shaderMaterial
-          ref={coreRef}
+          ref={materialRef}
           vertexShader={vertexShader}
           fragmentShader={fragmentShader}
-          uniforms={coreUniforms}
-          transparent
-          depthWrite={false}
-          side={THREE.DoubleSide}
-          blending={THREE.AdditiveBlending}
-        />
-      </mesh>
-      <mesh position-y={-RAYS.length / 2} renderOrder={-1}>
-        <planeGeometry args={[RAYS.width * 2.1, RAYS.length]} />
-        <shaderMaterial
-          ref={softRef}
-          vertexShader={vertexShader}
-          fragmentShader={fragmentShader}
-          uniforms={softUniforms}
-          transparent
+          uniforms={uniforms}
+          transparent={false}
           depthWrite={false}
           side={THREE.DoubleSide}
           blending={THREE.AdditiveBlending}
