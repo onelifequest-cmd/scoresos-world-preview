@@ -101,32 +101,34 @@ a { color: inherit; text-decoration: none; }
 }
 
 
-/* v4d: landscape ~4:3 displays, clear wall gap before Maxine */
+/* v4e: head→knees wall @1440 — AABB ≈ x40–380, y120–520; ≥24px left margin */
 .wall {
   position: absolute;
   z-index: 3;
-  left: 0.5%;
-  top: 20.8%;
-  width: 26.2%;
-  height: 20.0%;
+  /* Design lock @1440×900; scales with vw/vh (1280 proportional) */
+  left: max(24px, calc(40 / 1440 * 100vw));
+  top: calc(120 / 900 * 100vh);
+  /* layout width pre-rotateY so foreshortened visual width ≈ 340px @1440 */
+  width: calc(394 / 1440 * 100vw);
+  height: calc(400 / 900 * 100vh);
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(2, 1fr);
-  gap: 2.6% 2.8%;
+  gap: 14px;
   padding: 0;
   transform-origin: left center;
   transform:
-    perspective(1400px)
-    rotateY(24deg)
-    rotateX(2deg)
+    perspective(1500px)
+    rotateY(22deg)
+    rotateX(1.6deg)
     translate3d(calc((var(--mx) - 0.5) * 4px), calc((var(--my) - 0.5) * 2px + var(--scroll) * -10px), 0);
   transition: transform .18s linear;
   pointer-events: none;
 }
-/* Soft gold emissive spill onto marble + floor */
+/* Soft gold emissive spill — no left overflow past wall */
 .wall-spill {
   position: absolute;
-  inset: -6% -4% -14% -3%;
+  inset: -5% -5% -12% 0;
   z-index: -1;
   pointer-events: none;
   background:
@@ -199,9 +201,9 @@ a { color: inherit; text-decoration: none; }
 
 .demo {
   position: absolute; top: 5px; left: 5px; z-index: 4;
-  font-size: 8px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+  font-size: 9px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
   background: rgba(0,0,0,.55); color: rgba(255,255,255,.9);
-  padding: 2px 5px; border-radius: 3px; backdrop-filter: blur(4px);
+  padding: 3px 6px; border-radius: 3px; backdrop-filter: blur(4px);
 }
 
 /* v4d: label as small overlay on bottom image gradient — no black label band */
@@ -209,9 +211,9 @@ a { color: inherit; text-decoration: none; }
   position: absolute; left: 1.5px; right: 1.5px; bottom: 1.5px; z-index: 4;
   height: auto;
   max-height: 42%;
-  padding: 14px 8px 5px;
-  font-size: clamp(7px, 0.58vw, 10px);
-  font-weight: 650; letter-spacing: .01em;
+  padding: 18px 10px 7px;
+  font-size: clamp(11px, 0.85vw, 13px);
+  font-weight: 600; letter-spacing: .01em;
   line-height: 1.15;
   white-space: nowrap;
   overflow: hidden;
@@ -239,11 +241,11 @@ a { color: inherit; text-decoration: none; }
 }
 .score-num {
   font-family: Syne, sans-serif; font-weight: 800;
-  font-size: clamp(1.05rem, 1.7vw, 1.7rem);
+  font-size: clamp(1.25rem, 2.1vw, 2.05rem);
   color: #ecfdf5; text-shadow: 0 0 20px rgba(52, 211, 153, .85), 0 2px 8px rgba(0,0,0,.5); line-height: 1;
 }
 .score-range {
-  font-size: clamp(8px, 0.62vw, 11px);
+  font-size: clamp(10px, 0.78vw, 13px);
   font-weight: 700;
   letter-spacing: .04em;
   color: #4ade80;

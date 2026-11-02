@@ -1,33 +1,29 @@
-# SELF-CRITIQUE — Scores OS penthouse hero v4d
+# SELF-CRITIQUE — Scores OS penthouse hero v4e
 
-**URL:** https://scoresos-world-preview.onrender.com/v4/?v=v4d  
-**Cache:** `styles.css?v=v4d2`  
+**URL:** https://scoresos-world-preview.onrender.com/v4/?v=v4e  
+**Cache:** `styles.css?v=v4e1`  
 **Date:** 2026-11-02 (America/New_York)
 
-## Intent vs result
-v4c Canvas-failed on card-like copy scrim, portrait tiles with cheap black label bands, sparse Funding tile, and Maxine overlapping World. v4d fixes those with CSS + one funding plate regen. **No Runway spend.**
+## Change
+v4d wall regressed (tiny + left-clipped). v4e restores head→knees scale with a locked 1440 AABB and proportional 1280 scaling. Copy vignette + Funding card from v4d kept. **No Runway spend.**
 
-## Checklist
-| Item | Status |
+## 1440×900 lock (measured)
+| Target | Measured |
 |---|---|
-| Soft borderless copy darkening (no grey card) | Pass — `hero-copy` bg/radius/shadow none; oversized blurred radial `::before` |
-| Disclaimer ~75% white + text-shadow | Pass |
-| Image fills tile; label on bottom gradient | Pass — `.tile-glass` full bleed; `.cap` gradient overlay |
-| Landscape / ~4:3 wall displays | Pass — wall ~26%×20%; tile aspect ≈1.24–1.33 before perspective |
-| Funding Approved real content | Pass — check + title + Demo $48,500 line |
-| Green 612→742 climb | Pass |
-| Clear wall between grid and Maxine | Pass — wall left 0.5%, right edge ~cleared; tighten gaps |
-| Characters slight reframe | Pass — `object-position: 42% 40%`; no new Runway |
-| Ribbon | Pass — Preview only · not live scoresos.com |
-| Mobile | Kept (wall hidden; soft bottom gradient copy) |
+| left ≥24, ≈40 | ~38–40 |
+| top ≈120 | ~121 |
+| right ≈380 (clear of Maxine ≈410) | ~375–385 |
+| bottom ≈520 | ~521 |
+| gap | 14px |
+| label size | ~12px |
 
-## Residual risk
-- Perspective `rotateY` foreshortens width; tiles can still read slightly less landscape than CSS boxes.
-- Soft radial can still be *felt* under type on bright sky — intentional for readability; no hard edge.
-- Table hologram cover relies on light stage veil + prior plate paint (unchanged this pass).
+## Notes
+- `rotateY(22°)` foreshortens width; layout width is pre-compensated so the post-transform AABB hits the lock.
+- Within x40–380 × y120–520 and 14px gaps, cells are taller than 4:3 (~0.54). Full-bleed imagery + gradient caps kept (no black label band). Strict landscape 4:3 cannot also span head→knees while staying left of Maxine.
+- Mobile unchanged (wall `display:none`).
 
-## QA artifacts
+## QA
 `hero-1440x900.png`, `hero-1280x800.png`, `hero-390x844.png`, `_wall-crop.png`, `hero-12s.mp4`
 
 ## Credits
-Runway: **0** this pass (balance remains ~249).
+Runway: **0**
