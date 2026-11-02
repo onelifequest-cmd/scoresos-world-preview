@@ -344,7 +344,7 @@ export async function createWorld(canvas, opts = {}) {
     scoreEl = document.createElement('div');
     scoreEl.id = 'live-score';
     scoreEl.setAttribute('aria-hidden', 'true');
-    scoreEl.innerHTML = '<span class="ls-label">Demo score</span><span class="ls-num">580</span>';
+    scoreEl.innerHTML = '<span class="ls-label">Demo score</span><span class="ls-num">520</span>';
     document.body.appendChild(scoreEl);
   }
 
@@ -512,13 +512,20 @@ export async function createWorld(canvas, opts = {}) {
     glow.scale.setScalar(0.7 + ripple * 0.6);
     glow.visible = glowMat.opacity > 0.01;
 
-    // Demo score climb on beat 1
-    const onGauge = progress < 0.17;
-    scoreEl.classList.toggle('on', onGauge);
-    if (onGauge) {
-      const climb = Math.min(1, progress / 0.15);
-      const score = Math.round(580 + (760 - 580) * climb);
-      scoreEl.querySelector('.ls-num').textContent = String(score);
+    // R3F Lumea hero owns the 742 gauge — suppress legacy pedestal DEMO SCORE
+    // so it cannot sit at 580 over the pair while the dial climbs.
+    if (document.getElementById('lumea-hero-root')) {
+      scoreEl.classList.remove('on');
+      scoreEl.style.display = 'none';
+    } else {
+      const climbEnd = 0.12;
+      const onGauge = progress < climbEnd;
+      scoreEl.classList.toggle('on', onGauge);
+      if (onGauge) {
+        const climb = Math.min(1, progress / 0.10);
+        const score = Math.round(520 + (742 - 520) * climb);
+        scoreEl.querySelector('.ls-num').textContent = String(score);
+      }
     }
 
     grain.uniforms.time.value = time;

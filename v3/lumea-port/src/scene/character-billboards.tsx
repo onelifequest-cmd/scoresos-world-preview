@@ -62,19 +62,25 @@ const FootGrounding = ({ width }: GroundingProps) => {
   );
 };
 
-/** Neutral shaft key + subtle emerald rim — kept for both billboard and GLB. */
-const SlotLights = ({ height }: { height: number }) => (
+/** Neutral shaft key + subtle emerald rim — intensityScale lowers Maxine suit blowout. */
+const SlotLights = ({
+  height,
+  intensityScale = 1,
+}: {
+  height: number;
+  intensityScale?: number;
+}) => (
   <>
     <pointLight
       color="#fff6e8"
-      intensity={1.15}
+      intensity={1.15 * intensityScale}
       distance={2.4}
       decay={2}
       position={[0.02, height * 1.05, 0.45]}
     />
     <pointLight
       color="#3d9a72"
-      intensity={0.22}
+      intensity={0.22 * intensityScale}
       distance={1.5}
       decay={2}
       position={[-0.38, height * 0.55, -0.22]}
@@ -82,7 +88,7 @@ const SlotLights = ({ height }: { height: number }) => (
     {/* Soft fill so the camera-far side of a dark figure isn't a silhouette. */}
     <pointLight
       color="#e8eef8"
-      intensity={1.35}
+      intensity={1.35 * intensityScale}
       distance={2.4}
       decay={2}
       position={[0.45, height * 0.7, 0.4]}
@@ -195,12 +201,29 @@ const CharacterGlb = ({ cfg }: { cfg: CharacterSlotConfig }) => {
         obj.castShadow = true;
         obj.receiveShadow = true;
         const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
+        const isMaxine = !!(cfg.glbUrl && cfg.glbUrl.includes("maxine"));
         for (const m of mats) {
           if (!m || !("envMapIntensity" in m)) continue;
           const std = m as THREE.MeshStandardMaterial;
           const n = (std.name || "").toLowerCase();
-          // Maxine authored split: satin suit + chrome cyber-arm.
-          if (n.includes("arm-chrome") || n.includes("chrome")) {
+          // Maxine: pull suit exposure down so satin folds read; leave face maps alone
+          // (no emissive boost, no color push on skin-named mats).
+          if (isMaxine) {
+            const isFace =
+              n.includes("face") || n.includes("skin") || n.includes("head");
+            if (n.includes("arm-chrome") || n.includes("chrome")) {
+              std.metalness = 0.85;
+              std.roughness = 0.28;
+              std.envMapIntensity = 1.05;
+            } else if (!isFace) {
+              std.metalness = Math.min(std.metalness ?? 0.1, 0.12);
+              std.roughness = Math.max(std.roughness ?? 0.45, 0.58);
+              std.envMapIntensity = 0.42;
+              if (std.color) std.color.multiplyScalar(0.78);
+            }
+            std.emissiveIntensity = 0;
+            if (std.emissive) std.emissive.setRGB(0, 0, 0);
+          } else if (n.includes("arm-chrome") || n.includes("chrome")) {
             std.metalness = 0.9;
             std.roughness = 0.2;
             std.envMapIntensity = 1.35;
@@ -237,6 +260,7 @@ const CharacterGlb = ({ cfg }: { cfg: CharacterSlotConfig }) => {
     g.rotation.y = cfg.rotation[1] + cfg.yawBias + sway;
   });
 
+  const lightScale = cfg.glbUrl && cfg.glbUrl.includes("maxine") ? 0.55 : 1;
   return (
     <group
       ref={groupRef}
@@ -245,7 +269,7 @@ const CharacterGlb = ({ cfg }: { cfg: CharacterSlotConfig }) => {
     >
       <primitive object={root} />
       <FootGrounding width={width} />
-      <SlotLights height={cfg.height} />
+      <SlotLights height={cfg.height} intensityScale={lightScale} />
     </group>
   );
 };

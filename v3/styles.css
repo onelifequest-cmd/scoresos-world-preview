@@ -351,7 +351,7 @@ body.hero-done #hero-canvas, body.hero-done #lumea-hero-root{ opacity:0; pointer
   inset:0;
   z-index:2; /* over canvas: reel-style crisp type; emblem sits in clear center */
   display:grid;
-  grid-template-columns: minmax(0,1.15fr) minmax(0,0.85fr);
+  grid-template-columns: minmax(0,0.95fr) minmax(0,1.05fr);
   align-items:center;
   justify-items:stretch;
   pointer-events:none;
@@ -365,15 +365,16 @@ body.hero-done #hero-canvas, body.hero-done #lumea-hero-root{ opacity:0; pointer
   margin:0;
   font-family:"Syne", var(--font), system-ui, sans-serif;
   font-weight:800;
-  font-size:clamp(3.2rem, 8.6vw, 6.4rem);
+  font-size:clamp(2.6rem, 6.2vw, 4.6rem);
   letter-spacing:-0.03em;
   line-height:0.92;
   color:rgba(242, 234, 214, 0.94);
   text-transform:none;
   white-space:normal;
-  max-width: 11ch;
+  max-width: 8.5ch;
   user-select:none;
-  transform: translateY(0.8vh);
+  justify-self:start;
+  transform: translate(-1.5vw, 1.5vh);
   text-shadow: 0 2px 40px rgba(0,0,0,0.45);
 }
 .hero-headline-behind .hn-score{
@@ -595,7 +596,7 @@ body.hero-done #hero-canvas, body.hero-done #lumea-hero-root{ opacity:0; pointer
 }
 
 @media (max-width:720px){
-  .hero-headline-behind{ font-size:clamp(2.8rem, 14vw, 4.2rem); letter-spacing:-0.04em; transform:translateY(10vh); }
+  .hero-headline-behind{ font-size:clamp(2.2rem, 11vw, 3.4rem); letter-spacing:-0.04em; transform:translate(-2vw, 8vh); max-width:9ch; }
   .hero-aside{ display:none; }
   .hero-depth{ grid-template-columns:1fr; padding:8vh 5vw 28vh; }
   .hero-beat{ min-height:140vh; }

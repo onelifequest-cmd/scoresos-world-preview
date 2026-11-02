@@ -1,5 +1,5 @@
 /**
- * Scene configuration — v3g9 full-body Maxine+robot, closer framing, visible credit floaters.
+ * Scene configuration — v3g10: headroom framing, robot facing camera, gauge forward, denser floaters.
  * Emblem = single facing medallion (sway, no spin); pedestal from monk.glb;
  * debris cleared from the upper halo / headline zone.
  */
@@ -33,12 +33,12 @@ export const CAMERA = {
   orbit: {
     pivotX: 0,
     pivotZ: 1.05,
-    /** Between v3g8 (4.9) and overshot 3.95 — pair ~48% of frame height. */
-    radius: 4.10,
-    /** Slight low angle; lookAt at mid-torso so heads stay in frame. */
-    height: 1.30,
+    /** Pull back so full figures (head→boots) sit ~45–50% of viewport under the nav. */
+    radius: 4.65,
+    /** Slightly lower camera; lookAt at mid-torso for clear headroom under nav. */
+    height: 1.12,
     azimuth: 1.591,
-    lookAt: [0, 1.88, 1.05] as const,
+    lookAt: [0, 1.42, 1.05] as const,
     speed: 0.22,
   },
   swayX: 0.16,
@@ -83,12 +83,12 @@ export const RING = {
  */
 export const EMBLEM = {
   /**
-   * Mode A (v3g9): float between the pair at chest-to-head height, slightly
-   * in front (z+) so it sits clear of the top halo (raised above heads).
+   * Mode A (v3g10): between the pair, slightly above chest and clearly in front
+   * (z+) so it sits clear of both bodies and the top halo.
    */
-  position: [0, 1.32, 0.48] as const,
-  /** Sized so 742 + arc read at 1280; chest height, in front of pair. */
-  diameter: 0.78,
+  position: [0.0, 1.55, 0.95] as const,
+  /** Sized so 742 + arc read at 1280; clear of bodies. */
+  diameter: 0.70,
   /** Visible thickness (emblem.glb native depth scaled). */
   thickness: 0.13,
   /** Mild tip toward camera (~12°) — keep dial frontal. */
@@ -131,12 +131,12 @@ export const PILLAR = {
 // the edges. v3g6 uses denser edge debris (~34) explicitly so green wash can't
 // resurrect a noisy field.
 export const DEBRIS = {
-  /** 12–18 mid-size credit floaters near frame edges / mid-depth. */
-  count: 16,
-  minScale: 0.48,
-  maxScale: 0.86,
-  emissiveColor: "#7ae8a8",
-  emissiveIntensity: 1.35,
+  /** Denser Lumea-style credit floaters around the pair (not over faces). */
+  count: 28,
+  minScale: 0.52,
+  maxScale: 0.95,
+  emissiveColor: "#8af0b4",
+  emissiveIntensity: 1.75,
   spiral: {
     turns: 3.2,
     radius: 3.45,
@@ -149,10 +149,10 @@ export const DEBRIS = {
   },
   /** Keep floaters off the pair + gauge + headline column; park at edges. */
   clearZone: {
-    yMin: 0.15,
-    yMax: 3.0,
-    radius: 1.85,
-    minPushRadius: 2.85,
+    yMin: 0.35,
+    yMax: 2.55,
+    radius: 1.55,
+    minPushRadius: 2.35,
   },
   spinSpeed: 0.028,
   selfSpin: 0.18,
@@ -178,7 +178,7 @@ export const LIGHTS = {
     color: "#f3ede2",
     position: [0.4, 8.6, 1.4] as const,
     target: [0, 0.1, 0] as const,
-    intensity: 132,
+    intensity: 110,
     angle: 0.66,
     penumbra: 1,
     distance: 26,
@@ -246,9 +246,9 @@ export const PARTICLES = {
 
 export const POST = {
   bloom: {
-    intensity: 0.42,
-    luminanceThreshold: 0.9,
-    luminanceSmoothing: 0.28,
+    intensity: 0.28,
+    luminanceThreshold: 1.15,
+    luminanceSmoothing: 0.32,
     mipmapBlur: true,
   },
   dispersion: {
@@ -305,8 +305,8 @@ export const CHARACTERS: { maxine: CharacterSlotConfig; robot: CharacterSlotConf
     glbUrl: MAXINE_GLB_URL,
     /** Feet on crown (~0.515); full-body with boots visible. */
     position: [-0.48, 0.515, 0.18],
-    /** ~1.36 world units ≈ 48% of FOV height at radius 4.35. */
-    height: 1.50,
+    /** Sized with orbit.radius 4.65 so pair ≈ 45–50% of viewport height. */
+    height: 1.42,
     aspect: 0.305,
     yawBias: 0.06,
     rotation: [0, Math.PI, 0],
@@ -317,10 +317,11 @@ export const CHARACTERS: { maxine: CharacterSlotConfig; robot: CharacterSlotConf
     glbUrl: ROBOT_GLB_URL,
     /** True full-body (head→feet) matching robot-B-approved. */
     position: [0.50, 0.515, 0.16],
-    height: 1.55,
+    height: 1.46,
     aspect: 0.341,
-    yawBias: -0.05,
-    rotation: [0, Math.PI, 0],
+    /** Authored mesh faces +X; π/2 aims -Z (camera) like Maxine. +bias = ¾ toward Maxine. */
+    yawBias: 0.32,
+    rotation: [0, Math.PI / 2, 0],
   },
 };
 
@@ -350,8 +351,8 @@ export const GAUGE = {
   scoreMin: 300,
   scoreMax: 850,
   restScore: 742,
-  /** Seconds to climb from startScore → restScore. */
-  climbDuration: 3.6,
+  /** Seconds to climb from startScore → restScore (settle ≤ ~2.5s). */
+  climbDuration: 2.2,
   startScore: 520,
   /** Local dial-plane: 0 = 12 o'clock; negative = CCW toward 300. */
   startAngle: (-135 * Math.PI) / 180,
