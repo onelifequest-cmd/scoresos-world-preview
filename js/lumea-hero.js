@@ -13,6 +13,37 @@ import { OutputPass } from '../vendor/postprocessing/OutputPass.js';
 
 const CHIP_LABELS = ['DENIED', 'LATE', 'COLLECTION'];
 
+function makeHeadlinePlate() {
+  const c = document.createElement('canvas');
+  c.width = 2048;
+  c.height = 512;
+  const g = c.getContext('2d');
+  g.clearRect(0, 0, 2048, 512);
+  g.fillStyle = 'rgba(236, 224, 186, 0.92)';
+  g.font = '700 260px Georgia, "Times New Roman", serif';
+  g.textAlign = 'center';
+  g.textBaseline = 'middle';
+  g.letterSpacing = '-0.06em';
+  try { g.letterSpacing = '-0.06em'; } catch (_) {}
+  g.fillText('SCORE OS', 1024, 280);
+  const tex = new THREE.CanvasTexture(c);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.anisotropy = 8;
+  const mat = new THREE.MeshBasicMaterial({
+    map: tex,
+    transparent: true,
+    opacity: 0.62,
+    depthWrite: false,
+    toneMapped: false,
+  });
+  const mesh = new THREE.Mesh(new THREE.PlaneGeometry(14.5, 3.6), mat);
+  mesh.position.set(0, 1.15, -1.35);
+  mesh.renderOrder = -2;
+  return mesh;
+}
+
+
+
 function makeChipTexture(label) {
   const c = document.createElement('canvas');
   c.width = 256; c.height = 96;
@@ -230,9 +261,10 @@ export async function createLumeaHero(canvas, {
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
   const scene = new THREE.Scene();
-  // Transparent clear so HTML headline can sit behind the monolith
-  scene.background = null;
-  scene.fog = new THREE.FogExp2(0x060a10, 0.038);
+  // Near-black void — opaque so UnrealBloomPass stays clean.
+  // Massive "SCORE OS" sits as a 3D plate BEHIND the extruded emblem (HTML layer is a11y duplicate).
+  scene.background = new THREE.Color(0x030507);
+  scene.fog = new THREE.FogExp2(0x030507, 0.022);
 
   const camera = new THREE.PerspectiveCamera(42, window.innerWidth / window.innerHeight, 0.1, 80);
   camera.position.set(0, 1.4, 7.2);
@@ -324,6 +356,8 @@ export async function createLumeaHero(canvas, {
   const gauge = await buildExtrudedEmblem(isMobile);
   gauge.position.y = 1.58;
   root.add(gauge);
+  const headlinePlate = makeHeadlinePlate();
+  root.add(headlinePlate);
   onProgress(0.55);
 
   const ringMat = new THREE.MeshBasicMaterial({
@@ -424,7 +458,10 @@ export async function createLumeaHero(canvas, {
   onProgress(0.7);
 
   const composer = new EffectComposer(renderer);
-  composer.addPass(new RenderPass(scene, camera));
+  const renderPass = new RenderPass(scene, camera);
+  renderPass.clearColor = new THREE.Color(0x030507);
+  renderPass.clearAlpha = 1;
+  composer.addPass(renderPass);
   const bloom = new UnrealBloomPass(
     new THREE.Vector2(window.innerWidth, window.innerHeight),
     isMobile ? 0.28 : 0.42, 0.55, 0.82,
@@ -466,6 +503,11 @@ export async function createLumeaHero(canvas, {
 
     root.rotation.y = Math.sin(time * 0.15) * 0.04;
     gauge.rotation.y = time * 0.22;
+    if (headlinePlate) {
+      headlinePlate.position.x = mouseSmooth.x * -0.25;
+      headlinePlate.position.y = 1.15 + mouseSmooth.y * -0.12;
+      headlinePlate.material.opacity = THREE.MathUtils.lerp(0.62, 0.08, flight);
+    }
     ringA.rotation.z = time * 0.35;
     ringB.rotation.z = -time * 0.28;
     shaftMat.uniforms.uTime.value = time;

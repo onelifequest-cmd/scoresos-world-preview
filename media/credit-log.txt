@@ -94,3 +94,5 @@ Face compare: media/cameos/compare/face-compare-final.png — PASS (not celebrit
 - Total this Maxine pass ~65 cr (steer ~50; stills+clip required)
 - Face: original medium-brown/hazel, silver bob, white high-neck, chrome cheek+arm blue lights, bright office, NO readable text
 - Installed: media/cameos/maxine-still.jpg, media/clips/cameo-maxine{,-mobile}.mp4
+
+[2026-11-01 20:05 ET] Deploy v3g1: 3D SCORE OS plate behind extruded emblem (bloom-safe). No new Runway spend. Balance ~359.

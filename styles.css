@@ -369,7 +369,7 @@ body.hero-done #hero-canvas{ opacity:0; pointer-events:none; }
   font-size:clamp(5.5rem, 22vw, 16rem);
   letter-spacing:-0.06em;
   line-height:0.82;
-  color:rgba(232, 220, 180, 0.22);
+  color:rgba(232, 220, 180, 0.38);
   text-transform:uppercase;
   white-space:nowrap;
   user-select:none;
