@@ -82,13 +82,26 @@ a { color: inherit; text-decoration: none; }
   position: absolute; inset: 0;
   width: 100%; height: 100%;
   object-fit: cover;
-  /* v5m: framing via object-position ONLY — never CSS scale > 1 on the plate.
-     ox→0% pushes Maxine right (crop city) so wall can clear her; oy keeps heads under nav. */
+  /* v5n: video stays scale 1.0; settle/ambient may scale the 1920 still */
   object-position: 0% 36%;
   transform: none;
-  transform-origin: center center;
+  transform-origin: left center;
   transition: opacity 1.45s ease;
   z-index: 0;
+}
+/* Settled still is 1920×1080 — safe to scale ~1.12 at 1440 (still downsampled).
+   Left-origin scale shifts Maxine+robot RIGHT into the 40–48% band and frees
+   left wall for a v5i-size 3×2. Drift during crossfade hides the handoff. */
+.hero-settle, .hero-ambient {
+  transform: scale(1);
+  transform-origin: left center;
+  transition: opacity 1.45s ease, transform 1.85s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.hero-stage.settled .hero-settle,
+.hero-stage.settled-solid .hero-settle,
+.hero-stage.ambient .hero-ambient,
+.hero-stage.ambient-video .hero-ambient {
+  transform: scale(1.12);
 }
 .hero-poster-fallback {
   /* Visible until first decoded video frame — IS the fly-in frame (no jump) */
@@ -106,6 +119,8 @@ a { color: inherit; text-decoration: none; }
 .hero-stage.settled .hero-video { opacity: 0; }
 .hero-stage.settled-solid .hero-settle {
   opacity: 1;
+  transform: scale(1.12);
+  /* Keep final scale; only skip opacity fade on hard land */
   transition: none;
 }
 .hero-stage.settled-solid .hero-video {
@@ -121,7 +136,7 @@ a { color: inherit; text-decoration: none; }
   opacity: 0;
   pointer-events: none;
   z-index: 0;
-  transition: opacity 1.2s ease;
+  transition: opacity 1.2s ease, transform 1.85s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 .hero-stage.ambient-video .hero-ambient {
   opacity: 1;
@@ -221,15 +236,15 @@ a { color: inherit; text-decoration: none; }
   filter: blur(4px);
 }
 
-/* ---- Wall: v5m re-register — left of Maxine with clear gap @ scale=1 plate ---- */
+/* ---- Wall: v5n restore v5i-size (~3–37%) after settle plate drifts right ---- */
 .wall {
   position: absolute;
   z-index: 3;
-  /* Narrower than v5i 3–37%: without scale(1.22) Maxine sits ~28% @1440; wall must end before her */
-  left: max(16px, calc(36 / 1440 * 100vw)); /* ~2.5% */
+  left: max(16px, calc(36 / 1440 * 100vw)); /* ~2.5% / ~3% */
   top: calc(165 / 900 * 100vh); /* under nav, above floor */
-  width: calc(300 / 1440 * 100vw); /* v5m2: landed settle puts Maxine ~x310@1440; keep wall right ≤~290 */
-  height: calc(380 / 900 * 100vh); /* slightly taller so tiles stay readable when narrower */
+  /* Grow with settle: mid-reveal intermediate, settled = v5i 610/1440 */
+  width: calc(380 / 1440 * 100vw);
+  height: calc(360 / 900 * 100vh);
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(2, 1fr);
@@ -241,12 +256,37 @@ a { color: inherit; text-decoration: none; }
     rotateY(22deg)
     rotateX(1.6deg)
     translate3d(calc((var(--mx) - 0.5) * 4px), calc((var(--my) - 0.5) * 2px + var(--scroll) * -6px), 0);
-  transition: transform .18s linear;
+  transition: transform .18s linear, width 1.7s cubic-bezier(0.22, 0.61, 0.36, 1);
   pointer-events: none;
 }
-.wall.mid-reveal,
+.wall.mid-reveal {
+  width: calc(480 / 1440 * 100vw);
+}
 .wall.settled {
-  width: calc(300 / 1440 * 100vw);
+  width: calc(610 / 1440 * 100vw); /* layout; perspective → ~37% right @1440 */
+}
+/* Soft marble veil just past the grid — hides residual filmed panel outlines */
+.wall::after {
+  content: "";
+  position: absolute;
+  left: 98%;
+  top: -4%;
+  bottom: -10%;
+  width: clamp(28px, 4.5vw, 64px);
+  pointer-events: none;
+  z-index: -1;
+  opacity: 0;
+  background:
+    linear-gradient(90deg,
+      rgba(196, 178, 158, .55) 0%,
+      rgba(196, 178, 158, .22) 45%,
+      rgba(196, 178, 158, 0) 100%);
+  filter: blur(10px);
+  transition: opacity 1.2s ease;
+}
+.wall.settled::after,
+.wall.revealed::after {
+  opacity: .9;
 }
 .wall-spill {
   position: absolute;
@@ -719,9 +759,11 @@ a { color: inherit; text-decoration: none; }
   pointer-events: auto;
 }
 @media (max-width: 859px) {
-  /* Mobile copy sits below plate — show once plate is ready (not over fly-in path) */
+  /* v5n: copy sits BELOW the robot (never overlaps) — fade in early (~0.3s) so the
+     bottom band is never an empty brown block. */
   .hero-copy {
     opacity: 0;
+    transition: opacity 0.55s ease;
   }
   .hero-stage.copy-ready .hero-copy,
   .hero-stage.settled .hero-copy {
@@ -833,12 +875,26 @@ a { color: inherit; text-decoration: none; }
     background: #45301e;
   }
   .hero-stage::after {
-    /* Track plate height; soft fade into copy overlap */
+    /* Track plate height; soft fade into copy — no hard empty brown band */
     height: min(70vh, calc(100vw * 1.5));
     min-height: 280px;
     background:
-      linear-gradient(180deg, rgba(5,5,7,.10) 0%, transparent 18%, transparent 72%, rgba(69, 48, 30, 0.35) 100%);
+      linear-gradient(180deg,
+        rgba(5,5,7,.10) 0%,
+        transparent 18%,
+        transparent 62%,
+        rgba(69, 48, 30, 0.55) 88%,
+        rgba(69, 48, 30, 0.92) 100%);
     pointer-events: none;
+  }
+  .hero-plate::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 28%;
+    pointer-events: none;
+    z-index: 3;
+    background: linear-gradient(180deg, transparent 0%, rgba(42, 28, 18, 0.15) 40%, rgba(69, 48, 30, 0.85) 100%);
   }
   .hero-stage::before { display: none; }
 
@@ -864,14 +920,21 @@ a { color: inherit; text-decoration: none; }
     width: 100% !important;
     height: 100% !important;
     object-fit: cover !important;
-    /* Mobile intro plate is already robot-tracking 720²; center it */
-    object-position: center 42% !important;
+    /* Mobile intro plate is robot-tracking; settle is a 720×1080 portrait crop */
+    object-position: center 40% !important;
     transform: none !important;
     transform-origin: center center !important;
     left: auto; right: auto; top: auto;
     margin: 0;
     z-index: 0;
     pointer-events: none;
+  }
+  .hero-stage.settled .hero-settle,
+  .hero-stage.settled-solid .hero-settle,
+  .hero-stage.ambient .hero-ambient,
+  .hero-stage.ambient-video .hero-ambient {
+    transform: none !important; /* never inherit desktop settle scale */
+    object-position: 20% 38% !important; /* bias left so Maxine is never clipped */
   }
   .hero-poster-fallback {
     display: none !important; /* mobile uses poster-mobile / baked plate */

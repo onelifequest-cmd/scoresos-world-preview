@@ -24,15 +24,15 @@
   const mobile = () => matchMedia('(max-width: 859px)').matches;
   let isMobile = mobile();
 
-  // v5m: sharp intro (max source 1280x720) + copy deferred until robot clears + wall re-registered
+  // v5n: sharp intro (video 1280) + 1920 settle scale + early mobile copy + v5i wall
   const INTRO_DESK = './media/hero/hero-intro-v5m.mp4';
   const INTRO_MOBILE = './media/hero/hero-intro-mobile-v5m.mp4';
   const AMBIENT_DESK = './media/hero/ambient-calm-v5m.mp4';
   const AMBIENT_MOBILE = './media/hero/ambient-calm-mobile-v5m.mp4';
   const POSTER_DESK = './media/hero/poster-v5m.jpg';
   const POSTER_MOBILE = './media/hero/poster-mobile-v5m.jpg';
-  const SETTLE_DESK = './media/hero/settle-calm-v5m.jpg';
-  const SETTLE_MOBILE = './media/hero/settle-calm-mobile-v5m.jpg';
+  const SETTLE_DESK = './media/hero/settle-calm-v5n.jpg';
+  const SETTLE_MOBILE = './media/hero/settle-calm-mobile-v5n.jpg';
 
   const REVEAL_AT = 5.4;
   const SWIPE_AT = 5.55;
@@ -41,8 +41,10 @@
   const SETTLE_AT = 7.35;
   const MOBILE_RAIL_AT = 1.1;
   const MOBILE_SETTLE_AT = 7.35;
-  /* Robot clears right copy zone ~2.0s; fade copy in ~0.4–0.5s later */
+  /* Desktop: robot clears right copy zone ~2.0s; fade copy in after. */
   const COPY_REVEAL_AT = 2.5;
+  /* Mobile: copy sits below robot — show early so bottom band is never empty brown. */
+  const MOBILE_COPY_REVEAL_AT = 0.3;
 
   let revealed = false;
   let swiped = false;
@@ -353,6 +355,9 @@
   }
 
   function runMobileBeats() {
+    /* v5n: paint mobile copy almost immediately — never leave empty brown band */
+    setTimeout(revealCopy, 300);
+
     if (!mobile()) return;
     setTimeout(revealRail, 700);
     setTimeout(() => { if (!settled) settlePose(); }, 8200);
@@ -502,12 +507,13 @@
 
     function syncBeatsFromTime() {
       const t = video.currentTime || 0;
-      if (!copyReady && t >= COPY_REVEAL_AT) revealCopy();
       if (mobile()) {
+        if (!copyReady && t >= MOBILE_COPY_REVEAL_AT) revealCopy();
         if (!railStarted && t >= MOBILE_RAIL_AT) revealRail();
         if (!settled && t >= MOBILE_SETTLE_AT) settlePose();
         return;
       }
+      if (!copyReady && t >= COPY_REVEAL_AT) revealCopy();
       if (!revealed && t >= REVEAL_AT) revealPanels();
       if (!swiped && t >= SWIPE_AT) fireSwipe();
       if (!beamed && t >= BEAM_AT) fireBeam();
