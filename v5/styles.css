@@ -128,19 +128,19 @@ a { color: inherit; text-decoration: none; }
   filter: blur(4px);
 }
 
-/* ---- Wall: v5g = v4g six-screen 3×2 mapped onto left marble + holo glass ---- */
+/* ---- Wall: v5i wider 3×2 — ~3%→37% @1440, stop ~2% before Maxine ---- */
 .wall {
   position: absolute;
   z-index: 3;
-  /* Design lock @1440×900 — scales with vw/vh so wall stays anchored to photo */
-  left: max(28px, calc(60 / 1440 * 100vw));
-  top: calc(170 / 900 * 100vh);
-  width: calc(394 / 1440 * 100vw);
-  height: calc(400 / 900 * 100vh);
+  /* Wider cover of left marble; scales with vw/vh (same lock at every desktop size) */
+  left: max(20px, calc(43 / 1440 * 100vw)); /* ~3% */
+  top: calc(165 / 900 * 100vh); /* under nav, above floor */
+  width: calc(610 / 1440 * 100vw); /* layout; perspective → ~37% right @1440 */
+  height: calc(360 / 900 * 100vh); /* shorter band → wider tile AR (~4:3-ish) */
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(2, 1fr);
-  gap: 11px;
+  gap: 10px;
   padding: 0;
   transform-origin: left center;
   transform:
@@ -153,8 +153,7 @@ a { color: inherit; text-decoration: none; }
 }
 .wall.mid-reveal,
 .wall.settled {
-  /* No width morph — keep photo-anchored size */
-  width: calc(394 / 1440 * 100vw);
+  width: calc(610 / 1440 * 100vw);
 }
 .wall-spill {
   position: absolute;
