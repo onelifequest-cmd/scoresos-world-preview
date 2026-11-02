@@ -1,45 +1,44 @@
-# SELF-CRITIQUE — Scores OS homepage hero v4b (penthouse)
+# Scores OS `/v4/` self-critique — **v4c**
 
-Date: 2026-11-02 (America/New_York)
-Live: https://scoresos-world-preview.onrender.com/v4/?v=v4b
-Commits: b3a50d9 (v4 ship) → 8ef10e0 (v4a2) → c8705e6 (QA) → bcf6a94 (v4b) → (polish follow-up)
-Runway: unchanged from v4a2 — gen-4-turbo I2V 10s · **50 credits** · under 60 cap · no re-roll this pass
+**URL:** https://scoresos-world-preview.onrender.com/v4/?v=v4c  
+**Commit:** `09e8a1e` (+ QA follow-up)  
+**Deploy:** `dep-dbk3tu5g1s2s7397uh80` (live)  
+**Runway:** 50 credits this pass (299→249). Failed take1 charged 0; take2 gen-4-turbo 10s succeeded. Cap respected.
 
-## Verdict (brutally honest)
+## Canvas FAIL items → v4c response
 
-**Direction still right. v4b fixes the review blockers; photoreal bar is unchanged.**
+1. **Wall ~1.6–1.8× / no grey plate / gold into marble / harder perspective.**  
+   CSS wall now **32.5% × 47.5%** (~1.7× prior 19.2×28). `.wall::before` grey niche removed. Thin gold tile bezels only. `perspective(1400px) rotateY(26deg)` pushes tiles into the room toward the window. Height reads roughly Maxine head→knees on the 1440 still.
+2. **Table “742” hologram.**  
+   New plate + per-frame paint-out on the I2V clip; soft dark **copy scrim** also blankets the table zone under the right-hand copy. Live 1440 still: no readable table hologram.
+3. **Disclaimer readability.**  
+   `.croa` at **75% white**; copy block sits on a soft dark scrim / blur.
+4. **Characters too big.**  
+   New GenerateImage plate (edit of goals-wall-v5) + gen-4-turbo loop with smaller / farther Maxine+robot; video `object-position: 48% 42%` pulls back slightly. Cameos sit right of the larger grid on desktop QA.
 
-v4a2 was the right penthouse + cameo + goals-wall direction. v4b answers the five review notes: unclipped labels, score tile chrome cleaned, wall grid clear of Maxine/robot with recessed bezel treatment, jargon eyebrow gone, headline nudged, mobile wins under CTA. It still reads as a strong lifestyle plate with a product HUD, not a locked-off DP shoot.
-
-## What changed in v4b
-
-1. **Tile text.** Regenerated funding / world / score art with no baked copy. One CSS label per tile in a reserved footer band with padding. Score tile shows only the ticking number, a small `612 → 742` line, and the chart — no “Credit score” chrome.
-2. **Wall seating.** Grid shrunk and shifted left so Maxine + robot are fully visible. Gold bezel, inset glass shadow, window-light reflection wash, emissive spill onto marble/floor, stronger rotateY toward the window.
-3. **Eyebrow.** `FILMED WORLD · LIVE WINS` → `Built for credit repair & funding agencies`.
-4. **Headline.** Copy block nudged down/right so Syne lockup sits in open sky, not on the tallest tower.
-5. **Mobile.** Six-win horizontal carousel is inside the hero, directly under the CTA (not a buried section).
+**Minors:** Ribbon → `Preview only · not live scoresos.com`. Score tile: clear green **612→742** pill + glow. Mobile carousel under CTA unchanged (passes).
 
 ## What still looks fake / off
 
-1. **AI film, not a camera.** Same gen-4-turbo loop — micro-morph on marble / pool / silhouette if you stare. Budget left alone this pass.
-2. **Recessed, not architecture.** Bezels + inset + spill help; tiles still read as a fitted UI layer more than frameless glass that was poured with the wall. A hand-fit per-slot matrix (or baking wins into a new plate) would finish the job.
-3. **Long labels at this scale.** “Funding Approved” / “The World Is Yours” fit in the reserved band but are tight on the narrow right column — acceptable, not luxurious typesetting.
-4. **Score number over chart.** Intentional; the green line still crosses the glyphs a little.
-5. **No real motion on wins.** Jet/family remain stills; live tick + chips carry motion.
+1. **AI film.** gen-4-turbo micro-morph on marble/pool if you stare — same class as v4b.
+2. **Wall vs architecture.** Bezels sit in marble without a grey plate, but tiles still read as a fitted UI layer more than poured glass. Perspective helps; one-tile-per-panel alignment is approximate, not laser-matched to every gold inlay.
+3. **Cameo scale.** Better than v4b; against the bigger grid they can still feel mid-room rather than tiny balcony cameos. Further shrink would need another plate + another 50cr.
+4. **Score glyph over chart.** Intentional overlay; green climb is now unmistakable.
+5. **Wins still static.** Only score tick + chips animate.
 
 ## Real vs premium scorecard
 
 | Criterion | Score (1–5) | Note |
 |---|---|---|
-| Bright / not dark | 5 | Golden hour, open view |
-| Lifestyle > characters | 5 | Cameos fully clear of grid |
+| Bright / not dark | 5 | Golden hour held |
+| Lifestyle > characters | 4 | Smaller cameos; grid dominates left |
 | Photoreal / filmed | 3 | Still plate + I2V |
-| Premium (not graphic design) | 4 | Better seating; still a UI layer |
-| Not video-gamey | 4 | Clear win vs Lumea |
-| Product story (wins wall) | 4 | Labels readable; mobile wins restored |
-| Review blockers cleared | 5 | All five v4a2 notes addressed |
+| Premium (not graphic design) | 4 | No grey niche; scrim helps copy |
+| Not video-gamey | 4 | Clear vs Lumea |
+| Product story (wins wall) | 4 | Bigger readable wall + green climb |
+| Canvas blockers cleared | 4 | All four addressed; wall seating still “UI on marble” |
 
-**Ship recommendation:** Show Patrick `?v=v4b`. Do not chase more 3D. Next only if he asks: (a) bake wins into a new plate or per-frame slot fit, (b) optional short Runway loops on jet/family within leftover credits.
+**Ship recommendation:** Show Patrick `?v=v4c`. Next only if asked: (a) tighter per-panel tile matrix, (b) another plate with balcony-scale cameos.
 
 ## QA artifacts
 
@@ -54,4 +53,4 @@ v4a2 was the right penthouse + cameo + goals-wall direction. v4b answers the fiv
 - No touch to scoresos.com / DNS
 - Preview-only noindex
 - Never mentioned Conquest AI
-- Runway ≤60 (no new spend this pass)
+- Runway ≤50 this pass (exactly 50)

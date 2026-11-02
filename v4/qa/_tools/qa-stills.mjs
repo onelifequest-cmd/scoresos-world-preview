@@ -4,7 +4,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const out = path.resolve(__dirname, '..');
-const url = process.env.QA_URL || 'http://127.0.0.1:8765/v4/?v=v4b1';
+const url = process.env.QA_URL || 'http://127.0.0.1:8765/v4/?v=v4c1';
 const browser = await chromium.launch({ headless: true, args: ['--autoplay-policy=no-user-gesture-required'] });
 async function still(name, size) {
   const page = await browser.newPage({ viewport: { width: size.w, height: size.h }, deviceScaleFactor: 1 });

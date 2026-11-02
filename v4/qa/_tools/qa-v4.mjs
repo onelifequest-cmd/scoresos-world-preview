@@ -4,7 +4,7 @@ import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const out = path.resolve(__dirname, '..');
-const url = process.env.QA_URL || 'https://scoresos-world-preview.onrender.com/v4/?v=v4b';
+const url = process.env.QA_URL || 'https://scoresos-world-preview.onrender.com/v4/?v=v4c';
 
 const browser = await chromium.launch({
   headless: true,
