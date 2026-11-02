@@ -70,6 +70,14 @@ a { color: inherit; text-decoration: none; }
   isolation: isolate;
   --mx: 0.5; --my: 0.5; --scroll: 0;
 }
+/* Plate shell — absolute fill on desktop; relative portrait frame on mobile */
+.hero-plate {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
 .hero-video, .hero-poster-fallback, .hero-poster-mobile, .hero-settle {
   position: absolute; inset: 0;
   width: 100%; height: 100%;
@@ -326,7 +334,7 @@ a { color: inherit; text-decoration: none; }
 
 .funding-card-text {
   aspect-ratio: 16/9;
-  display: flex; align-items: center; justify-content: center;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
   font-family: Syne, sans-serif; font-weight: 800;
   font-size: clamp(0.65rem, 3.2vw, 0.9rem); color: #ecfdf5;
   background: linear-gradient(160deg, rgba(8, 28, 22, .45), rgba(6, 18, 16, .3));
@@ -334,9 +342,59 @@ a { color: inherit; text-decoration: none; }
   white-space: normal;
   text-align: center;
   line-height: 1.1;
-  padding: 6px 10px;
+  padding: 8% 10%;
   box-sizing: border-box;
   overflow: hidden;
+}
+.funding-card-text .funding-check {
+  width: clamp(18px, 14%, 28px);
+  height: clamp(18px, 14%, 28px);
+  color: #6ee7b7;
+  opacity: 0;
+  transform: scale(0.7);
+  transition: opacity .45s ease, transform .45s ease;
+}
+.rail-funding.checked .funding-card-text .funding-check,
+.rail-funding.on .funding-card-text .funding-check {
+  opacity: 1;
+  transform: scale(1);
+}
+.funding-card-lines { display: block; }
+.rail-score-face {
+  aspect-ratio: 16/9;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+  background: linear-gradient(160deg, rgba(8, 28, 22, .5), rgba(6, 18, 16, .32));
+  box-sizing: border-box;
+  padding: 8%;
+}
+.rail-score-num {
+  font-family: Syne, sans-serif; font-weight: 800;
+  font-size: clamp(1.6rem, 8vw, 2.4rem);
+  color: #6ee7b7;
+  text-shadow: 0 0 18px rgba(52, 211, 153, .75);
+  line-height: 1;
+}
+.rail-score-num.settled-score { color: #a7f3d0; }
+.rail-score-range {
+  font-size: 11px; letter-spacing: .06em; text-transform: uppercase;
+  color: rgba(236,253,245,.7); font-weight: 700;
+}
+.holo-card {
+  opacity: 1;
+  transform: none;
+  transition: opacity .5s ease, transform .5s ease, box-shadow .5s ease, border-color .45s ease;
+}
+@media (max-width: 859px) {
+  .holo-card {
+    opacity: 0;
+    transform: translateY(12px) scale(0.97);
+  }
+  .holo-card.on {
+    opacity: 1;
+    transform: none;
+    box-shadow: 0 10px 28px rgba(0,0,0,.4), 0 0 0 1px rgba(110, 231, 183, .35), 0 0 24px rgba(110, 231, 183, .18);
+    border-color: rgba(110, 231, 183, .5);
+  }
 }
 
 .tile.holo:hover, .tile.holo.hot {
@@ -672,7 +730,7 @@ a { color: inherit; text-decoration: none; }
     background: #45301e;
   }
   .hero-stage::after {
-    /* Track poster; fade into copy overlap — no hard brown band */
+    /* Track plate height; soft fade into copy overlap */
     height: min(70vh, calc(100vw * 1.5));
     min-height: 280px;
     background:
@@ -680,36 +738,79 @@ a { color: inherit; text-decoration: none; }
     pointer-events: none;
   }
   .hero-stage::before { display: none; }
-  /* Hide landscape loop on mobile — it always shows full plate height so legs spill into copy.
-     Use sharp pre-cropped vertical poster instead (robot + Maxine, native res). */
-  .hero-video,
-  .hero-poster-fallback,
-  .hero-settle { display: none !important; }
-  .hero-poster-mobile {
-    display: block !important;
+
+  /* Portrait plate: play muted video; poster only as instant fallback */
+  .hero-plate {
     position: relative;
-    left: auto; right: auto; top: auto;
+    inset: auto;
     width: 100%;
-    height: auto;
     aspect-ratio: 2 / 3;
     max-height: 70vh;
     min-height: 280px;
-    object-fit: cover;
-    object-position: 50% 42%;
-    transform: none;
-    z-index: 0;
-    image-rendering: auto;
-    filter: none;
-    background: transparent;
-    margin-bottom: 0;
+    flex-shrink: 0;
+    overflow: hidden;
+    background: #2a1c12;
   }
+  .hero-video,
+  .hero-poster-fallback,
+  .hero-settle,
+  .hero-poster-mobile {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    object-position: center 42% !important;
+    transform: none !important;
+    transform-origin: center center !important;
+    left: auto; right: auto; top: auto;
+    margin: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .hero-video {
+    display: block !important;
+    opacity: 1;
+    visibility: visible !important;
+  }
+  .hero-poster-fallback { display: none !important; }
+  .hero-poster-mobile {
+    display: none !important;
+    z-index: 0;
+  }
+  /* Instant paint before first frame / if autoplay blocked */
+  .hero-stage.mobile-fallback .hero-poster-mobile {
+    display: block !important;
+    z-index: 1;
+  }
+  .hero-stage.mobile-fallback .hero-video {
+    opacity: 0;
+  }
+  .hero-settle {
+    display: block !important;
+    opacity: 0;
+    z-index: 2;
+    transition: opacity 1.45s ease;
+  }
+  .hero-stage.settled .hero-settle { opacity: 1; }
+  .hero-stage.settled .hero-video { opacity: 0; }
+  .hero-stage.settled-solid .hero-settle {
+    opacity: 1;
+    transition: none;
+  }
+  .hero-stage.settled-solid .hero-video {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    display: none !important;
+  }
+
   .hero-copy {
     position: relative;
     left: auto; right: auto; top: auto; bottom: auto;
     transform: none;
     max-width: none;
     width: 100%;
-    /* Sit on top of poster bottom ~20%; scrim starts BELOW eyebrow so poster shows through */
+    /* Sit on top of plate bottom ~20%; scrim starts BELOW eyebrow so plate shows through */
     margin-top: calc(-0.20 * min(70vh, 100vw * 1.5));
     padding: 28px 16px 28px;
     text-align: left;
@@ -719,7 +820,6 @@ a { color: inherit; text-decoration: none; }
     box-shadow: none;
     backdrop-filter: none;
   }
-  /* Scrim fades from transparent (over poster+eyebrow) into solid brown under headline */
   .hero-copy::after {
     content: "";
     position: absolute;
@@ -749,20 +849,45 @@ a { color: inherit; text-decoration: none; }
   .headline { font-size: clamp(2.4rem, 12vw, 3.4rem); }
   .hero-wins-rail { display: block; margin-top: 14px; }
   .carousel {
-    grid-auto-columns: 78%;
+    grid-auto-columns: min(78%, 300px);
     gap: 10px;
+    padding-right: 16px;
+    scroll-padding-left: 0;
   }
   .carousel figure {
     background: rgba(15, 22, 28, .45);
   }
   .carousel img,
-  .carousel .funding-card-text {
+  .carousel .funding-card-text,
+  .carousel .rail-score-face {
     aspect-ratio: 16 / 9;
     width: 100%;
     height: auto;
     object-fit: cover;
   }
   .tagline { max-width: none; }
+  .topbar { padding-left: 14px; padding-right: 14px; }
+  .brand span { font-size: 15px; }
+}
+
+/* Short phones — keep a taste of the rail on first paint */
+@media (max-width: 859px) and (max-height: 740px) {
+  .hero-plate {
+    max-height: 54vh;
+    min-height: 220px;
+  }
+  .hero-stage::after {
+    height: min(54vh, calc(100vw * 1.5));
+    min-height: 220px;
+  }
+  .hero-copy {
+    margin-top: calc(-0.14 * min(54vh, 100vw * 1.5));
+    padding: 18px 16px 18px;
+  }
+  .headline { font-size: clamp(2.05rem, 10.5vw, 2.9rem); }
+  .tagline { font-size: 0.95rem; }
+  .hero-wins-rail { margin-top: 10px; }
+  .carousel { grid-auto-columns: min(82%, 280px); }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -773,4 +898,10 @@ a { color: inherit; text-decoration: none; }
   .chip { animation: none; opacity: 0; }
   .hero-video, .hero-poster-fallback, .wall { transition: none; transform: none; }
   .control-beam, .tablet-pulse { display: none; }
+  .holo-card { opacity: 1 !important; transform: none !important; transition: none !important; }
+}
+@media (max-width: 859px) and (prefers-reduced-motion: reduce) {
+  .hero-poster-fallback { display: none !important; }
+  .hero-poster-mobile { display: block !important; }
+  .hero-settle { display: none !important; }
 }
