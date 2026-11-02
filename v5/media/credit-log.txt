@@ -240,3 +240,5 @@ Fixes vs v5l:
 v5l kept reachable via ?v=v5l
 
 v5m patch: settle/ambient restored to landed plate (settle-calm.jpg lineage); prior v5m settle was mid-fly frame from cleaned@~7.8 by mistake.
+
+v5m wall width 380→300/1440 so Funding/World clear Maxine on landed settle plate (@1440 wallRight~296).
