@@ -4,44 +4,54 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="robots" content="noindex, nofollow, noarchive" />
-  <meta name="description" content="Preview only. Score OS scroll-driven 3D world experience. Not the live scoresos.com homepage." />
-  <title>Score OS — World Preview (Not Live)</title>
+  <meta name="description" content="Preview only. Score OS cinematic interactive world. Not the live scoresos.com homepage." />
+  <title>Score OS — World Preview v3 (Not Live)</title>
   <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="./styles.css" />
+  <link rel="stylesheet" href="./styles.css?v=v3c" />
   <script type="importmap">
   { "imports": { "three": "./vendor/three.module.min.js" } }
   </script>
 </head>
 <body>
   <a class="skip" href="#pricing">Skip to pricing</a>
-  <div class="preview-ribbon" role="status">Preview only · not live scoresos.com · demo / illustrative 3D · CROA-safe</div>
+  <div class="preview-ribbon" role="status">Preview only · not live scoresos.com · cinematic demo · CROA-safe</div>
   <div class="cursor" id="cursor" aria-hidden="true"><span></span></div>
   <div class="loader" id="loader">
     <div class="loader-inner">
       <p class="loader-brand">Score OS</p>
       <div class="loader-bar"><i id="loader-fill"></i></div>
       <p class="loader-pct" id="loader-pct">0%</p>
+      <p class="loader-sub">Loading the world</p>
     </div>
   </div>
 
   <canvas id="world" aria-hidden="true"></canvas>
 
+  <div class="cameo-layer" id="cameo-layer" aria-hidden="true">
+    <video class="cameo" id="cameo-robot" muted playsinline preload="auto"
+      poster="./media/cameos/robot-entrance-still.jpg"
+      src="./media/clips/cameo-robot.mp4"></video>
+    <video class="cameo" id="cameo-maxine" muted playsinline preload="auto"
+      poster="./media/cameos/maxine-still.jpg"
+      src="./media/clips/cameo-maxine.mp4"></video>
+  </div>
+
   <header class="topbar">
-    <a class="brand" href="#beat-1">
+    <a class="brand magnetic" href="#beat-1" data-magnetic>
       <img src="./media/logo.png" width="32" height="32" alt="" />
       <span>Score OS</span>
     </a>
     <nav class="nav" aria-label="Beats">
-      <a href="#beat-1">Emblem</a>
-      <a href="#beat-2">Maxine</a>
-      <a href="#beat-3">Bureaus</a>
-      <a href="#beat-4">Deck</a>
-      <a href="#beat-5">Funding</a>
-      <a href="#beat-6">Pricing</a>
-      <a class="nav-cta" href="https://checkout.square.site/merchant/MLGEBVXJC0JRS/checkout/6A2Q2LWRQHPQDXV3LPI3BSBZ">Get Started</a>
+      <a href="#beat-1" data-magnetic class="magnetic">Emblem</a>
+      <a href="#beat-2" data-magnetic class="magnetic">Maxine</a>
+      <a href="#beat-3" data-magnetic class="magnetic">Bureaus</a>
+      <a href="#beat-4" data-magnetic class="magnetic">Deck</a>
+      <a href="#beat-5" data-magnetic class="magnetic">Funding</a>
+      <a href="#beat-6" data-magnetic class="magnetic">Pricing</a>
+      <a class="nav-cta magnetic" data-magnetic href="https://checkout.square.site/merchant/MLGEBVXJC0JRS/checkout/6A2Q2LWRQHPQDXV3LPI3BSBZ">Get Started</a>
     </nav>
   </header>
 
@@ -50,7 +60,7 @@
       <div class="overlay left">
         <p class="eyebrow">THE OPERATING SYSTEM FOR CREDIT REPAIR AGENCIES</p>
         <h1>Score OS</h1>
-        <p class="lede">Scroll through a continuous filmed world — not a brochure.</p>
+        <p class="lede">Scroll through a continuous filmed world — move to feel it react.</p>
         <p class="demo-note">Demo gauge · sample climb 580→760 · not a result or guarantee.</p>
       </div>
     </section>
@@ -95,7 +105,7 @@
         <p class="eyebrow">ENTER THE SYSTEM</p>
         <h2>Simple pricing.<br/>Infinite scale.</h2>
         <div class="price-row">
-          <article class="price-card agency">
+          <article class="price-card agency magnetic" data-magnetic>
             <span class="pill">Most popular</span>
             <h3>Agency OS</h3>
             <p class="price">$199<span>/mo</span></p>
@@ -105,9 +115,9 @@
               <li>White-label portal</li>
               <li>3-bureau tracking</li>
             </ul>
-            <a class="btn gold" href="https://checkout.square.site/merchant/MLGEBVXJC0JRS/checkout/6A2Q2LWRQHPQDXV3LPI3BSBZ">Subscribe — $199/mo</a>
+            <a class="btn gold magnetic" data-magnetic href="https://checkout.square.site/merchant/MLGEBVXJC0JRS/checkout/6A2Q2LWRQHPQDXV3LPI3BSBZ">Subscribe — $199/mo</a>
           </article>
-          <article class="price-card">
+          <article class="price-card magnetic" data-magnetic>
             <h3>DIY OS</h3>
             <p class="price">$49.99<span>/mo</span></p>
             <ul>
@@ -115,7 +125,7 @@
               <li>Score progress tracking</li>
               <li>Dispute toolkit</li>
             </ul>
-            <a class="btn ghost" href="https://checkout.square.site/merchant/MLGEBVXJC0JRS/checkout/VROSXIVQX2GK6ISB4BMCE237">Start DIY — $49.99/mo</a>
+            <a class="btn ghost magnetic" data-magnetic href="https://checkout.square.site/merchant/MLGEBVXJC0JRS/checkout/VROSXIVQX2GK6ISB4BMCE237">Start DIY — $49.99/mo</a>
             <p class="already">Or <a href="https://scoresos.com/diy">scoresos.com/diy</a></p>
           </article>
         </div>
@@ -124,12 +134,12 @@
     </section>
   </main>
 
-  <div class="scroll-hint" id="scroll-hint">Scroll to enter the world</div>
+  <div class="scroll-hint" id="scroll-hint">Scroll · move to interact</div>
   <div class="beat-dots" id="beat-dots" aria-hidden="true"></div>
 
   <script src="./vendor/gsap.min.js"></script>
   <script src="./vendor/ScrollTrigger.min.js"></script>
   <script src="./vendor/lenis.min.js"></script>
-  <script type="module" src="./js/main.js?v=5b05cb7"></script>
+  <script type="module" src="./js/main.js?v=v3c"></script>
 </body>
 </html>
