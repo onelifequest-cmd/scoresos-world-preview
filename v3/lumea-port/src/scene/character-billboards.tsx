@@ -216,10 +216,10 @@ const CharacterGlb = ({ cfg }: { cfg: CharacterSlotConfig }) => {
               std.roughness = 0.28;
               std.envMapIntensity = 1.05;
             } else if (!isFace) {
-              std.metalness = Math.min(std.metalness ?? 0.1, 0.12);
-              std.roughness = Math.max(std.roughness ?? 0.45, 0.58);
-              std.envMapIntensity = 0.42;
-              if (std.color) std.color.multiplyScalar(0.78);
+              std.metalness = Math.min(std.metalness ?? 0.1, 0.08);
+              std.roughness = Math.max(std.roughness ?? 0.45, 0.62);
+              std.envMapIntensity = 0.22;
+              if (std.color) std.color.multiplyScalar(0.55);
             }
             std.emissiveIntensity = 0;
             if (std.emissive) std.emissive.setRGB(0, 0, 0);
@@ -251,16 +251,27 @@ const CharacterGlb = ({ cfg }: { cfg: CharacterSlotConfig }) => {
   }, [scene, cfg.height]);
 
   // Slow idle ±18° yaw sway — real depth lets us go past the billboard ±8° clamp.
+  // ?robotYaw=<rad> overrides robot base yaw for framing QA.
+  const robotYawOverride = useMemo(() => {
+    if (typeof window === "undefined") return null;
+    if (!cfg.glbUrl || !cfg.glbUrl.includes("robot")) return null;
+    const q = new URLSearchParams(window.location.search).get("robotYaw");
+    if (q == null || q === "") return null;
+    const n = Number(q);
+    return Number.isFinite(n) ? n : null;
+  }, [cfg.glbUrl]);
   useFrame(({ clock }) => {
     const g = groupRef.current;
     if (!g) return;
     const phase = cfg.position[0] * 2.4;
     const sway =
       Math.sin(clock.elapsedTime * GLB_SWAY_SPEED + phase) * GLB_SWAY_AMP;
-    g.rotation.y = cfg.rotation[1] + cfg.yawBias + sway;
+    const base =
+      robotYawOverride != null ? robotYawOverride : cfg.rotation[1] + cfg.yawBias;
+    g.rotation.y = base + sway;
   });
 
-  const lightScale = cfg.glbUrl && cfg.glbUrl.includes("maxine") ? 0.55 : 1;
+  const lightScale = cfg.glbUrl && cfg.glbUrl.includes("maxine") ? 0.32 : 1;
   return (
     <group
       ref={groupRef}

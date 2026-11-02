@@ -33,12 +33,12 @@ export const CAMERA = {
   orbit: {
     pivotX: 0,
     pivotZ: 1.05,
-    /** Pull back so full figures (head→boots) sit ~45–50% of viewport under the nav. */
-    radius: 4.65,
-    /** Slightly lower camera; lookAt at mid-torso for clear headroom under nav. */
-    height: 1.12,
+    /** Pair ≈ 45–50% VH with boots + headroom under nav. */
+    radius: 4.95,
+    height: 1.62,
     azimuth: 1.591,
-    lookAt: [0, 1.42, 1.05] as const,
+    /** Mid-upper torso — heads sit just below nav with clear headroom. */
+    lookAt: [0, 1.88, 1.05] as const,
     speed: 0.22,
   },
   swayX: 0.16,
@@ -63,7 +63,8 @@ export const MONK = {
 } as const;
 
 export const CONTENT = {
-  position: [0, 0.95, 1.05] as const,
+  /** Pedestal+pair under nav; lookAt mid-upper torso for headroom. */
+  position: [0, 0.58, 1.05] as const,
   rotationY: 0.39,
   scale: 1,
 } as const;
@@ -83,12 +84,12 @@ export const RING = {
  */
 export const EMBLEM = {
   /**
-   * Mode A (v3g10): between the pair, slightly above chest and clearly in front
-   * (z+) so it sits clear of both bodies and the top halo.
+   * Mode A (v3g10): between the pair, chest/head height, toward camera (+Z)
+   * so it sits clear of both bodies and the top halo.
    */
-  position: [0.0, 1.55, 0.95] as const,
-  /** Sized so 742 + arc read at 1280; clear of bodies. */
-  diameter: 0.70,
+  position: [0.01, 2.08, 0.62] as const,
+  /** Sized so 742 + arc read at 1280; clear of bodies + halo. */
+  diameter: 0.78,
   /** Visible thickness (emblem.glb native depth scaled). */
   thickness: 0.13,
   /** Mild tip toward camera (~12°) — keep dial frontal. */
@@ -99,9 +100,9 @@ export const EMBLEM = {
    */
   baseYaw: 1.72,
   /** Sway amplitude ±20° (rad). */
-  swayAmp: 0.35,
+  swayAmp: 0.12,
   /** Sway angular speed. */
-  swaySpeed: 0.42,
+  swaySpeed: 0.32,
   /** Contact-shadow Y on the pedestal crown. */
   shadowY: 0.515,
 } as const;
@@ -132,27 +133,27 @@ export const PILLAR = {
 // resurrect a noisy field.
 export const DEBRIS = {
   /** Denser Lumea-style credit floaters around the pair (not over faces). */
-  count: 28,
-  minScale: 0.52,
-  maxScale: 0.95,
-  emissiveColor: "#8af0b4",
-  emissiveIntensity: 1.75,
+  count: 30,
+  minScale: 0.30,
+  maxScale: 0.55,
+  emissiveColor: "#9af5c0",
+  emissiveIntensity: 2.05,
   spiral: {
-    turns: 3.2,
-    radius: 3.45,
-    radiusJitter: 0.7,
+    turns: 3.4,
+    radius: 3.5,
+    radiusJitter: 0.8,
     yBottom: 0.2,
-    ySpan: 3.4,
+    ySpan: 3.3,
     yJitter: 0.45,
     angleJitter: 0.7,
-    zCenter: -0.55,
+    zCenter: -0.65,
   },
-  /** Keep floaters off the pair + gauge + headline column; park at edges. */
+  /** Keep floaters off faces/gauge; denser ring without face crowding. */
   clearZone: {
-    yMin: 0.35,
-    yMax: 2.55,
-    radius: 1.55,
-    minPushRadius: 2.35,
+    yMin: 0.25,
+    yMax: 2.6,
+    radius: 1.65,
+    minPushRadius: 2.4,
   },
   spinSpeed: 0.028,
   selfSpin: 0.18,
@@ -178,7 +179,7 @@ export const LIGHTS = {
     color: "#f3ede2",
     position: [0.4, 8.6, 1.4] as const,
     target: [0, 0.1, 0] as const,
-    intensity: 110,
+    intensity: 95,
     angle: 0.66,
     penumbra: 1,
     distance: 26,
@@ -246,9 +247,9 @@ export const PARTICLES = {
 
 export const POST = {
   bloom: {
-    intensity: 0.28,
-    luminanceThreshold: 1.15,
-    luminanceSmoothing: 0.32,
+    intensity: 0.18,
+    luminanceThreshold: 1.35,
+    luminanceSmoothing: 0.4,
     mipmapBlur: true,
   },
   dispersion: {
@@ -305,8 +306,8 @@ export const CHARACTERS: { maxine: CharacterSlotConfig; robot: CharacterSlotConf
     glbUrl: MAXINE_GLB_URL,
     /** Feet on crown (~0.515); full-body with boots visible. */
     position: [-0.48, 0.515, 0.18],
-    /** Sized with orbit.radius 4.65 so pair ≈ 45–50% of viewport height. */
-    height: 1.42,
+    /** Sized with orbit.radius 4.95 so pair ≈ 45–50% of viewport height. */
+    height: 1.30,
     aspect: 0.305,
     yawBias: 0.06,
     rotation: [0, Math.PI, 0],
@@ -317,11 +318,11 @@ export const CHARACTERS: { maxine: CharacterSlotConfig; robot: CharacterSlotConf
     glbUrl: ROBOT_GLB_URL,
     /** True full-body (head→feet) matching robot-B-approved. */
     position: [0.50, 0.515, 0.16],
-    height: 1.46,
+    height: 1.34,
     aspect: 0.341,
-    /** Authored mesh faces +X; π/2 aims -Z (camera) like Maxine. +bias = ¾ toward Maxine. */
-    yawBias: 0.32,
-    rotation: [0, Math.PI / 2, 0],
+    /** −π/2 ≈ camera-facing; bias leans ¾ toward Maxine. */
+    yawBias: -0.22,
+    rotation: [0, -Math.PI / 2, 0],
   },
 };
 
