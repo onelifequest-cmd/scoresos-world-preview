@@ -1,5 +1,5 @@
 /**
- * Scene configuration — v3g8 Maxine+robot billboards + credit debris.
+ * Scene configuration — v3g9 full-body Maxine+robot, closer framing, visible credit floaters.
  * Emblem = single facing medallion (sway, no spin); pedestal from monk.glb;
  * debris cleared from the upper halo / headline zone.
  */
@@ -26,29 +26,31 @@ export const OCCLUDER_LAYER = 4;
 
 // --- Camera (Lumea shipped) ------------------------------------------------
 export const CAMERA = {
-  position: [-0.1, 1.4, 5.95] as const,
-  target: [0.05, 1.55, -6.0] as const,
+  position: [-0.08, 1.35, 5.15] as const,
+  target: [0.05, 1.7, -6.0] as const,
   fov: 34,
-  roll: 0.17,
+  roll: 0.14,
   orbit: {
     pivotX: 0,
     pivotZ: 1.05,
-    radius: 4.9,
-    height: 1.4,
+    /** Between v3g8 (4.9) and overshot 3.95 — pair ~48% of frame height. */
+    radius: 4.10,
+    /** Slight low angle; lookAt at mid-torso so heads stay in frame. */
+    height: 1.30,
     azimuth: 1.591,
-    lookAt: [0, 1.7, 1.05] as const,
-    speed: 0.24,
+    lookAt: [0, 1.88, 1.05] as const,
+    speed: 0.22,
   },
-  swayX: 0.22,
-  swayY: 0.1,
-  swaySpeedX: 0.14,
-  swaySpeedY: 0.19,
-  parallaxX: 0.18,
-  parallaxY: 0.12,
+  swayX: 0.16,
+  swayY: 0.08,
+  swaySpeedX: 0.12,
+  swaySpeedY: 0.17,
+  parallaxX: 0.12,
+  parallaxY: 0.08,
   parallaxEase: 0.04,
   pointerOrbit: {
-    azimuth: 0.5,
-    height: 0.75,
+    azimuth: 0.35,
+    height: 0.5,
     ease: 0.05,
   },
 } as const;
@@ -81,11 +83,11 @@ export const RING = {
  */
 export const EMBLEM = {
   /**
-   * Mode A: floats just above + between Maxine and the robot (crown ~0.52,
-   * characters ~1.15 tall → head ~1.67; medallion center ~1.95).
+   * Mode A (v3g9): float between the pair at chest-to-head height, slightly
+   * in front (z+) so it sits clear of the top halo (raised above heads).
    */
-  position: [0, 1.95, 0.05] as const,
-  /** Slightly smaller so it reads as the glowing focal point between them. */
+  position: [0, 1.32, 0.48] as const,
+  /** Sized so 742 + arc read at 1280; chest height, in front of pair. */
   diameter: 0.78,
   /** Visible thickness (emblem.glb native depth scaled). */
   thickness: 0.13,
@@ -129,38 +131,39 @@ export const PILLAR = {
 // the edges. v3g6 uses denser edge debris (~34) explicitly so green wash can't
 // resurrect a noisy field.
 export const DEBRIS = {
-  count: 34,
-  minScale: 0.16,
-  maxScale: 0.55,
-  emissiveColor: "#3d7a62",
-  emissiveIntensity: 0.42,
+  /** 12–18 mid-size credit floaters near frame edges / mid-depth. */
+  count: 16,
+  minScale: 0.48,
+  maxScale: 0.86,
+  emissiveColor: "#7ae8a8",
+  emissiveIntensity: 1.35,
   spiral: {
-    turns: 5,
-    radius: 4.2,
-    radiusJitter: 1.6,
-    yBottom: -4.0,
-    ySpan: 11,
-    yJitter: 0.7,
-    angleJitter: 0.55,
-    zCenter: -1.8,
+    turns: 3.2,
+    radius: 3.45,
+    radiusJitter: 0.7,
+    yBottom: 0.2,
+    ySpan: 3.4,
+    yJitter: 0.45,
+    angleJitter: 0.7,
+    zCenter: -0.55,
   },
-  /** Keep large shards out of the upper halo / headline column. */
+  /** Keep floaters off the pair + gauge + headline column; park at edges. */
   clearZone: {
-    yMin: 0.4,
-    yMax: 5.8,
-    radius: 3.2,
-    minPushRadius: 3.9,
+    yMin: 0.15,
+    yMax: 3.0,
+    radius: 1.85,
+    minPushRadius: 2.85,
   },
-  spinSpeed: 0.04,
-  selfSpin: 0.35,
+  spinSpeed: 0.028,
+  selfSpin: 0.18,
   repel: {
-    radius: 2.4,
-    strength: 0.9,
-    freqLight: 3.2,
-    freqHeavy: 1.7,
-    damping: 0.42,
+    radius: 2.8,
+    strength: 1.15,
+    freqLight: 2.6,
+    freqHeavy: 1.4,
+    damping: 0.48,
   },
-  seed: 1337,
+  seed: 20261101,
 } as const;
 
 // --- Lighting (Lumea shipped) ----------------------------------------------
@@ -197,7 +200,8 @@ export const LIGHTS = {
   emeraldBounce: {
     color: "#3d9a72",
     position: [-0.55, 1.15, 1.4] as const,
-    intensity: 9.5,
+    /** Soft rim only — bodies stay neutrally keyed from the shaft. */
+    intensity: 1.4,
     distance: 5.5,
     decay: 2,
   },
@@ -205,8 +209,9 @@ export const LIGHTS = {
 
 export const FOG = {
   color: "#15161f",
-  near: 8,
-  far: 34,
+  /** Mild depth haze — characters (~4 m) barely touched; floaters deepen. */
+  near: 5.2,
+  far: 18,
 } as const;
 
 export const BACKDROP = {
@@ -241,9 +246,9 @@ export const PARTICLES = {
 
 export const POST = {
   bloom: {
-    intensity: 0.66,
-    luminanceThreshold: 0.82,
-    luminanceSmoothing: 0.3,
+    intensity: 0.42,
+    luminanceThreshold: 0.9,
+    luminanceSmoothing: 0.28,
     mipmapBlur: true,
   },
   dispersion: {
@@ -262,24 +267,51 @@ export const POST = {
 
 // --- Characters (alpha billboards on pillar crown) -------------------------
 const CHAR_BASE = new URL("assets/characters/", BUNDLE_BASE);
-export const CHARACTERS = {
+/**
+ * Per-character hero slot. Billboard PNG is the v3g9 fallback; when a Meshy
+ * GLB lands under assets/characters/, set `glbUrl` and the slot swaps to the
+ * mesh while keeping the same position / height(scale) / yaw / lighting.
+ */
+export type CharacterSlotConfig = {
+  /** Billboard cutout (always present as fallback). */
+  url: string;
+  /** Optional Meshy GLB — when set, replaces the billboard plane. */
+  glbUrl: string | null;
+  position: readonly [number, number, number];
+  /** World height of the figure (billboard plane height / GLB uniform scale target). */
+  height: number;
+  /** Billboard width/height. Ignored for GLB. */
+  aspect: number;
+  yawBias: number;
+  /** Extra Euler XYZ for GLB (radians). Billboard uses yawBias only. */
+  rotation: readonly [number, number, number];
+};
+
+export const CHARACTERS: { maxine: CharacterSlotConfig; robot: CharacterSlotConfig } = {
   maxine: {
     url: new URL("maxine-C-cutout.png", CHAR_BASE).href,
-    /** Feet on crown (~0.515). */
-    position: [-0.36, 0.515, 0.14] as const,
-    height: 1.28,
+    /** Optimized Meshy mesh (meshopt + webp, ~1.2 MB / ~77k tris; suit+chrome arm mats). */
+    glbUrl: new URL("maxine-c.glb", CHAR_BASE).href,
+    /** Feet on crown (~0.515); full-body with boots visible. */
+    position: [-0.48, 0.515, 0.18],
+    /** ~1.36 world units ≈ 48% of FOV height at radius 4.35. */
+    height: 1.50,
     aspect: 0.305,
-    yawBias: 0.08,
+    yawBias: 0.06,
+    rotation: [0, Math.PI, 0],
   },
   robot: {
     url: new URL("robot-B-cutout.png", CHAR_BASE).href,
-    /** Thighs-up cutout — seat bottom near crown; reads as standing in the shaft. */
-    position: [0.38, 0.42, 0.12] as const,
-    height: 1.35,
-    aspect: 0.504,
-    yawBias: -0.06,
+    /** Optimized Meshy mesh (meshopt + webp, ~2 MB / ~102k tris). */
+    glbUrl: new URL("robot-b.glb", CHAR_BASE).href,
+    /** True full-body (head→feet) matching robot-B-approved. */
+    position: [0.50, 0.515, 0.16],
+    height: 1.55,
+    aspect: 0.341,
+    yawBias: -0.05,
+    rotation: [0, Math.PI, 0],
   },
-} as const;
+};
 
 /** Credit-themed floating debris icons (replace rocks). */
 const ICON_BASE = new URL("assets/credit-icons/", BUNDLE_BASE);

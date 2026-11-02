@@ -158,7 +158,7 @@ const HologramGauge = ({ dialTex }: { dialTex: THREE.Texture }) => {
         map: dialTex,
         color: new THREE.Color("#b8ffe0"),
         transparent: true,
-        opacity: 0.55,
+        opacity: 0.78,
         metalness: 0.05,
         roughness: 0.2,
         emissive: new THREE.Color("#1f6b4e"),
@@ -177,8 +177,8 @@ const HologramGauge = ({ dialTex }: { dialTex: THREE.Texture }) => {
     if (!g || !g.parent) return;
     // Soft flicker + face camera (content-local −Z hemisphere)
     const pulse = 0.5 + 0.5 * Math.sin(clock.getElapsedTime() * 3.2);
-    mat.opacity = 0.42 + pulse * 0.18;
-    mat.emissiveIntensity = 0.55 + pulse * 0.35;
+    mat.opacity = 0.62 + pulse * 0.22;
+    mat.emissiveIntensity = 0.85 + pulse * 0.45;
     const inv = new THREE.Matrix4().copy(g.parent.matrixWorld).invert();
     const localCam = camera.position.clone().applyMatrix4(inv);
     const yaw = Math.atan2(localCam.x - g.position.x, localCam.z - g.position.z);
@@ -195,7 +195,7 @@ const HologramGauge = ({ dialTex }: { dialTex: THREE.Texture }) => {
     <group
       ref={group}
       // Toward robot (+X), chest height — reads as projection from robot
-      position={[0.28, 1.48, 0.32]}
+      position={[0.22, 1.72, 0.38]}
       rotation={[0, Math.PI, 0]}
     >
       {/* Soft projection beam from robot shoulder toward hologram */}
@@ -295,6 +295,12 @@ export const EmblemModel = () => {
           toneMapped: false,
         });
         object.material = material;
+        // v3g9: raise the TOP halo (Torus @ y≈1.61) just above full-body
+        // heads (~1.92 content-local) so it crowns the pair. Bottom halo
+        // (Torus.002 @ y≈-0.09) stays around the pillar.
+        if (object.name === "Torus" && !object.name.includes("002")) {
+          object.position.y = 2.42;
+        }
         ringEntries.push({
           material,
           secondary: object.name.includes("002"),

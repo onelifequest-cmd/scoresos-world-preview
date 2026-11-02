@@ -81,9 +81,9 @@ export const PARTICLE_COUNTS: Record<DeviceTier, number> = {
 };
 
 export const DEBRIS_COUNTS: Record<DeviceTier, number> = {
-  desktop: 34,
-  tablet: 28,
-  mobile: 20,
+  desktop: 16,
+  tablet: 14,
+  mobile: 12,
 };
 
 /** MSAA on the composer — expensive on a phone; the DPR clamp + fewer motes hide

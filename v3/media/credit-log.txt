@@ -110,3 +110,20 @@ Spent this step: ~5 (under 30 budget). Meshy 3D skipped (later upgrade).
 - Bug: FrontSide + yaw clamp around 0 culled characters (camera in +X/−Z).
 - Fix: base yaw π, clamp parallax, DoubleSide, rim/shadow/grade; holo B nudged toward robot.
 - Deploy: ?v=v3g8a (floating medallion) and ?v=v3g8b (robot holo). Cameos folded off.
+
+[2026-11-01 ~23:16 ET] Deploy live: dep-dbk0sq7b9u1s73f9uk70 commit 1a3d723
+  https://scoresos-world-preview.onrender.com/v3/?v=v3g8a
+  https://scoresos-world-preview.onrender.com/v3/?v=v3g8b
+  Auto-deploy did not fire on push; API trigger_deploy used (same as prior ships).
+
+--- v3g9 full-body robot + framing/integration (America/New_York 2026-11-01 ~23:25) ---
+Start credits: 354
+- nano-banana-2.1 1K full-body robot B from robot-B-approved.jpg (task 33504954-4f3e-4183-b71c-079bbe3808d9): ~4 cr
+- birefnet-v2 matte (task ec96c1aa-686e-431e-ac2a-9e05ad2b1df0): ~1 cr
+- Maxine: already full-body feet-visible cutout; no regen
+End credits: 349
+Spent this step: ~5 (under 40 budget). Meshy still deferred.
+
+[2026-11-01 ~23:36 ET] Maxine C Meshy still
+- Source: maxine-C-cutout.png (already full-body feet-visible, approved face) composited on neutral dark → v3/media/cameos/maxine-c-fullbody-still.png
+- Runway spend: 0 (reuse). Balance still ~349.

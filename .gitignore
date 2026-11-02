@@ -12,3 +12,7 @@ v3/qa/_frames_v3g*/
 v3/qa/_probe-*.png
 v3/media/masters/
 refs/
+
+# Meshy raws — too large for git; keep optimized *.glb only
+v3/media/meshy/*-raw.glb
+*.bak-*
