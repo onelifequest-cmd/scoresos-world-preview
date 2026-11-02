@@ -23,3 +23,6 @@ v4/media/hero/hero-raw.mp4
 v4/media/hero/plate-raw.jpg
 v4/media/hero/plate-2560.jpg
 !v4/media/hero/*.webm
+v4/qa/_tools/node_modules/
+v4/qa/_rec/
+v4/qa/_tools/package-lock.json
