@@ -268,6 +268,17 @@ export const POST = {
 // --- Characters (alpha billboards on pillar crown) -------------------------
 const CHAR_BASE = new URL("assets/characters/", BUNDLE_BASE);
 /**
+ * Single swap points for Meshy character meshes (copied into assets/characters/).
+ * Maxine: placeholder is maxine-c.glb until Patrick's ref Meshy lands —
+ * optimize v3/media/meshy/maxine-ref-raw.glb → maxine-ref.glb, copy here, flip
+ * MAXINE_GLB_FILE to "maxine-ref.glb". Face must match refs/maxine-ref.png.
+ * Robot: robot-b.glb is final for v3g9.
+ */
+export const MAXINE_GLB_FILE = "maxine-c.glb"; // placeholder — swap to "maxine-ref.glb"
+export const ROBOT_GLB_FILE = "robot-b.glb";
+export const MAXINE_GLB_URL = new URL(MAXINE_GLB_FILE, CHAR_BASE).href;
+export const ROBOT_GLB_URL = new URL(ROBOT_GLB_FILE, CHAR_BASE).href;
+/**
  * Per-character hero slot. Billboard PNG is the v3g9 fallback; when a Meshy
  * GLB lands under assets/characters/, set `glbUrl` and the slot swaps to the
  * mesh while keeping the same position / height(scale) / yaw / lighting.
@@ -290,8 +301,8 @@ export type CharacterSlotConfig = {
 export const CHARACTERS: { maxine: CharacterSlotConfig; robot: CharacterSlotConfig } = {
   maxine: {
     url: new URL("maxine-C-cutout.png", CHAR_BASE).href,
-    /** Optimized Meshy mesh (meshopt + webp, ~1.2 MB / ~77k tris; suit+chrome arm mats). */
-    glbUrl: new URL("maxine-c.glb", CHAR_BASE).href,
+    /** Placeholder Meshy (maxine-c); swap MAXINE_GLB_FILE → maxine-ref.glb when raw arrives. */
+    glbUrl: MAXINE_GLB_URL,
     /** Feet on crown (~0.515); full-body with boots visible. */
     position: [-0.48, 0.515, 0.18],
     /** ~1.36 world units ≈ 48% of FOV height at radius 4.35. */
@@ -303,7 +314,7 @@ export const CHARACTERS: { maxine: CharacterSlotConfig; robot: CharacterSlotConf
   robot: {
     url: new URL("robot-B-cutout.png", CHAR_BASE).href,
     /** Optimized Meshy mesh (meshopt + webp, ~2 MB / ~102k tris). */
-    glbUrl: new URL("robot-b.glb", CHAR_BASE).href,
+    glbUrl: ROBOT_GLB_URL,
     /** True full-body (head→feet) matching robot-B-approved. */
     position: [0.50, 0.515, 0.16],
     height: 1.55,

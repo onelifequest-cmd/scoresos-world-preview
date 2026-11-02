@@ -22,3 +22,9 @@
 - `v3/qa/chars-crop-v3g9.png`
 - `v3/qa/v3g9-vs-lumea-sidebyside.png`
 - `v3/qa/hero-v3g9-12s.mp4`
+
+## Maxine face / ref swap
+Patrick wants Maxine face = `refs/maxine-ref.png`. Current hero uses **placeholder**
+`maxine-c.glb`. When `v3/media/meshy/maxine-ref-raw.glb` arrives: optimize →
+`maxine-ref.glb`, copy into `assets/characters/`, set `MAXINE_GLB_FILE = "maxine-ref.glb"`
+in `scene-config.ts` (single constant). Do not retexture or use maxine-still.png.

@@ -1,8 +1,14 @@
 Character hero slots (billboard PNG + Meshy GLB).
 
-- maxine-C-cutout.png / robot-B-cutout.png — billboard fallbacks
-- robot-b.glb — optimized Meshy (~2.0 MB, ~102k tris, meshopt+webp 2048)
-- maxine-c.glb — optimized Meshy (~1.2 MB, ~77k tris, meshopt+webp 2048);
-  materials: maxine-suit (roughness 0.45) + maxine-arm-chrome (metal 0.9 / rough 0.2)
+Swap Maxine in ONE place: scene-config.ts → MAXINE_GLB_FILE
+  - "maxine-c.glb"     placeholder (current)
+  - "maxine-ref.glb"   Patrick ref face (from v3/media/meshy/maxine-ref-raw.glb)
 
-Raws stay in v3/media/meshy/*-raw.glb (gitignored).
+Robot: ROBOT_GLB_FILE = "robot-b.glb" (final for v3g9).
+
+Pipeline for a new raw:
+  gltf-transform optimize *-raw.glb <name>.glb (weld/simplify/webp/meshopt)
+  cp to this folder + public/assets/characters/ + rebuild
+  raws are gitignored (v3/media/meshy/*-raw.glb)
+
+Face policy: Maxine face must match refs/maxine-ref.png — do not retexture/swap faces.
