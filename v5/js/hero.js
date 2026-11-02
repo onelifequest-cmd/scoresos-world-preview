@@ -11,7 +11,6 @@
   const poster = $('#hero-poster');
   const settle = $('#hero-settle');
   const posterMobile = $('#hero-poster-mobile');
-  const dust = $('#hero-dust');
   const wall = $('#wall');
   const tiles = $$('.tile');
   const scoreNum = $('#score-num');
@@ -25,13 +24,16 @@
   const mobile = () => matchMedia('(max-width: 859px)').matches;
   let isMobile = mobile();
 
-  const INTRO_WEBM = './media/hero/hero-intro-v5k.webm';
-  const INTRO_MP4 = './media/hero/hero-intro-v5k.mp4';
-  const INTRO_MOBILE = './media/hero/hero-loop-mobile.mp4';
-  const AMBIENT_DESK = './media/hero/ambient-calm-v5k.mp4';
-  const AMBIENT_MOBILE = './media/hero/ambient-calm-mobile-v5k.mp4';
+  // v5l: original-quality intro (stream-copy of hero-loop) + sharp settle micro-pan ambient
+  const INTRO_DESK = './media/hero/hero-intro-v5l.mp4';
+  const INTRO_MOBILE = './media/hero/hero-intro-mobile-v5l.mp4';
+  const AMBIENT_DESK = './media/hero/ambient-calm-v5l.mp4';
+  const AMBIENT_MOBILE = './media/hero/ambient-calm-mobile-v5l.mp4';
+  const POSTER_DESK = './media/hero/poster-v5l.jpg';
+  const POSTER_MOBILE = './media/hero/poster-mobile-v5l.jpg';
+  const SETTLE_DESK = './media/hero/settle-calm.jpg';
+  const SETTLE_MOBILE = './media/hero/settle-calm-mobile-v5l.jpg';
 
-  // Plate settle / reach beat (intro encode ~8.5s; settle ~7.35)
   const REVEAL_AT = 5.4;
   const SWIPE_AT = 5.55;
   const BEAM_AT = 5.85;
@@ -49,7 +51,6 @@
   let scoreStarted = false;
   let scoreDone = false;
   let railStarted = false;
-  let dustRaf = 0;
   let pulseTimer = 0;
 
   let loaded = 0;
@@ -61,13 +62,32 @@
   };
 
   let finished = false;
+  let playArmed = false;
   function finishLoader() {
     if (finished) return;
     finished = true;
     bump(100);
-    setTimeout(() => loader?.classList.add('done'), 180);
+    setTimeout(() => loader?.classList.add('done'), 120);
+    // Start intro from fly-in frame 0 AFTER loader hides — never burn fly-in under preload
+    startIntroFromFlyIn();
   }
 
+  function startIntroFromFlyIn() {
+    if (playArmed || reduce) return;
+    playArmed = true;
+    if (!video) return;
+    const kick = () => {
+      try { video.pause(); } catch (_) {}
+      try { video.currentTime = 0; } catch (_) {}
+      tryPlay().then(() => {
+        if (mobile()) runMobileBeats();
+      });
+    };
+    // slight delay so poster (t0 fly-in) paints under the dismiss, then play from 0
+    setTimeout(kick, 140);
+  }
+
+  // Fallback only — prefer canplay bumping to 100
   setTimeout(() => bump(100), 4500);
 
   const imgs = $$('.tile img, #hero-poster, .hero-poster-fallback, #hero-poster-mobile, #hero-settle');
@@ -88,16 +108,11 @@
       while (video.firstChild) video.removeChild(video.firstChild);
       video.removeAttribute('src');
       if (mobile()) {
-        video.poster = './media/hero/poster-mobile-v5j.jpg';
+        video.poster = POSTER_MOBILE;
         video.src = INTRO_MOBILE;
       } else {
-        video.poster = './media/hero/poster.jpg';
-        const w = document.createElement('source');
-        w.src = INTRO_WEBM; w.type = 'video/webm';
-        const m = document.createElement('source');
-        m.src = INTRO_MP4; m.type = 'video/mp4';
-        video.appendChild(w);
-        video.appendChild(m);
+        video.poster = POSTER_DESK;
+        video.src = INTRO_DESK;
       }
       video.load();
     } catch (_) {}
@@ -107,21 +122,29 @@
     if (!ambient) return;
     try {
       ambient.src = mobile() ? AMBIENT_MOBILE : AMBIENT_DESK;
+      ambient.loop = true;
       ambient.load();
     } catch (_) {}
   }
 
-  // Initial mobile / desktop media
-  if (video) {
-    if (isMobile) {
-      setIntroSources();
-      if (settle) settle.src = './media/hero/settle-calm-mobile.jpg';
+  function applyDeviceStills() {
+    if (mobile()) {
+      if (settle) settle.src = SETTLE_MOBILE;
       if (posterMobile) {
-        posterMobile.src = './media/hero/poster-mobile-v5j.jpg';
+        posterMobile.src = POSTER_MOBILE;
         posterMobile.hidden = false;
       }
+      if (poster) poster.src = POSTER_MOBILE;
+    } else {
+      if (settle) settle.src = SETTLE_DESK;
+      if (poster) poster.src = POSTER_DESK;
     }
   }
+
+  // Initial media
+  isMobile = mobile();
+  applyDeviceStills();
+  setIntroSources();
   setAmbientSource();
 
   function revealPanels() {
@@ -238,68 +261,6 @@
     wall?.classList.add('glow-breath');
   }
 
-  function startDust() {
-    if (!dust || reduce || dustRaf) return;
-    const ctx = dust.getContext('2d');
-    if (!ctx) return;
-    const particles = [];
-    const N = mobile() ? 18 : 36;
-    const resize = () => {
-      const r = dust.parentElement?.getBoundingClientRect();
-      if (!r) return;
-      const dpr = Math.min(2, window.devicePixelRatio || 1);
-      dust.width = Math.floor(r.width * dpr);
-      dust.height = Math.floor(r.height * dpr);
-      dust.style.width = r.width + 'px';
-      dust.style.height = r.height + 'px';
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    };
-    resize();
-    window.addEventListener('resize', resize, { passive: true });
-    for (let i = 0; i < N; i++) {
-      particles.push({
-        x: 0.45 + Math.random() * 0.5,
-        y: 0.05 + Math.random() * 0.7,
-        r: 0.4 + Math.random() * 1.4,
-        a: 0.12 + Math.random() * 0.28,
-        vx: (Math.random() - 0.35) * 0.00025,
-        vy: -0.00012 - Math.random() * 0.00022,
-        tw: Math.random() * Math.PI * 2,
-      });
-    }
-    const tick = () => {
-      if (!ambientOn) { dustRaf = 0; return; }
-      const w = dust.clientWidth || 1;
-      const h = dust.clientHeight || 1;
-      ctx.clearRect(0, 0, w, h);
-      for (const p of particles) {
-        p.x += p.vx;
-        p.y += p.vy;
-        p.tw += 0.02;
-        if (p.y < -0.02) { p.y = 0.75; p.x = 0.5 + Math.random() * 0.45; }
-        if (p.x < 0.4 || p.x > 1.05) p.x = 0.5 + Math.random() * 0.45;
-        const alpha = p.a * (0.65 + 0.35 * Math.sin(p.tw));
-        ctx.beginPath();
-        ctx.fillStyle = `rgba(255, 220, 160, ${alpha.toFixed(3)})`;
-        ctx.arc(p.x * w, p.y * h, p.r, 0, Math.PI * 2);
-        ctx.fill();
-      }
-      dustRaf = requestAnimationFrame(tick);
-    };
-    dustRaf = requestAnimationFrame(tick);
-  }
-
-  function stopDust() {
-    ambientOn = false;
-    if (dustRaf) cancelAnimationFrame(dustRaf);
-    dustRaf = 0;
-    if (dust) {
-      const ctx = dust.getContext('2d');
-      if (ctx) ctx.clearRect(0, 0, dust.width, dust.height);
-    }
-    if (pulseTimer) { clearInterval(pulseTimer); pulseTimer = 0; }
-  }
-
   function startAmbient() {
     if (reduce || ambientOn) {
       if (replayBtn) replayBtn.hidden = false;
@@ -310,11 +271,9 @@
     wall?.classList.add('ambient');
     if (replayBtn) replayBtn.hidden = false;
 
-    // Soft continuous life on holograms
     tiles.forEach((t) => t.classList.add('alive'));
     railCards.forEach((c) => c.classList.add('alive'));
 
-    // Loop calm ambient plate under settle (Ken Burns CSS also on settle)
     if (ambient) {
       setAmbientSource();
       ambient.muted = true;
@@ -324,13 +283,20 @@
       ambient.play().then(() => {
         stage?.classList.add('ambient-video');
       }).catch(() => {
-        // CSS Ken Burns on settle is enough
+        // settle still remains; CSS tile float still runs
       });
     }
 
-    startDust();
     pulse742();
     pulseTimer = setInterval(pulse742, 5200);
+  }
+
+  function stopAmbient() {
+    ambientOn = false;
+    if (pulseTimer) { clearInterval(pulseTimer); pulseTimer = 0; }
+    if (ambient) {
+      try { ambient.pause(); } catch (_) {}
+    }
   }
 
   function settlePose() {
@@ -347,7 +313,6 @@
       stage?.classList.add('settled-solid');
       if (video) {
         try { video.pause(); } catch (_) {}
-        // Keep in DOM for Replay; hide visually
         video.style.visibility = 'hidden';
         video.style.opacity = '0';
       }
@@ -387,6 +352,14 @@
     if (posterMobile) posterMobile.hidden = false;
   }
 
+  function markVideoPlaying() {
+    stage?.classList.add('video-playing');
+    if (poster) {
+      // Keep in DOM for replay paint, but hide under playing video
+      poster.style.opacity = '0';
+    }
+  }
+
   function tryPlay() {
     if (!video) return Promise.resolve();
     video.muted = true;
@@ -398,8 +371,8 @@
     video.setAttribute('autoplay', '');
     return video.play().then(() => {
       stage?.classList.remove('mobile-fallback');
+      markVideoPlaying();
       if (mobile() && posterMobile) posterMobile.style.opacity = '0';
-      if (poster) poster.hidden = true;
       video.hidden = false;
       video.style.visibility = '';
       video.style.opacity = '';
@@ -407,8 +380,8 @@
       if (mobile()) {
         showMobileFallback();
       } else {
-        // Desktop: keep trying; show poster underneath but don't abort intro forever
-        if (poster) poster.hidden = false;
+        // Desktop: poster (fly-in frame) stays visible; retry play
+        if (poster) poster.style.opacity = '1';
         setTimeout(() => tryPlay(), 600);
       }
     });
@@ -417,6 +390,7 @@
   function armPlayRetry() {
     if (reduce) return;
     const resume = () => {
+      if (!finished) return;
       if (!settled && video && video.paused) tryPlay();
     };
     window.addEventListener('pointerdown', resume, { passive: true });
@@ -461,27 +435,24 @@
 
   function replayIntro() {
     if (reduce) return;
-    stopDust();
-    stage?.classList.remove('settled', 'settled-solid', 'ambient', 'ambient-video', 'mobile-fallback');
+    stopAmbient();
+    stage?.classList.remove('settled', 'settled-solid', 'ambient', 'ambient-video', 'mobile-fallback', 'video-playing');
     if (ambient) {
       try { ambient.pause(); } catch (_) {}
-      stage?.classList.remove('ambient-video');
     }
     if (replayBtn) replayBtn.hidden = true;
     resetBeatFlags();
     isMobile = mobile();
+    applyDeviceStills();
     setIntroSources();
     setAmbientSource();
+    if (poster) poster.style.opacity = '1';
     if (video) {
       video.hidden = false;
       video.style.visibility = '';
       video.style.opacity = '';
       video.loop = false;
-      video.currentTime = 0;
-    }
-    if (settle) {
-      // force settle hidden until next settle
-      settle.style.opacity = '';
+      try { video.currentTime = 0; } catch (_) {}
     }
     tryPlay().then(() => {
       if (mobile()) runMobileBeats();
@@ -496,20 +467,20 @@
   if (video) {
     video.loop = false;
 
-    const onReady = () => bump(95);
+    const onReady = () => bump(100);
     if (video.readyState >= 2) onReady();
     video.addEventListener('loadeddata', onReady, { once: true });
     video.addEventListener('canplay', onReady, { once: true });
+    video.addEventListener('playing', markVideoPlaying);
     video.addEventListener('error', () => {
       if (mobile()) {
         showMobileFallback();
-        bump(95);
+        bump(100);
         if (!reduce) runMobileBeats();
         else { revealRail(); lockScore742(); }
       } else {
-        if (poster) poster.hidden = false;
-        bump(95);
-        // Fall back to beats so wall still animates even if video fails
+        if (poster) poster.style.opacity = '1';
+        bump(100);
         setTimeout(runDesktopBeats, 500);
         setTimeout(settlePose, 2800);
       }
@@ -540,25 +511,25 @@
 
     if (!reduce) {
       if (isMobile) showMobileFallback();
-      tryPlay();
+      // Preload only — play starts in finishLoader from currentTime 0 (fly-in)
+      try { video.pause(); video.currentTime = 0; } catch (_) {}
       armPlayRetry();
-      if (isMobile) runMobileBeats();
     } else {
       video.hidden = true;
-      bump(95);
+      bump(100);
       if (isMobile) {
         showMobileFallback();
         revealRail();
         lockScore742();
       } else {
-        if (poster) poster.hidden = false;
+        if (poster) poster.style.opacity = '1';
         runDesktopBeats();
         settlePose();
       }
       if (replayBtn) replayBtn.hidden = true;
     }
   } else {
-    bump(95);
+    bump(100);
     if (isMobile) {
       showMobileFallback();
       if (!reduce) runMobileBeats();

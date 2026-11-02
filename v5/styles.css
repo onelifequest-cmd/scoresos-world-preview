@@ -78,31 +78,31 @@ a { color: inherit; text-decoration: none; }
   overflow: hidden;
   pointer-events: none;
 }
-.hero-video, .hero-poster-fallback, .hero-poster-mobile, .hero-settle {
+.hero-video, .hero-poster-fallback, .hero-poster-mobile, .hero-settle, .hero-ambient {
   position: absolute; inset: 0;
   width: 100%; height: 100%;
   object-fit: cover;
-  /* Shared registration — same OP + transform so crossfade never doubles edges */
-  object-position: 8% 36%;
-  /* Scale up for pan room; nudge right so Maxine/robot sit right of ~x330 @1024 */
-  transform-origin: 28% 40%;
-  transform: scale(calc(1.22 + var(--scroll) * 0.03)) translate3d(
-    calc(5.5% + (var(--mx) - 0.5) * -18px),
-    calc((var(--my) - 0.5) * -12px),
-    0
-  );
-  transition: transform .15s linear, opacity 1.45s ease;
+  /* v5l: framing via object-position ONLY — never CSS scale > 1 on the plate */
+  object-position: 14% 38%;
+  transform: none;
+  transform-origin: center center;
+  transition: opacity 1.45s ease;
   z-index: 0;
 }
+.hero-poster-fallback {
+  /* Visible until first decoded video frame — IS the fly-in frame (no jump) */
+  opacity: 1;
+  z-index: 1;
+}
+.hero-stage.video-playing .hero-poster-fallback { opacity: 0; pointer-events: none; }
 .hero-poster-mobile { display: none; }
 .hero-settle {
   opacity: 0;
   pointer-events: none;
-  /* settle inherits transform from shared rule — critical for no ghost */
+  z-index: 1;
 }
 .hero-stage.settled .hero-settle { opacity: 1; }
 .hero-stage.settled .hero-video { opacity: 0; }
-/* After fade completes: settle is solid, video gone — no ghost */
 .hero-stage.settled-solid .hero-settle {
   opacity: 1;
   transition: none;
@@ -115,49 +115,26 @@ a { color: inherit; text-decoration: none; }
   transition: none;
 }
 
-/* ---- v5k ambient life (after intro settle) ---- */
+/* ---- v5l ambient: sharp micro-pan of settle (same plate, no upscale) ---- */
 .hero-ambient {
-  position: absolute; inset: 0;
-  width: 100%; height: 100%;
-  object-fit: cover;
-  object-position: 8% 36%;
-  transform-origin: 28% 40%;
-  transform: scale(calc(1.22 + var(--scroll) * 0.03)) translate3d(
-    calc(5.5% + (var(--mx) - 0.5) * -18px),
-    calc((var(--my) - 0.5) * -12px),
-    0
-  );
   opacity: 0;
   pointer-events: none;
   z-index: 0;
-  transition: opacity 1.2s ease, transform .15s linear;
+  transition: opacity 1.2s ease;
 }
 .hero-stage.ambient-video .hero-ambient {
-  opacity: 0.92;
+  opacity: 1;
   z-index: 1;
 }
 .hero-stage.ambient-video .hero-settle {
-  opacity: 0.35;
-}
-.hero-dust {
-  position: absolute; inset: 0;
-  z-index: 2;
-  pointer-events: none;
   opacity: 0;
-  transition: opacity 1s ease;
 }
-.hero-stage.ambient .hero-dust { opacity: 1; }
-
-/* Slow Ken Burns on the plate shell — parallax stays on media children */
+/* No Ken Burns / no plate shell scale — life lives on DOM screens */
 .hero-stage.ambient .hero-plate {
-  transform-origin: 38% 42%;
-  animation: plate-kb 24s ease-in-out infinite alternate;
-  will-change: transform;
+  transform: none;
+  animation: none;
 }
-@keyframes plate-kb {
-  0%   { transform: scale(1) translate3d(0, 0, 0); }
-  100% { transform: scale(1.05) translate3d(-0.8%, -0.5%, 0); }
-}
+.hero-dust { display: none !important; }
 
 /* Hologram continuous breath + scan */
 .wall.ambient {
@@ -262,7 +239,7 @@ a { color: inherit; text-decoration: none; }
     perspective(1500px)
     rotateY(22deg)
     rotateX(1.6deg)
-    translate3d(calc((var(--mx) - 0.5) * 14px), calc((var(--my) - 0.5) * 8px + var(--scroll) * -10px), 0);
+    translate3d(calc((var(--mx) - 0.5) * 4px), calc((var(--my) - 0.5) * 2px + var(--scroll) * -6px), 0);
   transition: transform .18s linear;
   pointer-events: none;
 }
@@ -861,12 +838,14 @@ a { color: inherit; text-decoration: none; }
   .hero-video,
   .hero-poster-fallback,
   .hero-settle,
-  .hero-poster-mobile {
+  .hero-poster-mobile,
+  .hero-ambient {
     position: absolute !important;
     inset: 0 !important;
     width: 100% !important;
     height: 100% !important;
     object-fit: cover !important;
+    /* Mobile intro plate is already robot-tracking 720²; center it */
     object-position: center 42% !important;
     transform: none !important;
     transform-origin: center center !important;
@@ -874,6 +853,9 @@ a { color: inherit; text-decoration: none; }
     margin: 0;
     z-index: 0;
     pointer-events: none;
+  }
+  .hero-poster-fallback {
+    display: none !important; /* mobile uses poster-mobile / baked plate */
   }
   .hero-video {
     display: block !important;
@@ -1001,14 +983,11 @@ a { color: inherit; text-decoration: none; }
 @media (max-width: 859px) {
   .hero-ambient {
     object-position: 50% 42%;
-    transform: none;
+    transform: none !important;
   }
   .hero-stage.ambient .hero-plate {
-    animation: plate-kb-mobile 22s ease-in-out infinite alternate;
-  }
-  @keyframes plate-kb-mobile {
-    0%   { transform: scale(1); }
-    100% { transform: scale(1.06) translate3d(0, -1.2%, 0); }
+    animation: none;
+    transform: none;
   }
   .hero-replay {
     margin: 8px auto 0;
@@ -1021,12 +1000,42 @@ a { color: inherit; text-decoration: none; }
   }
 }
 
+
+/* ---- v5l: life on DOM screens only (never scale the video) ---- */
+.tile.holo.alive.on {
+  animation: tile-float 5.2s ease-in-out infinite;
+  animation-delay: calc(var(--d, 0) * 0.35s);
+}
+.tile.holo.alive.on:nth-child(odd) {
+  animation-duration: 5.8s;
+}
+@keyframes tile-float {
+  0%, 100% { transform: translateY(0) translateZ(0); }
+  50% { transform: translateY(-4px) translateZ(0); }
+}
+.tile.holo.alive.on .tile-scan {
+  animation: scan-drift 3.6s linear infinite;
+}
+@keyframes scan-drift {
+  0% { background-position: 0 0; }
+  100% { background-position: 0 12px; }
+}
+.tile.holo.alive.on .tile-glass {
+  box-shadow:
+    inset 0 0 0 1px rgba(153, 246, 228, .30),
+    inset 0 8px 20px rgba(255,255,255,.06),
+    0 0 18px rgba(94, 234, 212, .14);
+}
+.score-num.settled-score {
+  text-shadow: 0 0 12px rgba(167, 243, 208, .55);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .hero-video, .hero-ambient { display: none !important; }
   .hero-poster-fallback { display: block !important; }
   .hero-dust { display: none !important; }
   .hero-replay { display: none !important; }
-  .tile.holo { transition: none; animation: none; opacity: 1; transform: none; }
+  .tile.holo, .tile.holo.alive.on { transition: none; animation: none !important; opacity: 1; transform: none; }
   .tile.holo .tile-scan { animation: none; }
   .chip { animation: none; opacity: 0; }
   .hero-video, .hero-poster-fallback, .hero-settle, .hero-plate, .wall { transition: none; transform: none; animation: none !important; }

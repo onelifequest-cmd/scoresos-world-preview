@@ -1,0 +1,657 @@
+{
+  "desk": {
+    "label": "1440",
+    "scales": [
+      {
+        "t": 0.15,
+        "hero-video": {
+          "transform": "none",
+          "scale": 1,
+          "objectFit": "cover",
+          "objectPosition": "14% 38%"
+        },
+        "hero-ambient": {
+          "transform": "none",
+          "scale": 1,
+          "objectFit": "cover",
+          "objectPosition": "14% 38%"
+        },
+        "hero-settle": {
+          "transform": "none",
+          "scale": 1,
+          "objectFit": "cover",
+          "objectPosition": "14% 38%"
+        },
+        "hero-plate": {
+          "transform": "none",
+          "scale": 1,
+          "objectFit": "fill",
+          "objectPosition": "50% 50%"
+        },
+        "video": {
+          "w": 1280,
+          "h": 720,
+          "t": 0.4028,
+          "paused": false,
+          "src": "http://127.0.0.1:8765/v5/media/hero/hero-intro-v5l.mp4"
+        },
+        "ambient": {
+          "w": 1280,
+          "h": 721,
+          "t": 0,
+          "paused": true,
+          "src": "http://127.0.0.1:8765/v5/media/hero/ambient-calm-v5l.mp4"
+        },
+        "stageClass": "hero-stage video-playing"
+      },
+      {
+        "t": 0.8,
+        "hero-video": {
+          "transform": "none",
+          "scale": 1,
+          "objectFit": "cover",
+          "objectPosition": "14% 38%"
+        },
+        "hero-ambient": {
+          "transform": "none",
+          "scale": 1,
+          "objectFit": "cover",
+          "objectPosition": "14% 38%"
+        },
+        "hero-settle": {
+          "transform": "none",
+          "scale": 1,
+          "objectFit": "cover",
+          "objectPosition": "14% 38%"
+        },
+        "hero-plate": {
+          "transform": "none",
+          "scale": 1,
+          "objectFit": "fill",
+          "objectPosition": "50% 50%"
+        },
+        "video": {
+          "w": 1280,
+          "h": 720,
+          "t": 1.005,
+          "paused": false,
+          "src": "http://127.0.0.1:8765/v5/media/hero/hero-intro-v5l.mp4"
+        },
+        "ambient": {
+          "w": 1280,
+          "h": 721,
+          "t": 0,
+          "paused": true,
+          "src": "http://127.0.0.1:8765/v5/media/hero/ambient-calm-v5l.mp4"
+        },
+        "stageClass": "hero-stage video-playing"
+      },
+      {
+        "t": 2,
+        "hero-video": {
+          "transform": "none",
+          "scale": 1,
+          "objectFit": "cover",
+          "objectPosition": "14% 38%"
+        },
+        "hero-ambient": {
+          "transform": "none",
+          "scale": 1,
+          "objectFit": "cover",
+          "objectPosition": "14% 38%"
+        },
+        "hero-settle": {
+          "transform": "none",
+          "scale": 1,
+          "objectFit": "cover",
+          "objectPosition": "14% 38%"
+        },
+        "hero-plate": {
+          "transform": "none",
+          "scale": 1,
+          "objectFit": "fill",
+          "objectPosition": "50% 50%"
+        },
+        "video": {
+          "w": 1280,
+          "h": 720,
+          "t": 2.2329,
+          "paused": false,
+          "src": "http://127.0.0.1:8765/v5/media/hero/hero-intro-v5l.mp4"
+        },
+        "ambient": {
+          "w": 1280,
+          "h": 721,
+          "t": 0,
+          "paused": true,
+          "src": "http://127.0.0.1:8765/v5/media/hero/ambient-calm-v5l.mp4"
+        },
+        "stageClass": "hero-stage video-playing"
+      },
+      {
+        "t": 5.5,
+        "hero-video": {
+          "transform": "none",
+          "scale": 1,
+          "objectFit": "cover",
+          "objectPosition": "14% 38%"
+        },
+        "hero-ambient": {
+          "transform": "none",
+          "scale": 1,
+          "objectFit": "cover",
+          "objectPosition": "14% 38%"
+        },
+        "hero-settle": {
+          "transform": "none",
+          "scale": 1,
+          "objectFit": "cover",
+          "objectPosition": "14% 38%"
+        },
+        "hero-plate": {
+          "transform": "none",
+          "scale": 1,
+          "objectFit": "fill",
+          "objectPosition": "50% 50%"
+        },
+        "video": {
+          "w": 1280,
+          "h": 720,
+          "t": 5.756,
+          "paused": false,
+          "src": "http://127.0.0.1:8765/v5/media/hero/hero-intro-v5l.mp4"
+        },
+        "ambient": {
+          "w": 1280,
+          "h": 721,
+          "t": 0,
+          "paused": true,
+          "src": "http://127.0.0.1:8765/v5/media/hero/ambient-calm-v5l.mp4"
+        },
+        "stageClass": "hero-stage video-playing"
+      }
+    ],
+    "files": [
+      "v5l-1440-t0p15.jpg",
+      "v5l-1440-t0p8.jpg",
+      "v5l-1440-t2.jpg",
+      "v5l-1440-t5p5.jpg"
+    ],
+    "settle": {
+      "hero-video": {
+        "transform": "none",
+        "scale": 1,
+        "objectFit": "cover",
+        "objectPosition": "14% 38%"
+      },
+      "hero-ambient": {
+        "transform": "none",
+        "scale": 1,
+        "objectFit": "cover",
+        "objectPosition": "14% 38%"
+      },
+      "hero-settle": {
+        "transform": "none",
+        "scale": 1,
+        "objectFit": "cover",
+        "objectPosition": "14% 38%"
+      },
+      "hero-plate": {
+        "transform": "none",
+        "scale": 1,
+        "objectFit": "fill",
+        "objectPosition": "50% 50%"
+      },
+      "video": {
+        "w": 1280,
+        "h": 720,
+        "t": 7.3526,
+        "paused": true,
+        "src": "http://127.0.0.1:8765/v5/media/hero/hero-intro-v5l.mp4"
+      },
+      "ambient": {
+        "w": 1280,
+        "h": 721,
+        "t": 0.86,
+        "paused": false,
+        "src": "http://127.0.0.1:8765/v5/media/hero/ambient-calm-v5l.mp4"
+      },
+      "stageClass": "hero-stage video-playing settled settled-solid ambient ambient-video"
+    },
+    "ambient": {
+      "hero-video": {
+        "transform": "none",
+        "scale": 1,
+        "objectFit": "cover",
+        "objectPosition": "14% 38%"
+      },
+      "hero-ambient": {
+        "transform": "none",
+        "scale": 1,
+        "objectFit": "cover",
+        "objectPosition": "14% 38%"
+      },
+      "hero-settle": {
+        "transform": "none",
+        "scale": 1,
+        "objectFit": "cover",
+        "objectPosition": "14% 38%"
+      },
+      "hero-plate": {
+        "transform": "none",
+        "scale": 1,
+        "objectFit": "fill",
+        "objectPosition": "50% 50%"
+      },
+      "video": {
+        "w": 1280,
+        "h": 720,
+        "t": 7.3526,
+        "paused": true,
+        "src": "http://127.0.0.1:8765/v5/media/hero/hero-intro-v5l.mp4"
+      },
+      "ambient": {
+        "w": 1280,
+        "h": 721,
+        "t": 4.0121,
+        "paused": false,
+        "src": "http://127.0.0.1:8765/v5/media/hero/ambient-calm-v5l.mp4"
+      },
+      "stageClass": "hero-stage video-playing settled settled-solid ambient ambient-video"
+    }
+  },
+  "mid": {
+    "label": "1280",
+    "scales": [
+      {
+        "t": 0.15,
+        "hero-video": {
+          "transform": "none",
+          "scale": 1,
+          "objectFit": "cover",
+          "objectPosition": "14% 38%"
+        },
+        "hero-ambient": {
+          "transform": "none",
+          "scale": 1,
+          "objectFit": "cover",
+          "objectPosition": "14% 38%"
+        },
+        "hero-settle": {
+          "transform": "none",
+          "scale": 1,
+          "objectFit": "cover",
+          "objectPosition": "14% 38%"
+        },
+        "hero-plate": {
+          "transform": "none",
+          "scale": 1,
+          "objectFit": "fill",
+          "objectPosition": "50% 50%"
+        },
+        "video": {
+          "w": 1280,
+          "h": 720,
+          "t": 0.3859,
+          "paused": false,
+          "src": "http://127.0.0.1:8765/v5/media/hero/hero-intro-v5l.mp4"
+        },
+        "ambient": {
+          "w": 1280,
+          "h": 721,
+          "t": 0,
+          "paused": true,
+          "src": "http://127.0.0.1:8765/v5/media/hero/ambient-calm-v5l.mp4"
+        },
+        "stageClass": "hero-stage video-playing"
+      },
+      {
+        "t": 2,
+        "hero-video": {
+          "transform": "none",
+          "scale": 1,
+          "objectFit": "cover",
+          "objectPosition": "14% 38%"
+        },
+        "hero-ambient": {
+          "transform": "none",
+          "scale": 1,
+          "objectFit": "cover",
+          "objectPosition": "14% 38%"
+        },
+        "hero-settle": {
+          "transform": "none",
+          "scale": 1,
+          "objectFit": "cover",
+          "objectPosition": "14% 38%"
+        },
+        "hero-plate": {
+          "transform": "none",
+          "scale": 1,
+          "objectFit": "fill",
+          "objectPosition": "50% 50%"
+        },
+        "video": {
+          "w": 1280,
+          "h": 720,
+          "t": 2.23,
+          "paused": false,
+          "src": "http://127.0.0.1:8765/v5/media/hero/hero-intro-v5l.mp4"
+        },
+        "ambient": {
+          "w": 1280,
+          "h": 721,
+          "t": 0,
+          "paused": true,
+          "src": "http://127.0.0.1:8765/v5/media/hero/ambient-calm-v5l.mp4"
+        },
+        "stageClass": "hero-stage video-playing"
+      }
+    ],
+    "files": [
+      "v5l-1280-t0p15.jpg",
+      "v5l-1280-t2.jpg"
+    ],
+    "settle": {
+      "hero-video": {
+        "transform": "none",
+        "scale": 1,
+        "objectFit": "cover",
+        "objectPosition": "14% 38%"
+      },
+      "hero-ambient": {
+        "transform": "none",
+        "scale": 1,
+        "objectFit": "cover",
+        "objectPosition": "14% 38%"
+      },
+      "hero-settle": {
+        "transform": "none",
+        "scale": 1,
+        "objectFit": "cover",
+        "objectPosition": "14% 38%"
+      },
+      "hero-plate": {
+        "transform": "none",
+        "scale": 1,
+        "objectFit": "fill",
+        "objectPosition": "50% 50%"
+      },
+      "video": {
+        "w": 1280,
+        "h": 720,
+        "t": 7.5713,
+        "paused": true,
+        "src": "http://127.0.0.1:8765/v5/media/hero/hero-intro-v5l.mp4"
+      },
+      "ambient": {
+        "w": 1280,
+        "h": 721,
+        "t": 0.8134,
+        "paused": false,
+        "src": "http://127.0.0.1:8765/v5/media/hero/ambient-calm-v5l.mp4"
+      },
+      "stageClass": "hero-stage video-playing settled settled-solid ambient ambient-video"
+    },
+    "ambient": {
+      "hero-video": {
+        "transform": "none",
+        "scale": 1,
+        "objectFit": "cover",
+        "objectPosition": "14% 38%"
+      },
+      "hero-ambient": {
+        "transform": "none",
+        "scale": 1,
+        "objectFit": "cover",
+        "objectPosition": "14% 38%"
+      },
+      "hero-settle": {
+        "transform": "none",
+        "scale": 1,
+        "objectFit": "cover",
+        "objectPosition": "14% 38%"
+      },
+      "hero-plate": {
+        "transform": "none",
+        "scale": 1,
+        "objectFit": "fill",
+        "objectPosition": "50% 50%"
+      },
+      "video": {
+        "w": 1280,
+        "h": 720,
+        "t": 7.5713,
+        "paused": true,
+        "src": "http://127.0.0.1:8765/v5/media/hero/hero-intro-v5l.mp4"
+      },
+      "ambient": {
+        "w": 1280,
+        "h": 721,
+        "t": 3.9406,
+        "paused": false,
+        "src": "http://127.0.0.1:8765/v5/media/hero/ambient-calm-v5l.mp4"
+      },
+      "stageClass": "hero-stage video-playing settled settled-solid ambient ambient-video"
+    }
+  },
+  "phone": {
+    "label": "390",
+    "scales": [
+      {
+        "t": 0.15,
+        "hero-video": {
+          "transform": "none",
+          "scale": 1,
+          "objectFit": "cover",
+          "objectPosition": "50% 42%"
+        },
+        "hero-ambient": {
+          "transform": "none",
+          "scale": 1,
+          "objectFit": "cover",
+          "objectPosition": "50% 42%"
+        },
+        "hero-settle": {
+          "transform": "none",
+          "scale": 1,
+          "objectFit": "cover",
+          "objectPosition": "50% 42%"
+        },
+        "hero-plate": {
+          "transform": "none",
+          "scale": 1,
+          "objectFit": "fill",
+          "objectPosition": "50% 50%"
+        },
+        "video": {
+          "w": 720,
+          "h": 720,
+          "t": 0.4009,
+          "paused": false,
+          "src": "http://127.0.0.1:8765/v5/media/hero/hero-intro-mobile-v5l.mp4"
+        },
+        "ambient": {
+          "w": 720,
+          "h": 720,
+          "t": 0,
+          "paused": true,
+          "src": "http://127.0.0.1:8765/v5/media/hero/ambient-calm-mobile-v5l.mp4"
+        },
+        "stageClass": "hero-stage video-playing"
+      },
+      {
+        "t": 0.8,
+        "hero-video": {
+          "transform": "none",
+          "scale": 1,
+          "objectFit": "cover",
+          "objectPosition": "50% 42%"
+        },
+        "hero-ambient": {
+          "transform": "none",
+          "scale": 1,
+          "objectFit": "cover",
+          "objectPosition": "50% 42%"
+        },
+        "hero-settle": {
+          "transform": "none",
+          "scale": 1,
+          "objectFit": "cover",
+          "objectPosition": "50% 42%"
+        },
+        "hero-plate": {
+          "transform": "none",
+          "scale": 1,
+          "objectFit": "fill",
+          "objectPosition": "50% 50%"
+        },
+        "video": {
+          "w": 720,
+          "h": 720,
+          "t": 1.0233,
+          "paused": false,
+          "src": "http://127.0.0.1:8765/v5/media/hero/hero-intro-mobile-v5l.mp4"
+        },
+        "ambient": {
+          "w": 720,
+          "h": 720,
+          "t": 0,
+          "paused": true,
+          "src": "http://127.0.0.1:8765/v5/media/hero/ambient-calm-mobile-v5l.mp4"
+        },
+        "stageClass": "hero-stage video-playing"
+      },
+      {
+        "t": 2,
+        "hero-video": {
+          "transform": "none",
+          "scale": 1,
+          "objectFit": "cover",
+          "objectPosition": "50% 42%"
+        },
+        "hero-ambient": {
+          "transform": "none",
+          "scale": 1,
+          "objectFit": "cover",
+          "objectPosition": "50% 42%"
+        },
+        "hero-settle": {
+          "transform": "none",
+          "scale": 1,
+          "objectFit": "cover",
+          "objectPosition": "50% 42%"
+        },
+        "hero-plate": {
+          "transform": "none",
+          "scale": 1,
+          "objectFit": "fill",
+          "objectPosition": "50% 50%"
+        },
+        "video": {
+          "w": 720,
+          "h": 720,
+          "t": 2.1879,
+          "paused": false,
+          "src": "http://127.0.0.1:8765/v5/media/hero/hero-intro-mobile-v5l.mp4"
+        },
+        "ambient": {
+          "w": 720,
+          "h": 720,
+          "t": 0,
+          "paused": true,
+          "src": "http://127.0.0.1:8765/v5/media/hero/ambient-calm-mobile-v5l.mp4"
+        },
+        "stageClass": "hero-stage video-playing"
+      }
+    ],
+    "files": [
+      "v5l-390-t0p15.jpg",
+      "v5l-390-t0p8.jpg",
+      "v5l-390-t2.jpg"
+    ],
+    "settle": {
+      "hero-video": {
+        "transform": "none",
+        "scale": 1,
+        "objectFit": "cover",
+        "objectPosition": "50% 42%"
+      },
+      "hero-ambient": {
+        "transform": "none",
+        "scale": 1,
+        "objectFit": "cover",
+        "objectPosition": "50% 42%"
+      },
+      "hero-settle": {
+        "transform": "none",
+        "scale": 1,
+        "objectFit": "cover",
+        "objectPosition": "50% 42%"
+      },
+      "hero-plate": {
+        "transform": "none",
+        "scale": 1,
+        "objectFit": "fill",
+        "objectPosition": "50% 50%"
+      },
+      "video": {
+        "w": 720,
+        "h": 720,
+        "t": 2.91,
+        "paused": true,
+        "src": "http://127.0.0.1:8765/v5/media/hero/hero-intro-mobile-v5l.mp4"
+      },
+      "ambient": {
+        "w": 720,
+        "h": 720,
+        "t": 0.8098,
+        "paused": false,
+        "src": "http://127.0.0.1:8765/v5/media/hero/ambient-calm-mobile-v5l.mp4"
+      },
+      "stageClass": "hero-stage video-playing settled settled-solid ambient ambient-video"
+    },
+    "ambient": {
+      "hero-video": {
+        "transform": "none",
+        "scale": 1,
+        "objectFit": "cover",
+        "objectPosition": "50% 42%"
+      },
+      "hero-ambient": {
+        "transform": "none",
+        "scale": 1,
+        "objectFit": "cover",
+        "objectPosition": "50% 42%"
+      },
+      "hero-settle": {
+        "transform": "none",
+        "scale": 1,
+        "objectFit": "cover",
+        "objectPosition": "50% 42%"
+      },
+      "hero-plate": {
+        "transform": "none",
+        "scale": 1,
+        "objectFit": "fill",
+        "objectPosition": "50% 50%"
+      },
+      "video": {
+        "w": 720,
+        "h": 720,
+        "t": 2.91,
+        "paused": true,
+        "src": "http://127.0.0.1:8765/v5/media/hero/hero-intro-mobile-v5l.mp4"
+      },
+      "ambient": {
+        "w": 720,
+        "h": 720,
+        "t": 3.8924,
+        "paused": false,
+        "src": "http://127.0.0.1:8765/v5/media/hero/ambient-calm-mobile-v5l.mp4"
+      },
+      "stageClass": "hero-stage video-playing settled settled-solid ambient ambient-video"
+    }
+  },
+  "base": "http://127.0.0.1:8765/v5/?v=v5l"
+}
