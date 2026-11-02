@@ -92,12 +92,15 @@
         video.src = INTRO_MOBILE;
       } else {
         video.poster = './media/hero/poster.jpg';
-        const w = document.createElement('source');
-        w.src = INTRO_WEBM; w.type = 'video/webm';
         const m = document.createElement('source');
         m.src = INTRO_MP4; m.type = 'video/mp4';
-        video.appendChild(w);
         video.appendChild(m);
+        // webm optional (may be gitignored on deploy)
+        try {
+          const w = document.createElement('source');
+          w.src = INTRO_WEBM; w.type = 'video/webm';
+          video.appendChild(w);
+        } catch (_) {}
       }
       video.load();
     } catch (_) {}
