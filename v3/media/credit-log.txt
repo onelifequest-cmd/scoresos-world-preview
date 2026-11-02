@@ -127,3 +127,13 @@ Spent this step: ~5 (under 40 budget). Meshy still deferred.
 [2026-11-01 ~23:36 ET] Maxine C Meshy still
 - Source: maxine-C-cutout.png (already full-body feet-visible, approved face) composited on neutral dark → v3/media/cameos/maxine-c-fullbody-still.png
 - Runway spend: 0 (reuse). Balance still ~349.
+
+--- v4 penthouse hero (America/New_York 2026-11-02 ~02:05) ---
+Start credits: 349
+Budget cap this build: 60
+- gen-4-turbo I2V 10s plate-1920 (task 384b12cf-3e3c-4bd6-847e-8b9ad211a562): 50 cr (349→299)
+- Encoded ping-pong loop 20.2s → hero-loop.mp4 (1.1MB) + hero-loop.webm
+End credits: 299
+Spent this build: 50 (under 60 budget). No re-roll; frames clean.
+No tile Runway animations (budget reserved; static photoreal tiles + live DOM).
+

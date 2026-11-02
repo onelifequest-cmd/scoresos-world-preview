@@ -16,3 +16,10 @@ refs/
 # Meshy raws — too large for git; keep optimized *.glb only
 v3/media/meshy/*-raw.glb
 *.bak-*
+
+# v4: ignore build scratch; keep web deliverables
+v4/media/hero/frames/
+v4/media/hero/hero-raw.mp4
+v4/media/hero/plate-raw.jpg
+v4/media/hero/plate-2560.jpg
+!v4/media/hero/*.webm
