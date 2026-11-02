@@ -1,0 +1,98 @@
+Score OS world-preview v3 — Runway cinematic heroes — credit log
+Started: 2026-11-01 ~19:26 America/New_York (UTC-5)
+Budget cap: 400 credits (do not exceed without stopping)
+Opening balance (whoami): 899 (plan 574 + purchased 325)
+Prior world-preview spend (root hybrid): 75 credits (already deducted; balance 899)
+
+Asset URLs (Runway-hosted stills):
+beat-01: https://d2jqrm6oza8nb6.cloudfront.net/datasets/97c8af02-06a2-424c-8966-3537a773602a.jpg?_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlIYXNoIjoiNGEyMTA3ODUxZDkxMTIyOCIsImJ1Y2tldCI6InJ1bndheS1kYXRhc2V0cyIsInN0YWdlIjoicHJvZCIsImV4cCI6MTc5MzcwMDk5N30.4TQUPOc9vs3tHC7DpntL6amkpMOPTJu_nmJbe-lbuuM
+beat-03: https://d2jqrm6oza8nb6.cloudfront.net/datasets/011c7f43-b2c9-41ac-9ad5-00c4f591b05c.jpg?_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlIYXNoIjoiNTNmYTFhOThkNDVhMGE2YyIsImJ1Y2tldCI6InJ1bndheS1kYXRhc2V0cyIsInN0YWdlIjoicHJvZCIsImV4cCI6MTc5MzcyNTMzNn0.s_5RvkJ1nFyQBUMRo0e5rao5SH3wqg1Ufrw6uCp-Ac8
+beat-04: https://d2jqrm6oza8nb6.cloudfront.net/datasets/adb6e687-cd7d-4ccb-9b49-7b529b4f0ac7.jpg?_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlIYXNoIjoiMTg4ZmE4NjI3MzEzZDVlMyIsImJ1Y2tldCI6InJ1bndheS1kYXRhc2V0cyIsInN0YWdlIjoicHJvZCIsImV4cCI6MTc5MzY5MDMzOH0.-T8m4_a_OGIx8cDcoRoFoldnXnubRXvpgzXmrzOmgMo
+beat-05: https://d2jqrm6oza8nb6.cloudfront.net/datasets/01e507fb-53f0-4fca-b8bd-4c7d21d1afc8.jpg?_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlIYXNoIjoiODdkNDNiMDgwY2Q0ZDMyMiIsImJ1Y2tldCI6InJ1bndheS1kYXRhc2V0cyIsInN0YWdlIjoicHJvZCIsImV4cCI6MTc5MzY5NjkwNH0.Q-9rBusoo-MyXRWm6r4HLAnCXwuQH1hFwgGfjk6yCFE
+beat-06: https://d2jqrm6oza8nb6.cloudfront.net/datasets/76cdb62f-c71f-4a75-988a-ea2eb04b1ab8.jpg?_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlIYXNoIjoiNjdmNzY4ZGRlNGUwN2M5ZSIsImJ1Y2tldCI6InJ1bndheS1kYXRhc2V0cyIsInN0YWdlIjoicHJvZCIsImV4cCI6MTc5MzY4ODI4NX0.Nr1ynW4T_4eAU7kcYugYtCJh_4rhKB594gOf_yCqfBk
+
+--- Generations ---
+beat-02 asset: https://d2jqrm6oza8nb6.cloudfront.net/datasets/05ed268b-b196-423e-a412-6dec5faee651.jpg?...
+
+2026-11-01 19:28 ET  B1 gauge 10s take1     gen-4-turbo 10s 16:9  task 71f61757-dce6-4f89-be0d-acdf014fb8ed   ~50 cr (pending)
+2026-11-01 19:28 ET  B2 shatter 10s take1   gen-4-turbo 10s 16:9  task c59d8773-05bd-4ce4-9e4e-a52b59c0a770   ~50 cr (pending)
+2026-11-01 19:28 ET  B3 towers 10s take1    gen-4-turbo 10s 16:9  task c2852f10-e173-4e0a-abc2-dcb25c20c63b   ~50 cr (pending)
+2026-11-01 19:28 ET  B4 deck 10s take1      gen-4-turbo 10s 16:9  task 0095451a-c480-4f5f-bc88-15bd7b2a3eaa   ~50 cr (pending)
+2026-11-01 19:28 ET  B5 skyline 10s take1   gen-4-turbo 10s 16:9  task 15059963-ffce-4510-b8ac-954f0aa445e6   ~50 cr (pending)
+2026-11-01 19:28 ET  B6 plaques 10s take1   gen-4-turbo 10s 16:9  task 9f7c64cc-3544-480a-bfa7-fc6b31b7c356   ~50 cr (pending)
+                        First-pass est: ~300 cr; reserve ~100 for retakes
+
+Prior alternate takes (already paid in root session, reused as candidates):
+  beat-02-takeA-5s.mp4, beat-03-takeA-5s.mp4, beat-05-takeA-5s.mp4
+
+2026-11-01 19:29 ET  All 6 first-pass SUCCEEDED
+  B1 71f61757… → masters/beat-01-take1.mp4 (4.0MB)  50 cr
+  B2 c59d8773… → masters/beat-02-take1.mp4 (3.6MB)  50 cr
+  B3 c2852f10… → masters/beat-03-take1.mp4 (3.9MB)  50 cr
+  B4 0095451a… → masters/beat-04-take1.mp4 (2.2MB)  50 cr
+  B5 15059963… → masters/beat-05-take1.mp4 (3.1MB)  50 cr
+  B6 9f7c64cc… → masters/beat-06-take1.mp4 (1.9MB)  50 cr
+whoami after first pass: 599 (plan 274 + purchased 325)
+Credits spent this session so far: 300
+Remaining under 400 cap: 100
+
+--- Cameo pass (robot + Maxine) 2026-11-01 ~19:35–19:39 ET ---
+Budget remaining before cameos under 400 cap: 100
+whoami before stills: 599
+
+2026-11-01 19:35 ET  Maxine ORIGINAL-face still  nano-banana-pro 1K 16:9
+  task ce20eff7-9b98-4bfc-a6a1-de532edaef2e  ~20 cr
+  Style from maxine-ref (hair/suit/cyborg) + beat-02 scene; face inventively different from ref (anti-lookalike)
+  → media/cameos/maxine-still.png|.jpg
+
+2026-11-01 19:35 ET  Robot B entrance still     nano-banana-pro 1K 16:9
+  task bd99c8a0-8fc0-4867-b09f-99154be9c202  ~20 cr
+  Robot-B-approved + beat-01 dusk city composite
+  → media/cameos/robot-entrance-still.png|.jpg
+
+whoami after stills: 559  (spent 40)
+
+2026-11-01 19:36 ET  Maxine cameo 5s            gen-4-turbo 5s 16:9
+  task eaa55e8a-7db4-4936-851c-a87a6e628559  25 cr
+  → media/clips/cameo-maxine.mp4 (+ mobile copy)
+
+2026-11-01 19:36 ET  Robot cameo 5s             gen-4-turbo 5s 16:9
+  task 382b34b0-c11f-43b4-83de-060d634aee91  25 cr
+  → media/clips/cameo-robot.mp4 (+ mobile copy)
+
+whoami after videos: 509
+Cameo spend: 90 cr
+Session total spend: 390 / 400 cap
+Remaining under cap: 10
+Account remaining: 509
+
+Frame QA (ffmpeg t=0,1,2,3,4):
+  Maxine: face consistent, original (not ref lookalike), holograms animate cleanly, no morph/glitch
+  Robot: identity locked to B across frames, walk toward camera, blue eyes/forearms stable, no limb morph
+Placement: robot progress 0.01–0.11 (opening); Maxine 0.18–0.30 (dispute beat)
+
+Integration note (post-cameo):
+  Cameo scroll windows narrowed for briefness: robot 0.015–0.075; Maxine 0.20–0.26
+  Wired in v3/index.html + styles.css + js/main.js (cache v3c)
+  Deployed commit 82aaf04 → https://scoresos-world-preview.onrender.com (dep-dbjtp77f3r2c73d47mk0 live)
+
+--- Blocker fix 2026-11-01 ~19:48–19:55 ET (America/New_York) ---
+Balance before this fix (whoami): 509
+This-fix generations:
+  Maxine A still (nano-banana-pro)  task afcdf7f2-9227-4d47-b866-1ac2528836b4   ~20 cr
+  Maxine B still (nano-banana-pro)  task 54566766-b027-4583-964d-7d00990191b3   ~20 cr  ← accepted (East Asian ~50s, original)
+  Pricing clean plate still         task cac66057-90b7-4e9e-987a-0b245e9a884e   ~20 cr
+  Maxine B I2V 5s gen-4-turbo       task a5444db4-1e2a-4728-9f3e-762e91479872   ~25 cr
+  beat-06 video: FREE ffmpeg Ken Burns from clean plate (0 Runway)
+Total this-fix Runway spend: ~85 credits
+Balance after (whoami): 424  (509−85=424 ✓)
+Face compare: media/cameos/compare/face-compare-final.png — PASS (not celebrity lookalike)
+
+[2026-11-01 20:02 ET] Maxine C (glamorous ~30, no holo text)
+- nano-banana-pro stills x2 (tasks 1c41f318, 726a0f58) ~40 cr — pick still-B
+- gen-4-turbo I2V 5s (task cf22ac71) ~25 cr
+- Total this Maxine pass ~65 cr (steer ~50; stills+clip required)
+- Face: original medium-brown/hazel, silver bob, white high-neck, chrome cheek+arm blue lights, bright office, NO readable text
+- Installed: media/cameos/maxine-still.jpg, media/clips/cameo-maxine{,-mobile}.mp4
+
+[2026-11-01 20:05 ET] Deploy v3g1: 3D SCORE OS plate behind extruded emblem (bloom-safe). No new Runway spend. Balance ~359.

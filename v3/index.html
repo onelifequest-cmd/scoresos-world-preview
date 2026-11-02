@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="robots" content="noindex, nofollow, noarchive" />
+  <meta name="description" content="Preview only. Score OS cinematic interactive world. Not the live scoresos.com homepage." />
+  <title>Score OS — World Preview v3g3 (Not Live)</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./styles.css?v=v3g3" />
+  <script type="importmap">
+  { "imports": { "three": "./vendor/three.module.min.js" } }
+  </script>
+</head>
+<body>
+  <a class="skip" href="#pricing">Skip to pricing</a>
+  <div class="preview-ribbon" role="status">Preview only · not live scoresos.com · cinematic demo · CROA-safe</div>
+  <div class="cursor" id="cursor" aria-hidden="true"><span></span></div>
+  <div class="loader" id="loader">
+    <div class="loader-inner">
+      <p class="loader-brand">Score OS</p>
+      <div class="loader-bar"><i id="loader-fill"></i></div>
+      <p class="loader-pct" id="loader-pct">0%</p>
+      <p class="loader-sub">Loading the world</p>
+    </div>
+  </div>
+
+  <!-- Live WebGL Lumea hero (extruded emblem) — sits above Runway world until scroll flight -->
+  <div id="lumea-hero-root" aria-hidden="true"></div>
+  <canvas id="world" aria-hidden="true"></canvas>
+
+  <div class="cameo-layer" id="cameo-layer" aria-hidden="true">
+    <video class="cameo" id="cameo-robot" muted playsinline preload="auto"
+      poster="./media/cameos/robot-entrance-still.jpg"
+      src="./media/clips/cameo-robot.mp4"></video>
+    <video class="cameo" id="cameo-maxine" muted playsinline preload="auto"
+      poster="./media/cameos/maxine-still.jpg"
+      src="./media/clips/cameo-maxine.mp4"></video>
+  </div>
+
+  <header class="topbar">
+    <a class="brand magnetic" href="#hero" data-magnetic>
+      <img src="./media/logo.png" width="32" height="32" alt="" />
+      <span>Score OS</span>
+    </a>
+    <nav class="nav" aria-label="Beats">
+      <a href="#hero" data-magnetic class="magnetic">Open</a>
+      <a href="#beat-1" data-magnetic class="magnetic">Emblem</a>
+      <a href="#beat-2" data-magnetic class="magnetic">Maxine</a>
+      <a href="#features" data-magnetic class="magnetic">Features</a>
+      <a href="#proof" data-magnetic class="magnetic">Proof</a>
+      <a href="#beat-6" data-magnetic class="magnetic">Pricing</a>
+      <a class="nav-cta magnetic" data-magnetic href="https://checkout.square.site/merchant/MLGEBVXJC0JRS/checkout/6A2Q2LWRQHPQDXV3LPI3BSBZ">Get Started</a>
+    </nav>
+  </header>
+
+  <main id="scroll-root">
+    <!-- HERO: massive headline sits partly BEHIND the monolith (z-index under canvas stack via depth layer) -->
+    <section class="beat hero-beat" id="hero" data-beat="hero">
+      <div class="hero-depth" aria-hidden="true">
+        <p class="hero-headline-behind"><span class="hn-score">Score</span> <span class="hn-os">OS</span></p>
+        <div class="hero-aside">
+          <p class="hero-aside-lead">The operating system for credit repair and funding agencies.</p>
+          <a class="hero-aside-cta magnetic" data-magnetic href="https://checkout.square.site/merchant/MLGEBVXJC0JRS/checkout/6A2Q2LWRQHPQDXV3LPI3BSBZ">Get Started</a>
+        </div>
+      </div>
+      <div class="hero-copy">
+        <p class="eyebrow">THE OPERATING SYSTEM FOR CREDIT REPAIR AGENCIES</p>
+        <h1 class="hero-title">Score OS</h1>
+        <p class="hero-sub">Move to part the debris. Scroll to fly into the filmed world.</p>
+        <p class="demo-note">Demo gauge · sample climb 580→760 · not a result or guarantee.</p>
+      </div>
+    </section>
+
+    <!-- Runway cinematic beats -->
+    <section class="beat" id="beat-1" data-beat="0">
+      <div class="overlay left">
+        <p class="eyebrow">LIVE EMBLEM · FILMED WORLD</p>
+        <h2>Enter the system.</h2>
+        <p class="lede">The gold gauge becomes the continuous filmed world — move to feel it react.</p>
+      </div>
+    </section>
+
+    <section class="beat" id="beat-2" data-beat="1">
+      <div class="overlay right">
+        <p class="eyebrow">MAXINE · AI DISPUTE ENGINE</p>
+        <h2>Reports shatter.<br/>Letters rebuild.</h2>
+        <p class="lede">A credit report breaks. Clear dispute drafts rebuild for human review.</p>
+        <p class="demo-note">Capability language only — Score OS does not guarantee deletions, score changes, or bureau outcomes.</p>
+      </div>
+    </section>
+
+    <section class="beat" id="beat-3" data-beat="2">
+      <div class="overlay left">
+        <p class="eyebrow">3-BUREAU TRACKING</p>
+        <h2>Weave the towers.</h2>
+        <p class="lede">Equifax · Experian · TransUnion — three towers, one clear view. No spreadsheet maze.</p>
+        <p class="demo-note">Demo labels only · not live bureau data.</p>
+      </div>
+    </section>
+
+    <section class="beat" id="beat-4" data-beat="3">
+      <div class="overlay right">
+        <p class="eyebrow">AGENCY COMMAND DECK</p>
+        <h2>Glass. Metal.<br/>Your whole op.</h2>
+        <p class="lede">Client portal, white-label branding, automations — your whole operation in one glass-clear view.</p>
+      </div>
+    </section>
+
+    <section class="beat" id="beat-5" data-beat="4">
+      <div class="overlay left">
+        <p class="eyebrow">BUILT TO FUND · READINESS</p>
+        <h2>Rise over the city.</h2>
+        <p class="lede">Organize the story lenders ask for as the city rises. Outcomes depend on the client, the lender, and underwriting.</p>
+        <p class="demo-note">No funding is promised. Illustrative readiness only.</p>
+      </div>
+    </section>
+
+    <!-- CALMER post-opener: precise near-black grid + whitespace -->
+    <section class="calm-section" id="features">
+      <div class="calm-inner">
+        <p class="eyebrow">WHAT YOU RUN</p>
+        <h2 class="calm-h">Everything an agency needs.<br/>Nothing it doesn’t.</h2>
+        <div class="feature-grid">
+          <article class="feature-cell">
+            <h3>Maxine drafts</h3>
+            <p>AI dispute letters ready for human review — never auto-sent.</p>
+          </article>
+          <article class="feature-cell">
+            <h3>3-bureau view</h3>
+            <p>Equifax, Experian, TransUnion in one calm command surface.</p>
+          </article>
+          <article class="feature-cell">
+            <h3>White-label portal</h3>
+            <p>Your brand on the client experience. Your agency, your trust.</p>
+          </article>
+          <article class="feature-cell">
+            <h3>Automations</h3>
+            <p>Status, reminders, and workflows without the spreadsheet maze.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Dashboard proof: glass bento over warm green/gold gradients -->
+    <section class="calm-section proof-section" id="proof">
+      <div class="calm-inner">
+        <p class="eyebrow">PROOF · DASHBOARD</p>
+        <h2 class="calm-h">Glass-clear ops.<br/>Warm, trustworthy light.</h2>
+        <div class="bento">
+          <article class="bento-card bento-hero">
+            <p class="bento-label">Agency command</p>
+            <p class="bento-metric">124 <span>active clients</span></p>
+            <p class="bento-note">Illustrative demo data · not a live account</p>
+          </article>
+          <article class="bento-card">
+            <p class="bento-label">Dispute queue</p>
+            <p class="bento-metric">38</p>
+            <p class="bento-note">Drafts awaiting review</p>
+          </article>
+          <article class="bento-card">
+            <p class="bento-label">Bureau sync</p>
+            <p class="bento-metric">3/3</p>
+            <p class="bento-note">Towers connected</p>
+          </article>
+          <article class="bento-card">
+            <p class="bento-label">Portal</p>
+            <p class="bento-metric">White-label</p>
+            <p class="bento-note">Your brand forward</p>
+          </article>
+          <article class="bento-card">
+            <p class="bento-label">Readiness</p>
+            <p class="bento-metric">Stories ready</p>
+            <p class="bento-note">No funding promised</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pricing finale — KEEP v3f two-card layout -->
+    <section class="beat finale" id="beat-6" data-beat="5">
+      <div class="overlay center pricing-overlay" id="pricing">
+        <p class="eyebrow">Enter the system</p>
+        <h2>Simple pricing.<br/>Infinite scale.</h2>
+        <div class="price-row">
+          <article class="price-card agency">
+            <span class="pill">Most popular</span>
+            <h3>Agency OS</h3>
+            <p class="price">$199<span>/mo</span></p>
+            <ul>
+              <li>Unlimited active clients</li>
+              <li>Maxine AI dispute drafts</li>
+              <li>White-label portal</li>
+              <li>3-bureau tracking</li>
+            </ul>
+            <a class="btn gold" href="https://checkout.square.site/merchant/MLGEBVXJC0JRS/checkout/6A2Q2LWRQHPQDXV3LPI3BSBZ">Subscribe — $199/mo</a>
+          </article>
+          <article class="price-card">
+            <h3>DIY OS</h3>
+            <p class="price">$49.99<span>/mo</span></p>
+            <ul>
+              <li>Your secure credit portal</li>
+              <li>Score progress tracking</li>
+              <li>Dispute toolkit</li>
+            </ul>
+            <a class="btn ghost" href="https://checkout.square.site/merchant/MLGEBVXJC0JRS/checkout/VROSXIVQX2GK6ISB4BMCE237">Start DIY — $49.99/mo</a>
+            <p class="already">Or <a href="https://scoresos.com/diy">scoresos.com/diy</a></p>
+          </article>
+        </div>
+        <p class="legal">Educational / informational only. Score OS does not guarantee any credit score, deletion, approval, or funding outcome. Users must comply with applicable law including CROA. Demo data is illustrative. Already paid? <a href="https://scoresos.com/login">Sign up with your access code</a>.</p>
+      </div>
+    </section>
+  </main>
+
+  <div class="scroll-hint" id="scroll-hint">Scroll · move to interact</div>
+  <div class="beat-dots" id="beat-dots" aria-hidden="true"></div>
+
+  <script src="./vendor/gsap.min.js"></script>
+  <script src="./vendor/ScrollTrigger.min.js"></script>
+  <script src="./vendor/lenis.min.js"></script>
+  <script type="module" src="./hero-r3f/lumea-hero.js?v=v3g3"></script>
+  <script type="module" src="./js/main.js?v=v3g3"></script>
+</body>
+</html>

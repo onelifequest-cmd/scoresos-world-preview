@@ -2,3 +2,9 @@
 *.log
 probe-*.png
 smoke-*.png
+node_modules/
+v3/lumea-port/node_modules/
+v3/qa/_frames_v3g3/
+v3/qa/_tools/node_modules/
+v3/qa/rec/
+*.webm
