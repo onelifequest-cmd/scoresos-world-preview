@@ -12,7 +12,7 @@ import { LIGHTS } from "./scene-config";
  * into the top haze. Shadows come from the key light only.
  */
 export const Lighting = () => {
-  const { ambientIntensity, hemisphere, key, fill, sourceGlow } = LIGHTS;
+  const { ambientIntensity, hemisphere, key, fill, sourceGlow, emeraldBounce } = LIGHTS;
   // A stable target object the spotlight aims at (a mesh in the graph, not a ref
   // read during render). Created once — its position never changes.
   const keyTarget = useMemo(() => new THREE.Object3D(), []);
@@ -53,6 +53,14 @@ export const Lighting = () => {
         <sphereGeometry args={[sourceGlow.radius, 16, 16]} />
         <meshBasicMaterial color={sourceGlow.color} toneMapped={false} />
       </mesh>
+
+      <pointLight
+        color={emeraldBounce.color}
+        position={[...emeraldBounce.position]}
+        intensity={emeraldBounce.intensity}
+        distance={emeraldBounce.distance}
+        decay={emeraldBounce.decay}
+      />
     </group>
   );
 };

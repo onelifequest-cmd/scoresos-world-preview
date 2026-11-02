@@ -401,34 +401,34 @@ body.hero-done #hero-canvas, body.hero-done #lumea-hero-root{ opacity:0; pointer
 .hero-aside-lead{
   margin:0;
   font-family: Inter, system-ui, sans-serif;
-  font-size: clamp(0.62rem, 1.05vw, 0.78rem);
+  font-size: 14.5px;
   font-weight: 500;
-  letter-spacing: 0.16em;
-  line-height: 1.55;
+  letter-spacing: 0.12em;
+  line-height: 1.65;
   text-transform: uppercase;
-  color: rgba(210, 200, 175, 0.72);
+  color: #E8E2D0;
 }
 .hero-aside-cta{
   display:inline-flex;
   align-items:center;
   width:fit-content;
-  padding:0.55rem 1.05rem;
-  border:1px solid rgba(212,175,55,0.45);
+  padding:0.78rem 1.45rem;
+  border:1px solid #C9A24A;
   border-radius:999px;
   font-family: Inter, system-ui, sans-serif;
-  font-size:0.68rem;
-  font-weight:600;
-  letter-spacing:0.14em;
+  font-size:0.92rem;
+  font-weight:700;
+  letter-spacing:0.1em;
   text-transform:uppercase;
   text-decoration:none;
-  color:#f0e6c8;
-  background:rgba(212,175,55,0.08);
-  transition: background 160ms ease, border-color 160ms ease;
+  color:#141210;
+  background:#C9A24A;
+  transition: background 160ms ease, border-color 160ms ease, transform 160ms ease;
   pointer-events:auto;
 }
 .hero-aside-cta:hover{
-  background:rgba(212,175,55,0.18);
-  border-color:rgba(212,175,55,0.7);
+  background:#d4b05a;
+  border-color:#d4b05a;
 }
 .hero-copy{
   position:relative;

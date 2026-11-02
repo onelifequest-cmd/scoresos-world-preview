@@ -171,7 +171,7 @@ export const EmblemModel = () => {
         object.material = m;
       } else if (name === "glass" || object.name === "Glass") {
         const m = new THREE.MeshPhysicalMaterial({
-          color: "#f5fffb",
+          color: "#e8fff4",
           metalness: 0,
           roughness: 0.05,
           transparent: true,
@@ -190,6 +190,9 @@ export const EmblemModel = () => {
           clearcoat: 0.7,
           clearcoatRoughness: 0.08,
           envMapIntensity: 1.7,
+          // Soft emerald rim bounce so the gold doesn't read gray/all-gold.
+          emissive: new THREE.Color("#1a4a38"),
+          emissiveIntensity: 0.14,
         });
         object.material = m;
       }

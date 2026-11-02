@@ -1,5 +1,5 @@
 /**
- * Scene configuration — Lumea defaults kept for v3g6.
+ * Scene configuration — Lumea defaults kept for v3g7.
  * Emblem = single facing medallion (sway, no spin); pedestal from monk.glb;
  * debris cleared from the upper halo / headline zone.
  */
@@ -68,10 +68,11 @@ export const CONTENT = {
 
 /** Halo rings — warm white-gold, Lumea intensity. */
 export const RING = {
-  emissiveColor: "#ffe3b3",
+  /** Warm gold with a whisper of emerald in the inner glow. */
+  emissiveColor: "#eef0c4",
   emissiveIntensity: 3.0,
   secondaryFactor: 1.0,
-  color: "#ffe3b3",
+  color: "#e8ecc0",
 } as const;
 
 /**
@@ -80,9 +81,9 @@ export const RING = {
  */
 export const EMBLEM = {
   /** Center so the bottom edge rests just above the cut crown (~0.52). */
-  position: [0, 0.92, 0] as const,
-  /** ~17–19% of vertical FOV at Lumea camera. */
-  diameter: 0.82,
+  position: [0, 1.00, 0] as const,
+  /** ~20–22% of vertical FOV — ~18% larger than v3g6, clears top halo. */
+  diameter: 0.97,
   /** Visible thickness (emblem.glb native depth scaled). */
   thickness: 0.13,
   /** Mild tip toward camera (~12°) — keep dial frontal. */
@@ -116,8 +117,8 @@ export const PILLAR = {
   color: "#2a2d36",
   roughness: 0.9,
   metalness: 0.04,
-  emissiveColor: "#5c6479",
-  emissiveIntensity: 0.08,
+  emissiveColor: "#3d5e52",
+  emissiveIntensity: 0.12,
 } as const;
 
 // --- Debris field ----------------------------------------------------------
@@ -128,8 +129,8 @@ export const DEBRIS = {
   count: 34,
   minScale: 0.16,
   maxScale: 0.55,
-  emissiveColor: "#5c6479",
-  emissiveIntensity: 0.22,
+  emissiveColor: "#4a6b5e",
+  emissiveIntensity: 0.28,
   spiral: {
     turns: 5,
     radius: 4.2,
@@ -188,6 +189,14 @@ export const LIGHTS = {
     color: "#fff6e6",
     position: [0.3, 6.2, 0.4] as const,
     radius: 0.22,
+  },
+  /** Soft emerald bounce on medallion + pillar crown (v3g7). */
+  emeraldBounce: {
+    color: "#3d9a72",
+    position: [-0.55, 1.15, 1.4] as const,
+    intensity: 9.5,
+    distance: 5.5,
+    decay: 2,
   },
 } as const;
 

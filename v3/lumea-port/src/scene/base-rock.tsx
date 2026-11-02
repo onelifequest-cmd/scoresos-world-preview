@@ -96,6 +96,8 @@ export const BaseRock = () => {
     material.roughness = Math.max(srcMat.roughness ?? 0.85, 0.78);
     material.metalness = Math.min(srcMat.metalness ?? 0.05, 0.08);
     material.envMapIntensity = 0.35;
+    material.emissive = new THREE.Color(PILLAR.emissiveColor);
+    material.emissiveIntensity = PILLAR.emissiveIntensity;
     material.needsUpdate = true;
 
     const pedestalMesh = new THREE.Mesh(geometry, material);
