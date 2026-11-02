@@ -1,8 +1,8 @@
 # Scores OS `/v4/` self-critique — **v4c**
 
 **URL:** https://scoresos-world-preview.onrender.com/v4/?v=v4c  
-**Commit:** `09e8a1e` (+ QA follow-up)  
-**Deploy:** `dep-dbk3tu5g1s2s7397uh80` (live)  
+**Commit:** `1930a88` (plate/CSS) · QA `cf9bdfb`+  
+**Deploy:** `dep-dbk3vhou01pc738vv4j0` (live; prior `dep-dbk3tu5g1s2s7397uh80`)  
 **Runway:** 50 credits this pass (299→249). Failed take1 charged 0; take2 gen-4-turbo 10s succeeded. Cap respected.
 
 ## Canvas FAIL items → v4c response
@@ -10,7 +10,7 @@
 1. **Wall ~1.6–1.8× / no grey plate / gold into marble / harder perspective.**  
    CSS wall now **32.5% × 47.5%** (~1.7× prior 19.2×28). `.wall::before` grey niche removed. Thin gold tile bezels only. `perspective(1400px) rotateY(26deg)` pushes tiles into the room toward the window. Height reads roughly Maxine head→knees on the 1440 still.
 2. **Table “742” hologram.**  
-   New plate + per-frame paint-out on the I2V clip; soft dark **copy scrim** also blankets the table zone under the right-hand copy. Live 1440 still: no readable table hologram.
+   New plate + per-frame paint-out on the I2V clip; soft dark **copy scrim** also blankets the table zone under the right-hand copy. Live 1440 still: no readable table hologram; plus soft CSS radial veil over the table corner (v4c1).
 3. **Disclaimer readability.**  
    `.croa` at **75% white**; copy block sits on a soft dark scrim / blur.
 4. **Characters too big.**  
