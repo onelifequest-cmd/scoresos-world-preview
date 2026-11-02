@@ -31,10 +31,21 @@
     bump(100);
     setTimeout(() => loader?.classList.add('done'), 180);
     requestAnimationFrame(() => {
-      tiles.forEach((t) => t.classList.add('on'));
+      tiles.forEach((t) => {
+        t.classList.add('on');
+        t.style.opacity = '1';
+      });
       if (!reduce) startScore();
       else if (scoreNum) scoreNum.textContent = '742';
       if (!reduce && !mobile()) spawnChips();
+      // after longest tile delay (5*140+200) + transition 550ms ≈ 1.45s — snap full opacity
+      setTimeout(() => {
+        tiles.forEach((t) => {
+          t.classList.add('on');
+          t.style.opacity = '1';
+        });
+        if (scoreNum) scoreNum.textContent = '742';
+      }, 2000);
     });
   }
 
@@ -110,7 +121,7 @@
     }, { passive: true });
   }
 
-  // Score tick 612 → 742
+  // Score tick 612 → 742 (always settle exactly on 742)
   function startScore() {
     if (!scoreNum) return;
     const from = 612, to = 742;
@@ -121,6 +132,7 @@
       const eased = 1 - Math.pow(1 - p, 3);
       scoreNum.textContent = String(Math.round(from + (to - from) * eased));
       if (p < 1) requestAnimationFrame(step);
+      else scoreNum.textContent = '742';
     };
     requestAnimationFrame(step);
   }

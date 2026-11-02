@@ -147,3 +147,12 @@ Budget cap this pass: 50
 - Encoded ping-pong ~20.2s → hero-loop.mp4 + hero-loop.webm; poster refreshed
 End credits: 249
 Spent this pass: 50 (at cap). CSS: wall ~1.7×, no grey ::before, rotateY 26°, croa 75% + copy scrim, ribbon text, green 612→742.
+
+--- v4f nits (America/New_York 2026-11-02 ~03:05) ---
+Start credits: 249
+- Portrait Funding plate (PIL/GenerateImage prior) + object-fit:contain so "Funding Approved" + amount fit with padding
+- World tile source brightened + .tile.on opacity:1 !important + saturate/contrast boost
+- Score tick always settles on 742; 2s post-reveal opacity snap
+- QA stills after ≥6.5s reveal settle (1440/1280/390 + wall/funding crops + hero-12s.mp4 reuse)
+End credits: 249
+Spent this pass: 0 Runway (reuse hero-loop from v4c)
