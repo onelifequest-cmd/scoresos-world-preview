@@ -1,56 +1,33 @@
-# Scores OS `/v4/` self-critique — **v4c**
+# SELF-CRITIQUE — Scores OS penthouse hero v4d
 
-**URL:** https://scoresos-world-preview.onrender.com/v4/?v=v4c  
-**Commit:** `8236e2d` (v4c2 denser table veil) · lineage `09e8a1e`→`1930a88`→`eaf170d`  
-**Deploy:** `dep-dbk40tmc6qcc73dfk350` (live; priors `dep-dbk40fijnfac739hdeb0`, `dep-dbk3vhou01pc738vv4j0`, `dep-dbk3tu5g1s2s7397uh80`)  
-**Runway:** 50 credits this pass (299→249). Failed take1 charged 0; take2 gen-4-turbo 10s succeeded. Cap respected.
+**URL:** https://scoresos-world-preview.onrender.com/v4/?v=v4d  
+**Cache:** `styles.css?v=v4d2`  
+**Date:** 2026-11-02 (America/New_York)
 
-## Canvas FAIL items → v4c response
+## Intent vs result
+v4c Canvas-failed on card-like copy scrim, portrait tiles with cheap black label bands, sparse Funding tile, and Maxine overlapping World. v4d fixes those with CSS + one funding plate regen. **No Runway spend.**
 
-1. **Wall ~1.6–1.8× / no grey plate / gold into marble / harder perspective.**  
-   CSS wall now **32.5% × 47.5%** (~1.7× prior 19.2×28). `.wall::before` grey niche removed. Thin gold tile bezels only. `perspective(1400px) rotateY(26deg)` pushes tiles into the room toward the window. Height reads roughly Maxine head→knees on the 1440 still.
-2. **Table “742” hologram.**  
-   New plate + per-frame paint-out on the I2V clip; soft dark **copy scrim** also blankets the table zone under the right-hand copy. Live 1440 still: no readable table hologram; plus soft CSS radial veil over the table corner (v4c1).
-3. **Disclaimer readability.**  
-   `.croa` at **75% white**; copy block sits on a soft dark scrim / blur.
-4. **Characters too big.**  
-   New GenerateImage plate (edit of goals-wall-v5) + gen-4-turbo loop with smaller / farther Maxine+robot; video `object-position: 48% 42%` pulls back slightly. Cameos sit right of the larger grid on desktop QA.
+## Checklist
+| Item | Status |
+|---|---|
+| Soft borderless copy darkening (no grey card) | Pass — `hero-copy` bg/radius/shadow none; oversized blurred radial `::before` |
+| Disclaimer ~75% white + text-shadow | Pass |
+| Image fills tile; label on bottom gradient | Pass — `.tile-glass` full bleed; `.cap` gradient overlay |
+| Landscape / ~4:3 wall displays | Pass — wall ~26%×20%; tile aspect ≈1.24–1.33 before perspective |
+| Funding Approved real content | Pass — check + title + Demo $48,500 line |
+| Green 612→742 climb | Pass |
+| Clear wall between grid and Maxine | Pass — wall left 0.5%, right edge ~cleared; tighten gaps |
+| Characters slight reframe | Pass — `object-position: 42% 40%`; no new Runway |
+| Ribbon | Pass — Preview only · not live scoresos.com |
+| Mobile | Kept (wall hidden; soft bottom gradient copy) |
 
-**Minors:** Ribbon → `Preview only · not live scoresos.com`. Score tile: clear green **612→742** pill + glow. Mobile carousel under CTA unchanged (passes).
-
-## What still looks fake / off
-
-1. **AI film.** gen-4-turbo micro-morph on marble/pool if you stare — same class as v4b.
-2. **Wall vs architecture.** Bezels sit in marble without a grey plate, but tiles still read as a fitted UI layer more than poured glass. Perspective helps; one-tile-per-panel alignment is approximate, not laser-matched to every gold inlay.
-3. **Cameo scale.** Better than v4b; against the bigger grid they can still feel mid-room rather than tiny balcony cameos. Further shrink would need another plate + another 50cr.
-4. **Score glyph over chart.** Intentional overlay; green climb is now unmistakable.
-5. **Wins still static.** Only score tick + chips animate.
-
-## Real vs premium scorecard
-
-| Criterion | Score (1–5) | Note |
-|---|---|---|
-| Bright / not dark | 5 | Golden hour held |
-| Lifestyle > characters | 4 | Smaller cameos; grid dominates left |
-| Photoreal / filmed | 3 | Still plate + I2V |
-| Premium (not graphic design) | 4 | No grey niche; scrim helps copy |
-| Not video-gamey | 4 | Clear vs Lumea |
-| Product story (wins wall) | 4 | Bigger readable wall + green climb |
-| Canvas blockers cleared | 4 | All four addressed; wall seating still “UI on marble” |
-
-**Ship recommendation:** Show Patrick `?v=v4c`. Next only if asked: (a) tighter per-panel tile matrix, (b) another plate with balcony-scale cameos.
+## Residual risk
+- Perspective `rotateY` foreshortens width; tiles can still read slightly less landscape than CSS boxes.
+- Soft radial can still be *felt* under type on bright sky — intentional for readability; no hard edge.
+- Table hologram cover relies on light stage veil + prior plate paint (unchanged this pass).
 
 ## QA artifacts
+`hero-1440x900.png`, `hero-1280x800.png`, `hero-390x844.png`, `_wall-crop.png`, `hero-12s.mp4`
 
-- `v4/qa/hero-1440x900.png`
-- `v4/qa/hero-1280x800.png`
-- `v4/qa/hero-390x844.png` (carousel under CTA)
-- `v4/qa/hero-12s.mp4`
-- `v4/qa/_wall-crop.png`
-
-## Non-goals respected
-
-- No touch to scoresos.com / DNS
-- Preview-only noindex
-- Never mentioned Conquest AI
-- Runway ≤50 this pass (exactly 50)
+## Credits
+Runway: **0** this pass (balance remains ~249).
