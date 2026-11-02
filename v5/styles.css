@@ -84,14 +84,14 @@ a { color: inherit; text-decoration: none; }
   position: absolute; inset: 0;
   width: 100%; height: 100%;
   object-fit: cover;
-  object-position: 42% 40%;
+  object-position: 46% 42%;
   z-index: 0;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 1.1s ease;
+  transition: opacity 1.65s ease;
 }
 .hero-stage.settled .hero-settle { opacity: 1; }
-.hero-stage.settled .hero-video { opacity: 0; transition: opacity 1.1s ease; }
+.hero-stage.settled .hero-video { opacity: 0; transition: opacity 1.65s ease; }
 .hero-stage::after {
   content: "";
   position: absolute; inset: 0; z-index: 1; pointer-events: none;
@@ -276,28 +276,35 @@ a { color: inherit; text-decoration: none; }
   z-index: 4;
   font-family: Syne, sans-serif;
   font-weight: 800;
-  font-size: clamp(1.05rem, 1.75vw, 1.7rem);
-  letter-spacing: -0.02em;
-  line-height: 1.05;
+  /* Fit "Funding"/"Approved" inside tile with padding — size to container width */
+  font-size: clamp(0.62rem, 10.5cqw, 0.98rem);
+  letter-spacing: -0.015em;
+  line-height: 1.08;
   color: #ecfdf5;
   text-align: center;
   text-shadow: 0 0 16px rgba(52, 211, 153, .85), 0 1px 6px rgba(0,0,0,.5);
-  padding: 0 6px;
+  padding: 6px 8px;
   white-space: normal;
   max-width: 100%;
   width: 100%;
   box-sizing: border-box;
-  overflow: visible;
+  overflow: hidden;
+  hyphens: manual;
+  word-break: keep-all;
 }
+.funding-line br { display: block; content: ""; }
+
 .funding-card-text {
   aspect-ratio: 16/9;
   display: flex; align-items: center; justify-content: center;
   font-family: Syne, sans-serif; font-weight: 800;
-  font-size: clamp(0.7rem, 3.6vw, 0.95rem); color: #ecfdf5;
+  font-size: clamp(0.65rem, 3.2vw, 0.9rem); color: #ecfdf5;
   background: linear-gradient(160deg, rgba(8, 28, 22, .45), rgba(6, 18, 16, .3));
   text-shadow: 0 0 14px rgba(52, 211, 153, .7);
-  white-space: nowrap;
-  padding: 0 10px;
+  white-space: normal;
+  text-align: center;
+  line-height: 1.1;
+  padding: 6px 10px;
   box-sizing: border-box;
   overflow: hidden;
 }
@@ -626,7 +633,7 @@ a { color: inherit; text-decoration: none; }
     background: #4a3422;
   }
   .hero-stage::after {
-    height: 55vh;
+    height: min(70vh, calc(100vw * 1.5));
     min-height: 280px;
     background:
       linear-gradient(180deg, rgba(5,5,7,.12) 0%, transparent 20%, transparent 70%, rgba(36,24,14,.25) 100%);
@@ -642,16 +649,18 @@ a { color: inherit; text-decoration: none; }
     position: relative;
     left: auto; right: auto; top: auto;
     width: 100%;
-    height: 55vh;
+    height: auto;
+    aspect-ratio: 2 / 3;
+    max-height: 70vh;
     min-height: 280px;
-    max-height: 520px;
+    /* Poster is pre-cropped 2:3 with Maxine+robot + margin; same ratio → no clip */
     object-fit: cover;
-    object-position: 50% 32%;
+    object-position: 50% 42%;
     transform: none;
     z-index: 0;
-    /* Keep crisp — no filter blur */
     image-rendering: auto;
     filter: none;
+    background: #4a3422;
   }
   .hero-copy {
     position: relative;

@@ -109,27 +109,12 @@
     settled = true;
     wall?.classList.remove('mid-reveal');
     wall?.classList.add('settled');
-    // Seek back to earlier hovering frame in the same plate, then hold.
-    // Crossfade the calm still underneath so mid-leap never freezes on screen.
-    const CALM_AT = 1.05;
+    // Plate has no upright frame (robot mid-leap throughout). Pause video and
+    // slow-crossfade to v4 standing still (settle-calm.jpg). 0 Runway.
     if (video) {
-      const onSeeked = () => {
-        try { video.pause(); } catch (_) {}
-        stage?.classList.add('settled');
-        video.removeEventListener('seeked', onSeeked);
-      };
-      video.addEventListener('seeked', onSeeked);
-      try {
-        video.currentTime = CALM_AT;
-      } catch (_) {
-        stage?.classList.add('settled');
-        try { video.pause(); } catch (__) {}
-      }
-      // Safety: ensure still shows even if seek stalls
-      setTimeout(() => stage?.classList.add('settled'), 700);
-    } else {
-      stage?.classList.add('settled');
+      try { video.pause(); } catch (_) {}
     }
+    stage?.classList.add('settled');
   }
 
   function runDesktopBeats() {
