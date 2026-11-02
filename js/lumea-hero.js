@@ -1,242 +1,121 @@
 /**
- * Lumea-style live WebGL opening — extruded Score OS emblem (SVGLoader + ExtrudeGeometry),
- * floating rock, amber rings, volumetric shaft, fog + moonlight, InstancedMesh debris.
- * Free stack only: three.js, Poly Haven HDRI, UnrealBloomPass. No Meshy/Tripo.
+ * Lumea-style live WebGL opening — Blender jewelry gauge + displaced rock,
+ * sparse spiral debris, volumetric shaft + dust, DOF.
+ * Free stack only. No Meshy/Tripo.
  */
 import * as THREE from 'three';
 import { RGBELoader } from '../vendor/loaders/RGBELoader.js';
-import { SVGLoader } from '../vendor/loaders/SVGLoader.js';
+import { GLTFLoader } from '../vendor/loaders/GLTFLoader.js';
+import { DRACOLoader } from '../vendor/loaders/DRACOLoader.js';
 import { EffectComposer } from '../vendor/postprocessing/EffectComposer.js';
 import { RenderPass } from '../vendor/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from '../vendor/postprocessing/UnrealBloomPass.js';
+import { BokehPass } from '../vendor/postprocessing/BokehPass.js';
 import { OutputPass } from '../vendor/postprocessing/OutputPass.js';
 
 const CHIP_LABELS = ['DENIED', 'LATE', 'COLLECTION'];
-
-function makeHeadlinePlate() {
-  const c = document.createElement('canvas');
-  c.width = 2048;
-  c.height = 512;
-  const g = c.getContext('2d');
-  g.clearRect(0, 0, 2048, 512);
-  g.fillStyle = 'rgba(236, 224, 186, 0.92)';
-  g.font = '700 260px Georgia, "Times New Roman", serif';
-  g.textAlign = 'center';
-  g.textBaseline = 'middle';
-  g.letterSpacing = '-0.06em';
-  try { g.letterSpacing = '-0.06em'; } catch (_) {}
-  g.fillText('SCORE OS', 1024, 280);
-  const tex = new THREE.CanvasTexture(c);
-  tex.colorSpace = THREE.SRGBColorSpace;
-  tex.anisotropy = 8;
-  const mat = new THREE.MeshBasicMaterial({
-    map: tex,
-    transparent: true,
-    opacity: 0.62,
-    depthWrite: false,
-    toneMapped: false,
-  });
-  const mesh = new THREE.Mesh(new THREE.PlaneGeometry(14.5, 3.6), mat);
-  mesh.position.set(0, 1.15, -1.35);
-  mesh.renderOrder = -2;
-  return mesh;
-}
-
-
 
 function makeChipTexture(label) {
   const c = document.createElement('canvas');
   c.width = 256; c.height = 96;
   const g = c.getContext('2d');
-  g.fillStyle = '#0c100e';
+  g.fillStyle = '#0a0e0c';
   g.fillRect(0, 0, 256, 96);
-  g.strokeStyle = 'rgba(212,175,55,0.55)';
-  g.lineWidth = 4;
-  g.strokeRect(4, 4, 248, 88);
+  g.strokeStyle = 'rgba(212,175,55,0.45)';
+  g.lineWidth = 3;
+  g.strokeRect(6, 6, 244, 84);
   g.fillStyle = '#e8d5a3';
-  g.font = '700 36px Inter, system-ui, sans-serif';
+  g.font = '600 32px Inter, system-ui, sans-serif';
   g.textAlign = 'center';
   g.textBaseline = 'middle';
   g.fillText(label, 128, 50);
   const tex = new THREE.CanvasTexture(c);
   tex.colorSpace = THREE.SRGBColorSpace;
-  tex.anisotropy = 4;
   return tex;
 }
 
-function displaceRock(geo, amount = 0.18) {
-  const pos = geo.attributes.position;
-  const v = new THREE.Vector3();
-  for (let i = 0; i < pos.count; i++) {
-    v.fromBufferAttribute(pos, i);
-    const n = Math.sin(v.x * 3.1 + v.y * 2.7) * Math.cos(v.z * 4.2 + v.x * 1.3);
-    v.addScaledVector(v.clone().normalize(), n * amount);
-    pos.setXYZ(i, v.x, v.y, v.z);
-  }
-  geo.computeVertexNormals();
-  return geo;
-}
-
-function goldMat(extra = {}) {
-  return new THREE.MeshPhysicalMaterial({
-    color: 0xd4af37,
-    metalness: 1,
-    roughness: 0.22,
-    clearcoat: 0.75,
-    clearcoatRoughness: 0.12,
-    envMapIntensity: 1.45,
-    ...extra,
-  });
-}
-
-function glassMat(isMobile) {
-  return new THREE.MeshPhysicalMaterial({
-    color: 0xe8f6ef,
-    metalness: 0.04,
-    roughness: 0.06,
-    transmission: isMobile ? 0.5 : 0.86,
-    thickness: 0.7,
-    ior: 1.48,
-    clearcoat: 1,
-    clearcoatRoughness: 0.06,
-    transparent: true,
-    opacity: 1,
-    envMapIntensity: 1.15,
-  });
-}
-
-function greenMat() {
-  return new THREE.MeshPhysicalMaterial({
-    color: 0x1a6b3c,
-    metalness: 0.55,
-    roughness: 0.28,
-    emissive: 0x0a3d22,
-    emissiveIntensity: 0.35,
-    clearcoat: 0.4,
-    envMapIntensity: 0.9,
-  });
-}
-
-/** Extrude Score OS emblem SVG into real bevelled 3D with glass + gold materials. */
-async function buildExtrudedEmblem(isMobile) {
-  const loader = new SVGLoader();
-  let data;
-  try {
-    data = await loader.loadAsync('./media/emblem.svg');
-  } catch (e) {
-    console.warn('emblem.svg load failed, procedural fallback', e);
-    return buildProceduralGauge(isMobile);
-  }
-
-  const group = new THREE.Group();
-  const glass = glassMat(isMobile);
-  const gold = goldMat();
-  const green = greenMat();
-  const jewel = goldMat({ color: 0xf4d96b, emissive: 0xf0c94a, emissiveIntensity: 0.55, roughness: 0.18 });
-
-  // SVG is in pixel space; center + scale to ~1.6 world units
-  const box = new THREE.Box3();
-  const extrudeSettings = {
-    depth: 18,
-    bevelEnabled: true,
-    bevelThickness: 3.2,
-    bevelSize: 2.4,
-    bevelOffset: 0,
-    bevelSegments: isMobile ? 2 : 4,
-  };
-
-  data.paths.forEach((path) => {
-    const fill = path.userData?.style?.fill;
-    let mat = gold;
-    if (fill) {
-      const f = String(fill).toLowerCase();
-      if (f.includes('1a6b3c') || f.includes('green')) mat = green;
-      else if (f.includes('f4d96b') || f.includes('f0c94a')) mat = jewel;
-      else if (f.includes('dde') || f.includes('e8') || f.includes('fff')) mat = glass;
-      else mat = gold;
-    }
-    const shapes = SVGLoader.createShapes(path);
-    shapes.forEach((shape) => {
-      const geo = new THREE.ExtrudeGeometry(shape, extrudeSettings);
-      const mesh = new THREE.Mesh(geo, mat);
-      mesh.castShadow = true;
-      mesh.receiveShadow = true;
-      group.add(mesh);
-      box.expandByObject(mesh);
+function enhanceMaterials(root, envMap, isMobile) {
+  root.traverse((o) => {
+    if (!o.isMesh || !o.material) return;
+    const mats = Array.isArray(o.material) ? o.material : [o.material];
+    mats.forEach((m, i) => {
+      const name = ((o.name || '') + ' ' + (m.name || '')).toLowerCase();
+      const isGlass = name.includes('glass') || (m.transmission && m.transmission > 0.2);
+      const isGold = name.includes('gold') || name.includes('jewel') || name.includes('needle') || name.includes('bezel') || name.includes('hub') || name.includes('tick') || name.includes('lip') || name.includes('step') || name.includes('mark') || name.includes('spine');
+      const isGreen = name.includes('green') || name.includes('scorearc') || name.includes('arc');
+      let next = m;
+      if (isGlass) {
+        // Transmission often fails on software GL — keep a clear see-through lens
+        next = new THREE.MeshPhysicalMaterial({
+          color: 0xeaf6f0,
+          metalness: 0,
+          roughness: 0.06,
+          transmission: isMobile ? 0.2 : 0.65,
+          thickness: 0.6,
+          ior: 1.45,
+          clearcoat: 1,
+          clearcoatRoughness: 0.04,
+          transparent: true,
+          opacity: 0.28,
+          depthWrite: false,
+          envMap,
+          envMapIntensity: 1.25,
+          side: THREE.DoubleSide,
+        });
+      } else if (isGold) {
+        next = new THREE.MeshPhysicalMaterial({
+          color: name.includes('jewel') ? 0xf4d96b : 0xd4af37,
+          metalness: 1,
+          roughness: name.includes('jewel') ? 0.12 : 0.16,
+          clearcoat: 1,
+          clearcoatRoughness: 0.05,
+          envMap,
+          envMapIntensity: 1.7,
+          emissive: name.includes('jewel') ? 0xf0c94a : 0xb8860b,
+          emissiveIntensity: name.includes('jewel') ? 0.25 : 0.05,
+        });
+      } else if (isGreen) {
+        next = new THREE.MeshPhysicalMaterial({
+          color: 0x1a6b3c,
+          metalness: 0.45,
+          roughness: 0.26,
+          clearcoat: 0.55,
+          emissive: 0x0a3d22,
+          emissiveIntensity: 0.28,
+          envMap,
+          envMapIntensity: 1.0,
+        });
+      } else if (name.includes('dial') || name.includes('rocktmp') || (!name && m.color && m.color.getHex() < 0x222222)) {
+        next = new THREE.MeshPhysicalMaterial({
+          color: 0x101814,
+          metalness: 0.35,
+          roughness: 0.45,
+          clearcoat: 0.35,
+          envMap,
+          envMapIntensity: 0.7,
+        });
+      } else {
+        if (m.isMeshStandardMaterial || m.isMeshPhysicalMaterial) {
+          m.envMap = envMap;
+          m.envMapIntensity = 0.6;
+          m.needsUpdate = true;
+        }
+        return;
+      }
+      if (Array.isArray(o.material)) o.material[i] = next;
+      else o.material = next;
+      o.castShadow = true;
+      o.receiveShadow = true;
     });
   });
-
-  // Glass dial plate behind the extruded rings
-  const dial = new THREE.Mesh(
-    new THREE.CylinderGeometry(52, 52, 6, 64),
-    glass,
-  );
-  dial.rotation.x = Math.PI / 2;
-  dial.position.set(90, 90, -4);
-  dial.castShadow = true;
-  group.add(dial);
-  box.expandByObject(dial);
-
-  // Normalize: SVG Y-down → flip, center, scale
-  const size = new THREE.Vector3();
-  box.getSize(size);
-  const center = new THREE.Vector3();
-  box.getCenter(center);
-  group.children.forEach((ch) => {
-    ch.position.x -= center.x;
-    ch.position.y -= center.y;
-    ch.position.z -= center.z;
-  });
-  group.scale.setScalar(1.65 / Math.max(size.x, size.y, 1));
-  group.rotation.x = Math.PI; // flip Y from SVG
-  // Face camera: extruded depth along Z after flip
-  group.rotation.x = Math.PI;
-
-  // Soft wrap in a facing group so we can spin yaw cleanly
-  const wrap = new THREE.Group();
-  // After PI flip on X, emblem faces -Z; rotate to face +Z toward default camera
-  group.rotation.set(Math.PI, Math.PI, 0);
-  wrap.add(group);
-
-  // Extra gold bezel ring in world space for readability
-  const bezel = new THREE.Mesh(
-    new THREE.TorusGeometry(0.82, 0.045, 16, 80),
-    goldMat({ roughness: 0.18 }),
-  );
-  bezel.rotation.x = Math.PI / 2;
-  wrap.add(bezel);
-
-  // Needle
-  const needle = new THREE.Mesh(
-    new THREE.BoxGeometry(0.035, 0.55, 0.02),
-    goldMat({ color: 0xfff2c8, emissive: 0xffe08a, emissiveIntensity: 1.1 }),
-  );
-  needle.position.set(0.1, 0.18, 0.12);
-  needle.rotation.z = -0.5;
-  wrap.add(needle);
-
-  return wrap;
 }
 
-function buildProceduralGauge(isMobile) {
-  const wrap = new THREE.Group();
-  const dial = new THREE.Mesh(new THREE.CylinderGeometry(0.72, 0.78, 0.16, 64), glassMat(isMobile));
-  dial.rotation.x = Math.PI / 2;
-  wrap.add(dial);
-  const bezel = new THREE.Mesh(new THREE.TorusGeometry(0.78, 0.055, 16, 80), goldMat());
-  bezel.rotation.x = Math.PI / 2;
-  wrap.add(bezel);
-  const arc = new THREE.Mesh(
-    new THREE.TorusGeometry(0.52, 0.03, 12, 64, Math.PI * 1.35),
-    greenMat(),
-  );
-  arc.rotation.x = Math.PI / 2;
-  arc.rotation.z = -Math.PI * 0.15;
-  wrap.add(arc);
-  const jewel = new THREE.Mesh(new THREE.SphereGeometry(0.09, 24, 24), goldMat({ emissive: 0xf0c94a, emissiveIntensity: 0.6 }));
-  jewel.position.set(0, 0.18, 0.1);
-  wrap.add(jewel);
-  return wrap;
+function scoreToAngle(score) {
+  const t = THREE.MathUtils.clamp((score - 580) / (760 - 580), 0, 1);
+  // NeedlePivot rotates around Z (face-on gauge); map to elegant sweep
+  const start = 0.95;
+  const end = -0.85;
+  return start + (end - start) * t;
 }
 
 export async function createLumeaHero(canvas, {
@@ -244,59 +123,59 @@ export async function createLumeaHero(canvas, {
   reduced = false,
   onProgress = () => {},
 } = {}) {
-  const dprCap = isMobile ? 1.5 : 2;
+  const dprCap = isMobile ? 1.35 : 1.75;
   const renderer = new THREE.WebGLRenderer({
     canvas,
     antialias: !isMobile,
-    alpha: true,
+    alpha: false,
     powerPreference: 'high-performance',
   });
-  renderer.setClearColor(0x000000, 0);
+  renderer.setClearColor(0x030507, 1);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, dprCap));
   renderer.setSize(window.innerWidth, window.innerHeight, false);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 0.92;
+  renderer.toneMappingExposure = 0.82;
   renderer.shadowMap.enabled = !isMobile;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
   const scene = new THREE.Scene();
-  // Near-black void — opaque so UnrealBloomPass stays clean.
-  // Massive "SCORE OS" sits as a 3D plate BEHIND the extruded emblem (HTML layer is a11y duplicate).
   scene.background = new THREE.Color(0x030507);
-  scene.fog = new THREE.FogExp2(0x030507, 0.022);
+  scene.fog = new THREE.FogExp2(0x030507, 0.042);
 
-  const camera = new THREE.PerspectiveCamera(42, window.innerWidth / window.innerHeight, 0.1, 80);
-  camera.position.set(0, 1.4, 7.2);
+  const camera = new THREE.PerspectiveCamera(38, window.innerWidth / window.innerHeight, 0.1, 80);
+  camera.position.set(0, 1.45, 7.4);
 
-  const moon = new THREE.DirectionalLight(0xc4d4f0, 1.25);
-  moon.position.set(-7, 11, -5);
-  moon.castShadow = !isMobile;
+  const key = new THREE.SpotLight(0xffe6b8, 32, 42, Math.PI / 9, 0.62, 1.2);
+  key.position.set(0.15, 11.2, 1.0);
+  key.target.position.set(0, 1.0, 0);
+  key.castShadow = !isMobile;
   if (!isMobile) {
-    moon.shadow.mapSize.set(1024, 1024);
-    moon.shadow.camera.near = 1;
-    moon.shadow.camera.far = 32;
-    moon.shadow.camera.left = -9;
-    moon.shadow.camera.right = 9;
-    moon.shadow.camera.top = 9;
-    moon.shadow.camera.bottom = -9;
+    key.shadow.mapSize.set(1024, 1024);
+    key.shadow.bias = -0.0002;
   }
-  scene.add(moon);
-
-  // Cool moonlight rim
-  const moonFill = new THREE.DirectionalLight(0x8aa0c8, 0.35);
-  moonFill.position.set(5, 4, 6);
-  scene.add(moonFill);
-
-  const key = new THREE.SpotLight(0xffe2a8, 20, 30, Math.PI / 7, 0.55, 1.4);
-  key.position.set(0.35, 9.8, 1.1);
-  key.target.position.set(0, 0.7, 0);
   scene.add(key, key.target);
 
-  scene.add(new THREE.HemisphereLight(0x6a7a9a, 0x0a0c10, 0.32));
-  scene.add(new THREE.AmbientLight(0x1a2230, 0.22));
+  const rim = new THREE.DirectionalLight(0xb0c8f0, 1.25);
+  rim.position.set(-6.2, 3.8, -4.2);
+  scene.add(rim);
 
-  onProgress(0.08);
+  const fill = new THREE.DirectionalLight(0x6a7a90, 0.32);
+  fill.position.set(5, 2.2, 6);
+  scene.add(fill);
+  scene.add(new THREE.HemisphereLight(0x4a5568, 0x050608, 0.3));
+  scene.add(new THREE.AmbientLight(0x121820, 0.2));
+
+  // Extra cool rim skim on emblem glass/gold
+  const rim2 = new THREE.PointLight(0xdde8ff, 18, 8, 2);
+  rim2.position.set(1.8, 2.2, 2.4);
+  scene.add(rim2);
+  const faceLight = new THREE.SpotLight(0xfff0d0, 40, 12, Math.PI / 7, 0.45, 1.1);
+  faceLight.position.set(0.2, 2.4, 4.2);
+  faceLight.target.position.set(-0.2, 1.45, 0);
+  scene.add(faceLight, faceLight.target);
+
+  onProgress(0.06);
 
   const pmrem = new THREE.PMREMGenerator(renderer);
   let envMap = null;
@@ -314,126 +193,185 @@ export async function createLumeaHero(canvas, {
     } catch (__) {}
   }
   pmrem.dispose();
-  onProgress(0.2);
+  onProgress(0.18);
 
   const texLoader = new THREE.TextureLoader();
+  async function loadTex(url, srgb = false) {
+    const t = await texLoader.loadAsync(url);
+    if (srgb) t.colorSpace = THREE.SRGBColorSpace;
+    t.wrapS = t.wrapT = THREE.RepeatWrapping;
+    t.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy?.() || 4);
+    t.repeat.set(1.8, 1.8);
+    return t;
+  }
   let rockDiff = null, rockNor = null, rockRough = null;
   try {
-    rockDiff = await texLoader.loadAsync('./media/textures/rock/diff_1k.jpg');
-    rockDiff.colorSpace = THREE.SRGBColorSpace;
-    rockDiff.wrapS = rockDiff.wrapT = THREE.RepeatWrapping;
-    rockDiff.repeat.set(2, 2);
-    rockNor = await texLoader.loadAsync('./media/textures/rock/nor_gl_1k.jpg');
-    rockNor.wrapS = rockNor.wrapT = THREE.RepeatWrapping;
-    rockNor.repeat.set(2, 2);
-    rockRough = await texLoader.loadAsync('./media/textures/rock/rough_1k.jpg');
-    rockRough.wrapS = rockRough.wrapT = THREE.RepeatWrapping;
-    rockRough.repeat.set(2, 2);
-  } catch (_) {}
-  onProgress(0.32);
+    rockDiff = await loadTex('./media/textures/rock/diff_2k.jpg', true);
+    rockNor = await loadTex('./media/textures/rock/nor_gl_2k.jpg');
+    rockRough = await loadTex('./media/textures/rock/rough_2k.jpg');
+  } catch (_) {
+    try {
+      rockDiff = await loadTex('./media/textures/rock/diff_1k.jpg', true);
+      rockNor = await loadTex('./media/textures/rock/nor_gl_1k.jpg');
+      rockRough = await loadTex('./media/textures/rock/rough_1k.jpg');
+    } catch (__) {}
+  }
+  onProgress(0.3);
+
+  const draco = new DRACOLoader();
+  draco.setDecoderPath('./vendor/draco/');
+  const gltfLoader = new GLTFLoader();
+  gltfLoader.setDRACOLoader(draco);
 
   const root = new THREE.Group();
   scene.add(root);
 
-  const rockGeo = displaceRock(new THREE.IcosahedronGeometry(1.35, 3), 0.22);
-  const rock = new THREE.Mesh(rockGeo, new THREE.MeshPhysicalMaterial({
-    color: 0x2a2e2c,
-    map: rockDiff || null,
-    normalMap: rockNor || null,
-    roughnessMap: rockRough || null,
-    roughness: 0.92,
-    metalness: 0.08,
-    clearcoat: 0.12,
-    clearcoatRoughness: 0.6,
-    envMapIntensity: 0.35,
-  }));
-  rock.position.y = -0.15;
-  rock.castShadow = true;
-  rock.receiveShadow = true;
-  root.add(rock);
+  // --- Rock from Blender ---
+  let rock = null;
+  try {
+    const rockGltf = await gltfLoader.loadAsync('./media/models/rock.glb');
+    rock = rockGltf.scene;
+    rock.traverse((o) => {
+      if (!o.isMesh) return;
+      o.castShadow = true;
+      o.receiveShadow = true;
+      const geo = o.geometry;
+      if (geo && !geo.attributes.tangent && geo.attributes.uv && geo.attributes.normal) {
+        try { geo.computeTangents(); } catch (_) {}
+      }
+      o.material = new THREE.MeshPhysicalMaterial({
+        color: 0xffffff,
+        map: rockDiff || null,
+        normalMap: rockNor || null,
+        normalScale: new THREE.Vector2(1.35, 1.35),
+        roughnessMap: rockRough || null,
+        roughness: 0.92,
+        metalness: 0.04,
+        clearcoat: 0.06,
+        clearcoatRoughness: 0.75,
+        envMapIntensity: 0.35,
+      });
+    });
+    rock.position.set(0.05, -0.35, 0);
+    rock.scale.setScalar(0.92);
+    root.add(rock);
+  } catch (e) {
+    console.warn('rock.glb failed', e);
+  }
+  onProgress(0.5);
 
-  onProgress(0.4);
-  const gauge = await buildExtrudedEmblem(isMobile);
-  gauge.position.y = 1.58;
-  root.add(gauge);
-  const headlinePlate = makeHeadlinePlate();
-  root.add(headlinePlate);
-  onProgress(0.55);
+  // --- Jewelry gauge from Blender ---
+  let gauge = new THREE.Group();
+  let needlePivot = null;
+  try {
+    const gaugeGltf = await gltfLoader.loadAsync('./media/models/gauge.glb');
+    gauge = gaugeGltf.scene;
+    enhanceMaterials(gauge, envMap, isMobile);
+    gauge.traverse((o) => {
+      if (o.name === 'NeedlePivot' || o.name.includes('NeedlePivot')) needlePivot = o;
+      if (!o.isMesh) return;
+      const n = (o.name || '').toLowerCase();
+      if (n.includes('glass')) { o.visible = false; } // dial jewelry must read; glass occludes on swiftshader
+      if (n.includes('tick') || n.includes('needle') || n.includes('scorearc') || n.includes('jewel') || n.includes('hub') || n.includes('logo')) {
+        o.renderOrder = 1;
+        // Ensure gold needle/ticks not culled
+        if (o.material) { o.material.side = THREE.DoubleSide; o.material.needsUpdate = true; }
+      }
+    });
+    // Face camera: Blender exported Y-up, gauge face was +Z in Blender → after Yup export face is +Z
+    gauge.scale.setScalar(1.35);
+    gauge.position.set(0.05, 1.72, 0.35);
+    // Flip so dial/glass/needle face camera (Blender apply left face on -Z)
+    gauge.rotation.set(0.05, Math.PI, 0);
+    if (needlePivot) needlePivot.scale.setScalar(1.25);
+    root.add(gauge);
+  } catch (e) {
+    console.warn('gauge.glb failed', e);
+  }
+  onProgress(0.65);
 
+  // Orbit rings
   const ringMat = new THREE.MeshBasicMaterial({
     color: 0xffc857,
     transparent: true,
-    opacity: 0.85,
+    opacity: 0.65,
     blending: THREE.AdditiveBlending,
     depthWrite: false,
   });
-  const ringA = new THREE.Mesh(new THREE.TorusGeometry(2.15, 0.012, 12, 128), ringMat);
+  const ringA = new THREE.Mesh(new THREE.TorusGeometry(2.3, 0.007, 12, 128), ringMat);
   ringA.rotation.x = Math.PI / 2.15;
   root.add(ringA);
-  const ringB = new THREE.Mesh(new THREE.TorusGeometry(1.55, 0.01, 12, 128), ringMat.clone());
-  ringB.rotation.x = Math.PI / 1.85;
-  ringB.rotation.y = 0.4;
+  const ringB = new THREE.Mesh(new THREE.TorusGeometry(1.65, 0.005, 12, 128), ringMat.clone());
+  ringB.rotation.x = Math.PI / 1.95;
+  ringB.rotation.y = 0.32;
   root.add(ringB);
 
+  // Soft volumetric shaft
   const shaftMat = new THREE.ShaderMaterial({
     transparent: true,
     depthWrite: false,
     blending: THREE.AdditiveBlending,
     side: THREE.DoubleSide,
     uniforms: {
-      uColor: { value: new THREE.Color(0xffe6b0) },
-      uOpacity: { value: 0.22 },
+      uColor: { value: new THREE.Color(0xffe2a8) },
+      uOpacity: { value: 0.17 },
       uTime: { value: 0 },
     },
     vertexShader: `varying vec2 vUv; void main(){ vUv=uv; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0); }`,
     fragmentShader: `
       uniform vec3 uColor; uniform float uOpacity; uniform float uTime; varying vec2 vUv;
       void main(){
-        float axial = smoothstep(0.0,0.15,vUv.y)*smoothstep(1.0,0.55,vUv.y);
-        float radial = pow(1.0 - abs(vUv.x-0.5)*2.0, 1.6);
-        float pulse = 0.85 + 0.15*sin(uTime*0.7);
-        gl_FragColor = vec4(uColor, axial*radial*uOpacity*pulse);
+        float axial = smoothstep(0.0,0.12,vUv.y)*smoothstep(1.0,0.48,vUv.y);
+        float radial = pow(1.0 - abs(vUv.x-0.5)*2.0, 2.2);
+        float pulse = 0.9 + 0.1*sin(uTime*0.55);
+        float dust = 0.85 + 0.15*sin(vUv.y*40.0 + uTime*1.2)*sin(vUv.x*30.0);
+        gl_FragColor = vec4(uColor, axial*radial*uOpacity*pulse*dust);
       }`,
   });
-  const shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 1.8, 10, 32, 1, true), shaftMat);
-  shaft.position.y = 5.2;
+  const shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 1.5, 11, 32, 1, true), shaftMat);
+  shaft.position.y = 5.4;
   root.add(shaft);
 
-  // Soft fog disc + distant moonlight glow
-  const fogDisc = new THREE.Mesh(
-    new THREE.CircleGeometry(16, 48),
-    new THREE.MeshBasicMaterial({ color: 0x0a1218, transparent: true, opacity: 0.55, depthWrite: false }),
-  );
-  fogDisc.rotation.x = -Math.PI / 2;
-  fogDisc.position.y = -1.45;
-  scene.add(fogDisc);
-
-  const moonGlow = new THREE.Mesh(
-    new THREE.SphereGeometry(0.35, 16, 16),
-    new THREE.MeshBasicMaterial({ color: 0xdde6ff, transparent: true, opacity: 0.55 }),
-  );
-  moonGlow.position.set(-8, 9.5, -10);
-  scene.add(moonGlow);
-  const moonHalo = new THREE.Mesh(
-    new THREE.SphereGeometry(1.1, 16, 16),
-    new THREE.MeshBasicMaterial({
-      color: 0xa8b8e0, transparent: true, opacity: 0.12,
-      blending: THREE.AdditiveBlending, depthWrite: false,
+  const moteCount = isMobile ? 80 : 170;
+  const moteGeo = new THREE.BufferGeometry();
+  const motePos = new Float32Array(moteCount * 3);
+  const motePhase = new Float32Array(moteCount);
+  for (let i = 0; i < moteCount; i++) {
+    const a = Math.random() * Math.PI * 2;
+    const r = Math.random() * 0.55;
+    motePos[i * 3] = Math.cos(a) * r;
+    motePos[i * 3 + 1] = Math.random() * 8.5 + 0.5;
+    motePos[i * 3 + 2] = Math.sin(a) * r;
+    motePhase[i] = Math.random() * Math.PI * 2;
+  }
+  moteGeo.setAttribute('position', new THREE.BufferAttribute(motePos, 3));
+  const motes = new THREE.Points(
+    moteGeo,
+    new THREE.PointsMaterial({
+      color: 0xffe6c0,
+      size: isMobile ? 0.025 : 0.017,
+      transparent: true,
+      opacity: 0.55,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending,
+      sizeAttenuation: true,
     }),
   );
-  moonHalo.position.copy(moonGlow.position);
-  scene.add(moonHalo);
+  root.add(motes);
 
-  // Debris InstancedMesh (spring parting — Rapier upgrade path noted)
-  const chipCount = isMobile ? 70 : 160;
-  const chipGeo = new THREE.BoxGeometry(0.42, 0.16, 0.04);
+  // Sparse elegant spiral debris (25–40)
+  const chipCount = isMobile ? 26 : 34;
+  const chipGeo = new THREE.BoxGeometry(0.26, 0.09, 0.024);
   const chipMats = CHIP_LABELS.map((lab) => new THREE.MeshStandardMaterial({
-    map: makeChipTexture(lab), roughness: 0.55, metalness: 0.25, envMapIntensity: 0.4,
+    map: makeChipTexture(lab),
+    roughness: 0.5,
+    metalness: 0.2,
+    envMapIntensity: 0.35,
   }));
   const debrisGroups = [];
+  const debrisData = [];
   const per = Math.floor(chipCount / CHIP_LABELS.length);
   const dummy = new THREE.Object3D();
-  const debrisData = [];
 
   CHIP_LABELS.forEach((lab, li) => {
     const mesh = new THREE.InstancedMesh(chipGeo, chipMats[li], per);
@@ -441,32 +379,55 @@ export async function createLumeaHero(canvas, {
     root.add(mesh);
     debrisGroups.push(mesh);
     for (let i = 0; i < per; i++) {
-      const a = (i / per) * Math.PI * 2 + li * 0.7;
-      const spiral = 1.8 + (i / per) * 4.5;
-      const y = ((i % 17) / 17 - 0.5) * 5.5 + Math.sin(a * 2) * 0.4;
+      const t = (i + li * 0.33) / per;
+      const a = t * Math.PI * 2.4 + li * 0.9;
+      const spiral = 2.7 + t * 3.9;
+      const y = (t - 0.5) * 3.9 + Math.sin(a) * 0.22;
+      const depthTier = (Math.sin(a * 1.7 + li) * 0.5 + 0.5);
       debrisData.push({
         mesh, index: i,
-        base: new THREE.Vector3(Math.cos(a) * spiral, y, Math.sin(a) * spiral * 0.85),
-        pos: new THREE.Vector3(Math.cos(a) * spiral, y, Math.sin(a) * spiral * 0.85),
+        base: new THREE.Vector3(Math.cos(a) * spiral, y, Math.sin(a) * spiral * 0.9),
+        pos: new THREE.Vector3(Math.cos(a) * spiral, y, Math.sin(a) * spiral * 0.9),
         vel: new THREE.Vector3(),
-        spin: new THREE.Vector3((Math.random() - 0.5) * 1.2, (Math.random() - 0.5) * 1.8, (Math.random() - 0.5) * 1.2),
+        spin: new THREE.Vector3((Math.random() - 0.5) * 0.55, (Math.random() - 0.5) * 0.85, (Math.random() - 0.5) * 0.55),
         rot: new THREE.Euler(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI),
         phase: Math.random() * Math.PI * 2,
+        depthTier,
+        baseScale: 0.5 + depthTier * 0.5,
       });
     }
   });
-  onProgress(0.7);
+  onProgress(0.78);
+
+  const fogDisc = new THREE.Mesh(
+    new THREE.CircleGeometry(14, 48),
+    new THREE.MeshBasicMaterial({ color: 0x05080c, transparent: true, opacity: 0.65, depthWrite: false }),
+  );
+  fogDisc.rotation.x = -Math.PI / 2;
+  fogDisc.position.y = -1.55;
+  scene.add(fogDisc);
 
   const composer = new EffectComposer(renderer);
-  const renderPass = new RenderPass(scene, camera);
-  renderPass.clearColor = new THREE.Color(0x030507);
-  renderPass.clearAlpha = 1;
-  composer.addPass(renderPass);
+  composer.addPass(new RenderPass(scene, camera));
   const bloom = new UnrealBloomPass(
     new THREE.Vector2(window.innerWidth, window.innerHeight),
-    isMobile ? 0.28 : 0.42, 0.55, 0.82,
+    isMobile ? 0.12 : 0.16, 0.4, 0.9,
   );
   composer.addPass(bloom);
+
+  let bokehPass = null;
+  if (!isMobile && !reduced) {
+    try {
+      bokehPass = new BokehPass(scene, camera, {
+        focus: 7.0,
+        aperture: 0.00024,
+        maxblur: 0.008,
+      });
+      composer.addPass(bokehPass);
+    } catch (e) {
+      console.warn('BokehPass unavailable', e);
+    }
+  }
   try { composer.addPass(new OutputPass()); } catch (_) {}
 
   let time = 0;
@@ -488,46 +449,62 @@ export async function createLumeaHero(canvas, {
   function update(dt) {
     if (!visible && flight >= 0.98) return;
     time += dt;
-    const ease = 1 - Math.exp(-dt * 6);
+    const ease = 1 - Math.exp(-dt * 5);
     mouseSmooth.x += (mouse.x - mouseSmooth.x) * ease;
     mouseSmooth.y += (mouse.y - mouseSmooth.y) * ease;
 
-    const orbit = time * 0.12;
-    const radius = THREE.MathUtils.lerp(7.2, 2.2, flight);
-    const elev = THREE.MathUtils.lerp(1.45, 0.35, flight);
-    const lookY = THREE.MathUtils.lerp(0.7, 1.8, flight);
-    camera.position.x = Math.sin(orbit) * radius + mouseSmooth.x * 0.35;
-    camera.position.z = Math.cos(orbit) * radius - flight * 4.5;
-    camera.position.y = elev + mouseSmooth.y * 0.2 + flight * 1.2;
-    camera.lookAt(mouseSmooth.x * 0.15, lookY + flight * 2.5, 0);
+    const orbit = time * 0.08;
+    const radius = THREE.MathUtils.lerp(7.4, 2.35, flight);
+    const elev = THREE.MathUtils.lerp(1.45, 0.4, flight);
+    const lookY = THREE.MathUtils.lerp(0.95, 1.85, flight);
+    camera.position.x = Math.sin(orbit) * radius + mouseSmooth.x * 0.28;
+    camera.position.z = Math.cos(orbit) * radius - flight * 4.2;
+    camera.position.y = elev + mouseSmooth.y * 0.18 + flight * 1.1;
+    camera.lookAt(mouseSmooth.x * 0.12, lookY + flight * 2.2, 0);
 
-    root.rotation.y = Math.sin(time * 0.15) * 0.04;
-    gauge.rotation.y = time * 0.22;
-    if (headlinePlate) {
-      headlinePlate.position.x = mouseSmooth.x * -0.25;
-      headlinePlate.position.y = 1.15 + mouseSmooth.y * -0.12;
-      headlinePlate.material.opacity = THREE.MathUtils.lerp(0.62, 0.08, flight);
+    if (bokehPass?.material?.uniforms?.focus) {
+      bokehPass.material.uniforms.focus.value = camera.position.distanceTo(new THREE.Vector3(0, 1.15, 0));
     }
-    ringA.rotation.z = time * 0.35;
-    ringB.rotation.z = -time * 0.28;
+
+    root.rotation.y = Math.sin(time * 0.1) * 0.025;
+    gauge.rotation.y = Math.sin(time * 0.11) * 0.06;
+    ringA.rotation.z = time * 0.2;
+    ringB.rotation.z = -time * 0.16;
     shaftMat.uniforms.uTime.value = time;
-    shaftMat.uniforms.uOpacity.value = THREE.MathUtils.lerp(0.22, 0.04, flight);
+    shaftMat.uniforms.uOpacity.value = THREE.MathUtils.lerp(0.17, 0.04, flight);
+
+    if (needlePivot) {
+      const cycle = (Math.sin(time * 0.22) * 0.5 + 0.5);
+      const score = 580 + cycle * 180;
+      needlePivot.rotation.z = scoreToAngle(score);
+    }
+
+    const mp = motes.geometry.attributes.position;
+    for (let i = 0; i < moteCount; i++) {
+      let y = mp.getY(i) + dt * (0.12 + (i % 5) * 0.02);
+      if (y > 9.2) y = 0.4;
+      const ph = motePhase[i];
+      mp.setX(i, Math.cos(time * 0.3 + ph) * (0.15 + (i % 7) * 0.04));
+      mp.setY(i, y);
+      mp.setZ(i, Math.sin(time * 0.25 + ph * 1.3) * (0.15 + (i % 5) * 0.04));
+    }
+    mp.needsUpdate = true;
 
     raycaster.setFromCamera(new THREE.Vector2(mouseSmooth.x, mouseSmooth.y), camera);
     const hit = new THREE.Vector3();
     if (raycaster.ray.intersectPlane(partPlane, hit)) cursorWorld.copy(hit);
-    else cursorWorld.set(mouseSmooth.x * 3.5, mouseSmooth.y * 2.2, 0);
+    else cursorWorld.set(mouseSmooth.x * 3.2, mouseSmooth.y * 2.0, 0);
 
-    const pushR = 1.65, pushF = 14;
-    const spinT = time * 0.08;
+    const pushR = 1.9, pushF = 11;
+    const spinT = time * 0.05;
     for (let i = 0; i < debrisData.length; i++) {
       const d = debrisData[i];
       const bx = d.base.x * Math.cos(spinT) - d.base.z * Math.sin(spinT);
       const bz = d.base.x * Math.sin(spinT) + d.base.z * Math.cos(spinT);
-      const by = d.base.y + Math.sin(time * 0.4 + d.phase) * 0.15;
-      d.vel.x += (bx - d.pos.x) * 2.2 * dt;
-      d.vel.y += (by - d.pos.y) * 2.2 * dt;
-      d.vel.z += (bz - d.pos.z) * 2.2 * dt;
+      const by = d.base.y + Math.sin(time * 0.35 + d.phase) * 0.12;
+      d.vel.x += (bx - d.pos.x) * 1.6 * dt;
+      d.vel.y += (by - d.pos.y) * 1.6 * dt;
+      d.vel.z += (bz - d.pos.z) * 1.6 * dt;
       const dx = d.pos.x - cursorWorld.x;
       const dy = d.pos.y - cursorWorld.y;
       const dz = d.pos.z - cursorWorld.z;
@@ -536,14 +513,16 @@ export async function createLumeaHero(canvas, {
         const f = (1 - dist / pushR) * pushF;
         d.vel.x += (dx / dist) * f * dt;
         d.vel.y += (dy / dist) * f * dt;
-        d.vel.z += (dz / dist) * f * dt * 0.5;
+        d.vel.z += (dz / dist) * f * dt * 0.45;
       }
-      d.vel.multiplyScalar(0.9);
-      d.pos.addScaledVector(d.vel, dt * 60 * 0.016);
+      d.vel.multiplyScalar(0.92);
+      d.pos.addScaledVector(d.vel, dt);
       d.rot.x += d.spin.x * dt;
       d.rot.y += d.spin.y * dt;
       d.rot.z += d.spin.z * dt;
-      const scale = THREE.MathUtils.lerp(1, 0.15, flight);
+      const camDist = d.pos.distanceTo(camera.position);
+      const dof = THREE.MathUtils.clamp(1 - Math.abs(camDist - 7.0) / 6.5, 0.35, 1);
+      const scale = THREE.MathUtils.lerp(d.baseScale * dof, 0.12, flight);
       dummy.position.copy(d.pos);
       dummy.rotation.copy(d.rot);
       dummy.scale.setScalar(scale);
@@ -552,8 +531,9 @@ export async function createLumeaHero(canvas, {
     }
     debrisGroups.forEach((m) => { m.instanceMatrix.needsUpdate = true; m.visible = flight < 0.95; });
 
-    root.position.y = flight * -1.2;
-    rock.visible = flight < 0.98;
+    root.position.y = flight * -1.15;
+    if (rock) rock.visible = flight < 0.98;
+    motes.visible = flight < 0.9;
 
     if (visible || flight < 0.98) composer.render();
   }
@@ -572,10 +552,13 @@ export async function createLumeaHero(canvas, {
     window.removeEventListener('resize', onResize);
     renderer.dispose();
     envMap?.dispose();
+    draco.dispose();
   }
 
   update(0);
   onProgress(1);
 
-  return { setMouse, setFlight, setVisible, update, dispose, renderer, scene, camera };
+  const api = { setMouse, setFlight, setVisible, update, dispose, renderer, scene, camera, root, gauge, needlePivot };
+  if (typeof window !== 'undefined') window.__lumeaHero = api;
+  return api;
 }

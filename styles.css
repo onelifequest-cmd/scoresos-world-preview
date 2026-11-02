@@ -326,18 +326,19 @@ body.beat-pricing-active #world::after{
 #beat-3 h2{text-shadow:0 2px 18px rgba(0,0,0,.75)}
 
 /* ——— v3g Lumea hero + calm grid + glass bento ——— */
-#hero-canvas{
+#hero-canvas,#lumea-hero-root{
   position:fixed; inset:0; width:100%; height:100%;
   z-index:1; display:block; touch-action:none;
   transition:opacity .55s ease;
 }
+#lumea-hero-root canvas{ width:100%!important; height:100%!important; display:block; }
 #world{
   z-index:0;
   opacity:0;
   transition:opacity .7s ease;
 }
 body.world-visible #world{ opacity:1; }
-body.hero-done #hero-canvas{ opacity:0; pointer-events:none; }
+body.hero-done #hero-canvas, body.hero-done #lumea-hero-root{ opacity:0; pointer-events:none; }
 
 .hero-beat{
   min-height:160vh;
@@ -348,33 +349,57 @@ body.hero-done #hero-canvas{ opacity:0; pointer-events:none; }
 .hero-depth{
   position:fixed;
   inset:0;
-  z-index:0; /* under #hero-canvas (z=1): word sits behind monolith */
-  display:flex;
+  z-index:2; /* over canvas: reel-style crisp type; emblem sits in clear center */
+  display:grid;
+  grid-template-columns: minmax(0,1.15fr) minmax(0,0.85fr);
   align-items:center;
-  justify-content:center;
+  justify-items:stretch;
   pointer-events:none;
   overflow:hidden;
-  background:
-    radial-gradient(ellipse at 50% 40%, rgba(20,28,36,0.9), transparent 55%),
-    #030507;
+  padding: 10vh 6vw 22vh;
+  gap: 3vw;
+  background: transparent;
 }
-/* Massive tightly tracked headline sitting partly BEHIND the monolith:
-   canvas is z-index 1; this layer is z-index 0 under the fixed canvas visually
-   via mix — we place it in the scroll section but with fixed-like scale so
-   the WebGL emblem renders over the center of the word. */
+/* Elegant serif headline — left of emblem, tight tracking; lower edge of
+   emblem optically kisses the baseline (copy sits mid, emblem centered). */
 .hero-headline-behind{
   margin:0;
   font-family:"Cormorant Garamond", Georgia, serif;
-  font-weight:700;
-  font-size:clamp(5.5rem, 22vw, 16rem);
-  letter-spacing:-0.06em;
-  line-height:0.82;
-  color:rgba(232, 220, 180, 0.38);
-  text-transform:uppercase;
-  white-space:nowrap;
+  font-weight:600;
+  font-size:clamp(3.6rem, 9.5vw, 7.2rem);
+  letter-spacing:-0.045em;
+  line-height:0.9;
+  color:rgba(242, 234, 214, 0.92);
+  text-transform:none;
+  white-space:normal;
+  max-width: 9ch;
   user-select:none;
-  transform:translateY(-8vh);
-  text-shadow:0 0 80px rgba(212,175,55,0.08);
+  transform: translateY(0.8vh); /* slight drop — emblem lower edge kisses baseline of 1–2 letters */
+  text-shadow: 0 2px 40px rgba(0,0,0,0.45);
+}
+.hero-headline-behind .hn-score{
+  display:block;
+  font-style:normal;
+}
+.hero-headline-behind .hn-os{
+  display:inline-block;
+  letter-spacing:-0.04em;
+}
+.hero-aside{
+  justify-self:end;
+  align-self:center;
+  max-width: 24ch;
+  margin:0;
+  padding-left: 1.35rem;
+  border-left: 1px solid rgba(212,175,55,0.32);
+  font-family: Inter, system-ui, sans-serif;
+  font-size: clamp(0.62rem, 1.05vw, 0.78rem);
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  line-height: 1.6;
+  text-transform: uppercase;
+  color: rgba(210, 200, 175, 0.52);
+  transform: translateY(-2vh);
 }
 .hero-copy{
   position:relative;
@@ -385,9 +410,9 @@ body.hero-done #hero-canvas{ opacity:0; pointer-events:none; }
 }
 .hero-title{
   font-family:var(--display);
-  font-size:clamp(3.2rem, 9vw, 6rem);
-  letter-spacing:-0.03em;
-  margin:0 0 12px;
+  font-size:clamp(1.6rem, 3.5vw, 2.2rem);
+  letter-spacing:-0.02em;
+  margin:0 0 10px;
   color:#f4f1e6;
   text-shadow:0 2px 24px rgba(0,0,0,0.55);
 }
@@ -541,9 +566,14 @@ body.hero-done #hero-canvas{ opacity:0; pointer-events:none; }
 }
 
 @media (max-width:720px){
-  .hero-headline-behind{ font-size:clamp(3.8rem, 28vw, 7rem); letter-spacing:-0.05em; }
+  .hero-headline-behind{ font-size:clamp(2.8rem, 14vw, 4.2rem); letter-spacing:-0.04em; transform:translateY(10vh); }
+  .hero-aside{ display:none; }
+  .hero-depth{ grid-template-columns:1fr; padding:8vh 5vw 28vh; }
   .hero-beat{ min-height:140vh; }
   .calm-section{ padding:56px 18px; }
 }
 
+body.hero-done .hero-depth{opacity:0; transition:opacity .6s;}
+
+.qa-hide{opacity:0 !important;}
 body.hero-done .hero-depth{opacity:0; transition:opacity .6s;}

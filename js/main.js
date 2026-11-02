@@ -1,6 +1,6 @@
 import { createWorld } from './world.js';
-import { createLumeaHero } from './lumea-hero.js';
 
+const qaMode = /[?&]qa=1/.test(location.search);
 const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches || /[?&]static=1/.test(location.search);
 const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) || window.innerWidth < 720;
 
@@ -8,7 +8,7 @@ const loader = document.getElementById('loader');
 const loaderFill = document.getElementById('loader-fill');
 const loaderPct = document.getElementById('loader-pct');
 const canvas = document.getElementById('world');
-const heroCanvas = document.getElementById('hero-canvas');
+const heroRoot = document.getElementById('lumea-hero-root') || document.getElementById('hero-canvas');
 const cursor = document.getElementById('cursor');
 const hint = document.getElementById('scroll-hint');
 const dotsWrap = document.getElementById('beat-dots');
@@ -29,17 +29,24 @@ function setLoad(p) {
 
 setLoad(0.03);
 
-// Lumea live WebGL hero first
-const hero = await createLumeaHero(heroCanvas, {
-  isMobile,
-  reduced,
-  onProgress: (p) => setLoad(0.03 + p * 0.35),
-});
+// R3F Lumea port mounts itself onto #lumea-hero-root (see hero-r3f/lumea-hero.js).
+// Thin shim keeps scroll-flight fade / mouse API used below.
+const hero = {
+  setFlight(v) { this._flight = v; },
+  setMouse() {},
+  setVisible(v) {
+    if (!heroRoot) return;
+    heroRoot.style.opacity = v ? '' : '0';
+    heroRoot.style.pointerEvents = v ? '' : 'none';
+  },
+  update() {},
+  _flight: 0,
+};
 setLoad(0.4);
 
 const world = await createWorld(canvas, {
   isMobile,
-  reduced,
+  reduced: reduced || qaMode, // ?qa=1 skips Runway video preload for hero recording
   onProgress: (p) => setLoad(0.4 + p * 0.55),
 });
 setLoad(0.98);
@@ -242,7 +249,16 @@ requestAnimationFrame(frame);
 setLoad(1);
 setTimeout(() => loader?.classList.add('done'), 320);
 
-if (reduced) {
+if (qaMode) {
+  // Hero-only recording path: no Runway video preload, stay on opener
+  world.setProgress(0);
+  hero.setFlight(0);
+  document.body.classList.remove('world-visible', 'hero-done');
+  document.getElementById('world')?.style && (document.getElementById('world').style.display = 'none');
+  document.getElementById('cameo-layer')?.style && (document.getElementById('cameo-layer').style.display = 'none');
+  hint?.classList.add('hide');
+  document.querySelector('.hero-copy')?.classList.add('qa-hide');
+} else if (reduced) {
   world.setProgress(0.08);
   hero.setFlight(1);
   document.body.classList.add('world-visible', 'hero-done');

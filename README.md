@@ -10,6 +10,7 @@ Quick cameos only (not full-beat guides):
 - **Live site untouched:** https://scoresos.com
 - `noindex` / `robots.txt` — preview only, CROA-safe demo copy
 - Source build: `world-preview/v3/`
+- Hero: ported GetLayers Lumea R3F scene (`?v=v3g2`) — Score OS jewelry emblem replaces monk; green/gold brand
 
 ## Run locally
 ```bash
