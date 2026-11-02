@@ -1,8 +1,8 @@
 # Scores OS `/v4/` self-critique — **v4c**
 
 **URL:** https://scoresos-world-preview.onrender.com/v4/?v=v4c  
-**Commit:** `1930a88` (plate/CSS) · QA `cf9bdfb`+  
-**Deploy:** `dep-dbk3vhou01pc738vv4j0` (live; prior `dep-dbk3tu5g1s2s7397uh80`)  
+**Commit:** `8236e2d` (v4c2 denser table veil) · lineage `09e8a1e`→`1930a88`→`eaf170d`  
+**Deploy:** `dep-dbk40tmc6qcc73dfk350` (live; priors `dep-dbk40fijnfac739hdeb0`, `dep-dbk3vhou01pc738vv4j0`, `dep-dbk3tu5g1s2s7397uh80`)  
 **Runway:** 50 credits this pass (299→249). Failed take1 charged 0; take2 gen-4-turbo 10s succeeded. Cap respected.
 
 ## Canvas FAIL items → v4c response
