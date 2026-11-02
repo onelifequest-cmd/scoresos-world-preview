@@ -136,8 +136,8 @@
       el.textContent = labels[i % labels.length];
       i += 1;
       // Place roughly over the wall region
-      const x = 6 + Math.random() * 28;
-      const y = 22 + Math.random() * 40;
+      const x = 5 + Math.random() * 22;
+      const y = 24 + Math.random() * 34;
       el.style.setProperty('--x', x + '%');
       el.style.setProperty('--y', y + '%');
       chips.appendChild(el);

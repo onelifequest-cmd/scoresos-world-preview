@@ -81,88 +81,150 @@ a { color: inherit; text-decoration: none; }
   content: "";
   position: absolute; inset: 0; z-index: 1; pointer-events: none;
   background:
-    linear-gradient(90deg, rgba(5,5,7,.28) 0%, transparent 38%, transparent 62%, rgba(5,5,7,.18) 100%),
+    linear-gradient(90deg, rgba(5,5,7,.22) 0%, transparent 32%, transparent 62%, rgba(5,5,7,.18) 100%),
     linear-gradient(180deg, rgba(5,5,7,.45) 0%, transparent 22%, transparent 68%, rgba(5,5,7,.55) 100%);
 }
 
-/* Perspective wall of tiles — calibrated to plate-1920 left marble wall */
+/* Recessed glass wall — seated INTO left marble, clear of Maxine + robot (right of ~28%) */
 .wall {
   position: absolute;
   z-index: 3;
-  left: 4.6%;
-  top: 19.2%;
-  width: 29.2%;
-  height: 47.5%;
+  left: 5.2%;
+  top: 21.5%;
+  width: 22.8%;
+  height: 41.5%;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(2, 1fr);
-  gap: 1.8% 1.6%;
+  gap: 2.4% 2.2%;
+  padding: 0.6%;
   transform-origin: left center;
   transform:
-    perspective(1600px)
-    rotateY(9deg)
-    rotateX(1deg)
-    translate3d(calc((var(--mx) - 0.5) * 6px), calc((var(--my) - 0.5) * 3px + var(--scroll) * -14px), 0);
+    perspective(1800px)
+    rotateY(14deg)
+    rotateX(1.2deg)
+    translate3d(calc((var(--mx) - 0.5) * 4px), calc((var(--my) - 0.5) * 2px + var(--scroll) * -10px), 0);
   transition: transform .18s linear;
   pointer-events: none;
+}
+/* Soft gold emissive spill onto marble + floor */
+.wall-spill {
+  position: absolute;
+  inset: -8% -6% -18% -4%;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 70% 55% at 50% 42%, rgba(240, 201, 106, .18), transparent 70%),
+    linear-gradient(180deg, transparent 55%, rgba(240, 180, 90, .10) 100%);
+  filter: blur(10px);
+  opacity: .85;
 }
 @media (min-width: 900px) {
   .wall { pointer-events: auto; }
 }
+
 .tile {
   position: relative;
-  border-radius: 6px;
-  overflow: hidden;
-  background: rgba(20,18,16,.55);
+  border-radius: 5px;
+  /* Thin gold bezel + soft recess into wall */
+  background:
+    linear-gradient(145deg, rgba(255, 230, 170, .55), rgba(160, 120, 50, .35) 40%, rgba(90, 70, 30, .5));
+  padding: 1.5px;
   box-shadow:
-    0 0 0 1px rgba(255, 220, 160, .22),
-    0 4px 14px rgba(0,0,0,.35),
-    inset 0 0 18px rgba(255, 200, 120, .06);
+    0 0 0 1px rgba(212, 168, 75, .35),
+    inset 0 1px 0 rgba(255, 240, 200, .45),
+    inset 0 -1px 0 rgba(40, 25, 5, .35),
+    0 6px 18px rgba(0,0,0,.45),
+    0 0 22px rgba(240, 201, 106, .12);
   opacity: 0;
-  transform: translateY(14px) scale(.96);
+  transform: translateY(10px) scale(.97);
   transition: opacity .55s ease, transform .55s cubic-bezier(.2,.8,.2,1), box-shadow .2s ease;
   transition-delay: calc(var(--d) * 140ms + 200ms);
   will-change: transform, opacity;
+  overflow: hidden;
+  min-height: 0;
+  min-width: 0;
+}
+.tile-glass {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 4px;
+  overflow: hidden;
+  background: rgba(12, 10, 8, .85);
+  /* Soft inner shadow = recessed glass pocket */
+  box-shadow:
+    inset 0 3px 10px rgba(0,0,0,.55),
+    inset 0 -1px 0 rgba(255, 220, 160, .12);
+}
+.tile-reflect {
+  position: absolute; inset: 0; pointer-events: none; z-index: 2;
+  background:
+    linear-gradient(125deg, rgba(255, 245, 220, .22) 0%, rgba(255, 245, 220, .06) 18%, transparent 42%),
+    linear-gradient(180deg, transparent 60%, rgba(0,0,0,.25) 100%);
+  mix-blend-mode: soft-light;
 }
 .tile.on {
   opacity: 1;
-  transform: translateY(0) scale(1) rotateX(calc((var(--ty, 0.5) - 0.5) * -8deg)) rotateY(calc((var(--tx, 0.5) - 0.5) * 10deg));
+  transform: translateY(0) scale(1);
 }
 .tile:hover, .tile.hot {
   box-shadow:
-    0 0 0 1px rgba(255, 220, 160, .55),
-    0 0 28px rgba(240, 201, 106, .35),
-    0 14px 36px rgba(0,0,0,.5);
+    0 0 0 1px rgba(255, 220, 160, .7),
+    inset 0 1px 0 rgba(255, 240, 200, .55),
+    0 0 28px rgba(240, 201, 106, .4),
+    0 10px 28px rgba(0,0,0,.5);
 }
 .tile img {
-  width: 100%; height: 100%; object-fit: cover;
-  filter: saturate(1.05) contrast(1.04);
+  width: 100%; height: 100%; object-fit: cover; object-position: center;
+  filter: saturate(1.04) contrast(1.03);
 }
+
 .demo {
-  position: absolute; top: 6px; left: 6px;
-  font-size: 9px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase;
+  position: absolute; top: 5px; left: 5px; z-index: 4;
+  font-size: 8px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
   background: rgba(0,0,0,.55); color: rgba(255,255,255,.9);
-  padding: 3px 6px; border-radius: 3px; backdrop-filter: blur(4px);
+  padding: 2px 5px; border-radius: 3px; backdrop-filter: blur(4px);
 }
+
+/* One clean label — full text with padding, never clipped */
 .cap {
-  position: absolute; left: 0; right: 0; bottom: 0;
-  padding: 18px 8px 7px;
-  font-size: 10px; font-weight: 600; letter-spacing: .04em;
-  background: linear-gradient(transparent, rgba(0,0,0,.72));
-  color: rgba(255,255,255,.92);
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 4;
+  padding: 14px 7px 7px;
+  font-size: clamp(8px, 0.72vw, 11px);
+  font-weight: 600; letter-spacing: .03em;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  background: linear-gradient(transparent, rgba(0,0,0,.78));
+  color: rgba(255,255,255,.95);
+  text-align: left;
+  box-sizing: border-box;
 }
+
+/* Score tile: ticking number + small range only — no duplicate “credit score” chrome */
+.score-tile .cap { display: none; }
 .score-overlay {
-  position: absolute; inset: 0;
+  position: absolute; inset: 0; z-index: 3;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  background: linear-gradient(160deg, rgba(8,10,14,.35), rgba(8,10,14,.72));
+  background: linear-gradient(160deg, rgba(8,10,14,.15), rgba(8,10,14,.55));
   text-align: center; pointer-events: none;
+  padding: 10%;
+  gap: 4px;
 }
-.score-label { font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: rgba(255,255,255,.7); }
 .score-num {
-  font-family: Syne, sans-serif; font-weight: 800; font-size: clamp(1.6rem, 3.2vw, 2.6rem);
-  color: #fff; text-shadow: 0 0 24px rgba(80, 220, 140, .55); line-height: 1.05; margin: 4px 0;
+  font-family: Syne, sans-serif; font-weight: 800;
+  font-size: clamp(1.35rem, 2.6vw, 2.35rem);
+  color: #fff; text-shadow: 0 0 22px rgba(80, 220, 140, .6); line-height: 1;
 }
-.score-sub { font-size: 10px; color: rgba(180, 255, 210, .85); letter-spacing: .08em; }
+.score-range {
+  font-size: clamp(8px, 0.7vw, 11px);
+  font-weight: 600;
+  letter-spacing: .06em;
+  color: rgba(180, 255, 210, .9);
+  white-space: nowrap;
+}
 
 .float-chips { position: absolute; inset: 0; z-index: 4; pointer-events: none; overflow: hidden; }
 .chip {
@@ -181,29 +243,30 @@ a { color: inherit; text-decoration: none; }
   100% { opacity: 0; transform: translateY(-70px) scale(1); }
 }
 
+/* Headline sits in open sky — nudged off the tallest tower */
 .hero-copy {
   position: absolute; z-index: 5;
-  right: clamp(16px, 6vw, 72px);
-  top: 42%;
-  transform: translateY(-40%);
-  max-width: min(420px, 42vw);
+  right: clamp(20px, 7vw, 88px);
+  top: 48%;
+  transform: translateY(-38%);
+  max-width: min(400px, 38vw);
   text-align: left;
   text-shadow: 0 2px 24px rgba(0,0,0,.55);
 }
 .eyebrow {
   margin: 0 0 10px; font-size: 11px; font-weight: 600;
-  letter-spacing: .18em; color: rgba(255, 230, 180, .85); text-transform: uppercase;
+  letter-spacing: .1em; color: rgba(255, 230, 180, .88); text-transform: none;
 }
 .headline {
   margin: 0 0 12px;
   font-family: Syne, sans-serif; font-weight: 800;
-  font-size: clamp(2.6rem, 6.5vw, 5.2rem);
+  font-size: clamp(2.5rem, 6vw, 4.8rem);
   line-height: .95; letter-spacing: -0.02em;
 }
 .hn-a { color: #fff; }
 .hn-b { color: var(--gold-hot); }
 .tagline {
-  margin: 0 0 22px; font-size: clamp(.95rem, 1.4vw, 1.15rem);
+  margin: 0 0 22px; font-size: clamp(.95rem, 1.35vw, 1.1rem);
   line-height: 1.45; color: rgba(255,255,255,.86); font-weight: 500; max-width: 34ch;
 }
 .cta {
@@ -220,27 +283,28 @@ a { color: inherit; text-decoration: none; }
 }
 .croa { margin: 14px 0 0; font-size: 11px; color: rgba(255,255,255,.55); max-width: 36ch; }
 
-/* Mobile: hide wall overlay (use carousel), show poster-friendly layout */
-.mobile-wins { display: none; padding: 28px 16px 40px; background: #0a0a0c; }
-.mobile-wins h2 { font-family: Syne, sans-serif; font-weight: 800; margin: 0 0 6px; font-size: 1.4rem; }
-.mobile-lede { margin: 0 0 16px; color: rgba(255,255,255,.6); font-size: 13px; }
+/* Mobile wins rail — under CTA inside hero; hidden on desktop */
+.hero-wins-rail { display: none; margin-top: 18px; }
 .carousel {
-  display: grid; grid-auto-flow: column; grid-auto-columns: 78%;
-  gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 8px;
+  display: grid; grid-auto-flow: column; grid-auto-columns: 72%;
+  gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 6px;
   -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
 }
 .carousel figure {
   margin: 0; scroll-snap-align: start; border-radius: 12px; overflow: hidden;
   background: #151518; box-shadow: 0 8px 24px rgba(0,0,0,.4);
+  border: 1px solid rgba(212,168,75,.28);
 }
 .carousel img { aspect-ratio: 1; object-fit: cover; width: 100%; }
 .carousel figcaption {
   padding: 10px 12px; font-size: 13px; font-weight: 600;
   display: flex; justify-content: space-between; align-items: center;
+  gap: 8px;
 }
 .carousel figcaption span {
   font-size: 10px; letter-spacing: .12em; text-transform: uppercase;
-  color: rgba(255,255,255,.55); font-weight: 700;
+  color: rgba(255,255,255,.55); font-weight: 700; flex-shrink: 0;
 }
 
 .band { padding: 72px 20px; background: linear-gradient(180deg, #0a0a0c, #121018); }
@@ -251,14 +315,35 @@ a { color: inherit; text-decoration: none; }
 
 @media (max-width: 859px) {
   .wall { display: none; }
+  .hero { min-height: auto; }
+  .hero-stage {
+    height: auto;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    overflow: visible;
+  }
+  .hero-video, .hero-poster-fallback {
+    position: absolute; inset: 0;
+    object-position: 70% 40%;
+    height: 100%;
+  }
   .hero-copy {
-    left: 16px; right: 16px; top: auto; bottom: 48px; transform: none;
-    max-width: none; text-align: left;
+    position: relative;
+    left: auto; right: auto; top: auto; bottom: auto;
+    transform: none;
+    max-width: none;
+    width: 100%;
+    padding: 88px 16px 28px;
+    text-align: left;
+    background: linear-gradient(180deg, transparent 0%, rgba(5,5,7,.55) 28%, rgba(5,5,7,.92) 100%);
   }
   .headline { font-size: clamp(2.4rem, 12vw, 3.4rem); }
-  .mobile-wins { display: block; }
-  .hero-video, .hero-poster-fallback { object-position: 70% 40%; }
+  .hero-wins-rail { display: block; }
+  .tagline { max-width: none; }
 }
+
 @media (prefers-reduced-motion: reduce) {
   .hero-video { display: none !important; }
   .hero-poster-fallback { display: block !important; }
