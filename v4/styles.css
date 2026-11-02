@@ -89,20 +89,20 @@ a { color: inherit; text-decoration: none; }
 .wall {
   position: absolute;
   z-index: 3;
-  left: 3.8%;
-  top: 18.5%;
-  width: 31.5%;
-  height: 50%;
+  left: 4.6%;
+  top: 19.2%;
+  width: 29.2%;
+  height: 47.5%;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(2, 1fr);
-  gap: 2.2% 2%;
+  gap: 1.8% 1.6%;
   transform-origin: left center;
   transform:
-    perspective(1400px)
-    rotateY(18deg)
-    rotateX(2deg)
-    translate3d(calc((var(--mx) - 0.5) * 8px), calc((var(--my) - 0.5) * 4px + var(--scroll) * -18px), 0);
+    perspective(1600px)
+    rotateY(9deg)
+    rotateX(1deg)
+    translate3d(calc((var(--mx) - 0.5) * 6px), calc((var(--my) - 0.5) * 3px + var(--scroll) * -14px), 0);
   transition: transform .18s linear;
   pointer-events: none;
 }
@@ -115,9 +115,9 @@ a { color: inherit; text-decoration: none; }
   overflow: hidden;
   background: rgba(20,18,16,.55);
   box-shadow:
-    0 0 0 1px rgba(255, 220, 160, .18),
-    0 10px 28px rgba(0,0,0,.45),
-    inset 0 0 24px rgba(255, 200, 120, .08);
+    0 0 0 1px rgba(255, 220, 160, .22),
+    0 4px 14px rgba(0,0,0,.35),
+    inset 0 0 18px rgba(255, 200, 120, .06);
   opacity: 0;
   transform: translateY(14px) scale(.96);
   transition: opacity .55s ease, transform .55s cubic-bezier(.2,.8,.2,1), box-shadow .2s ease;
@@ -154,7 +154,7 @@ a { color: inherit; text-decoration: none; }
 .score-overlay {
   position: absolute; inset: 0;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  background: linear-gradient(160deg, rgba(8,10,14,.15), rgba(8,10,14,.55));
+  background: linear-gradient(160deg, rgba(8,10,14,.35), rgba(8,10,14,.72));
   text-align: center; pointer-events: none;
 }
 .score-label { font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: rgba(255,255,255,.7); }
