@@ -141,7 +141,7 @@ window.addEventListener('pointermove', (e) => {
   const uvx = e.clientX / window.innerWidth;
   const uvy = 1 - e.clientY / window.innerHeight;
   world.setMouse(nx, ny, uvx, uvy);
-  const hot = e.target.closest && e.target.closest('a, button, .price-card, [data-magnetic]');
+  const hot = e.target.closest && e.target.closest('a, button, [data-magnetic]');
   cursor?.classList.toggle('hot', !!hot);
 }, { passive: true });
 
@@ -162,7 +162,7 @@ window.addEventListener('touchmove', (e) => {
 }, { passive: true });
 
 // ——— Magnetic buttons ———
-const magnets = [...document.querySelectorAll('[data-magnetic]')];
+const magnets = [...document.querySelectorAll('[data-magnetic]')].filter((el) => !el.classList.contains('price-card') && !el.closest('.price-card'));
 const magState = magnets.map((el) => ({ el, x: 0, y: 0, tx: 0, ty: 0 }));
 
 function updateMagnets() {
@@ -173,9 +173,9 @@ function updateMagnets() {
     const dx = mx - cx0;
     const dy = my - cy0;
     const dist = Math.hypot(dx, dy);
-    const radius = Math.max(rect.width, rect.height) * 1.1 + 40;
+    const radius = Math.max(rect.width, rect.height) * 0.55 + 18;
     if (dist < radius) {
-      const strength = (1 - dist / radius) * 0.35;
+      const strength = (1 - dist / radius) * 0.08;
       m.tx = dx * strength;
       m.ty = dy * strength;
     } else {
@@ -202,6 +202,7 @@ function frame(now) {
   const prog = progressFromScroll();
   world.setProgress(prog);
   updateCameos(prog);
+  document.body.classList.toggle('beat-pricing-active', prog > 0.78);
   world.update(reduced ? 0 : dt);
   updateCursor();
   if (!isMobile && !reduced) updateMagnets();

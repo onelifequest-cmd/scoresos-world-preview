@@ -70,3 +70,20 @@ Frame QA (ffmpeg t=0,1,2,3,4):
   Maxine: face consistent, original (not ref lookalike), holograms animate cleanly, no morph/glitch
   Robot: identity locked to B across frames, walk toward camera, blue eyes/forearms stable, no limb morph
 Placement: robot progress 0.01–0.11 (opening); Maxine 0.18–0.30 (dispute beat)
+
+Integration note (post-cameo):
+  Cameo scroll windows narrowed for briefness: robot 0.015–0.075; Maxine 0.20–0.26
+  Wired in v3/index.html + styles.css + js/main.js (cache v3c)
+  Deployed commit 82aaf04 → https://scoresos-world-preview.onrender.com (dep-dbjtp77f3r2c73d47mk0 live)
+
+--- Blocker fix 2026-11-01 ~19:48–19:55 ET (America/New_York) ---
+Balance before this fix (whoami): 509
+This-fix generations:
+  Maxine A still (nano-banana-pro)  task afcdf7f2-9227-4d47-b866-1ac2528836b4   ~20 cr
+  Maxine B still (nano-banana-pro)  task 54566766-b027-4583-964d-7d00990191b3   ~20 cr  ← accepted (East Asian ~50s, original)
+  Pricing clean plate still         task cac66057-90b7-4e9e-987a-0b245e9a884e   ~20 cr
+  Maxine B I2V 5s gen-4-turbo       task a5444db4-1e2a-4728-9f3e-762e91479872   ~25 cr
+  beat-06 video: FREE ffmpeg Ken Burns from clean plate (0 Runway)
+Total this-fix Runway spend: ~85 credits
+Balance after (whoami): 424  (509−85=424 ✓)
+Face compare: media/cameos/compare/face-compare-final.png — PASS (not celebrity lookalike)
