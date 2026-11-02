@@ -187,3 +187,5 @@ Upload: init 92b3448b… complete → datasets/4bb3562e-5134-4730-a93b-fbd979af7
 
 QA local: 1440/1280/390 + hero-12s.mp4 + SELF-CRITIQUE.md (0 Runway)
 Session closed at hard cap 100/100. Balance ~149.
+
+v5b CSS-only pass (0 Runway): reframe clear-lane, solid wall veil over filmed frames, holo opacity ~0.78 + scanlines/cyan-gold.
