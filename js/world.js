@@ -1,12 +1,11 @@
 /**
  * Score OS world — hybrid photoreal stills/video + interactive Three.js overlays.
  * Heroes are cinematic photographs (and scroll-scrubbed clips). Three.js only
- * handles particles, cursor glow, live gauge needle/score HUD, and depth parallax.
+ * handles particles, soft cursor glow, DOM demo-score HUD, and depth parallax.
  */
 import * as THREE from 'three';
 import { EffectComposer } from '../vendor/postprocessing/EffectComposer.js';
 import { RenderPass } from '../vendor/postprocessing/RenderPass.js';
-import { UnrealBloomPass } from '../vendor/postprocessing/UnrealBloomPass.js';
 import { ShaderPass } from '../vendor/postprocessing/ShaderPass.js';
 
 const BEAT_META = [
@@ -190,7 +189,7 @@ export async function createWorld(canvas, opts = {}) {
   scene.add(dust);
 
   // Cursor-reactive warm glow orb (subtle)
-  const glowGeo = new THREE.SphereGeometry(0.55, 24, 24);
+  const glowGeo = new THREE.SphereGeometry(0.28, 16, 16);
   const glowMat = new THREE.MeshBasicMaterial({
     color: 0xd4b46a,
     transparent: true,
@@ -202,40 +201,12 @@ export async function createWorld(canvas, opts = {}) {
   glow.position.set(0, 0, 4.5);
   scene.add(glow);
 
-  // Live gauge HUD — DOM-synced score + thin Three needle ring (beat 1 only)
-  const gaugeGroup = new THREE.Group();
-  gaugeGroup.position.set(0, -0.15, 2.2);
-  scene.add(gaugeGroup);
-  const needlePivot = new THREE.Group();
-  gaugeGroup.add(needlePivot);
-  const needleMat = new THREE.MeshBasicMaterial({
-    color: 0xe8c75a,
-    transparent: true,
-    opacity: 0.55,
-    depthWrite: false,
-  });
-  const needle = new THREE.Mesh(new THREE.BoxGeometry(0.02, 1.15, 0.01), needleMat);
-  needle.position.y = 0.55;
-  needlePivot.add(needle);
-  const hub = new THREE.Mesh(
-    new THREE.CircleGeometry(0.06, 24),
-    new THREE.MeshBasicMaterial({ color: 0xf0d78a, transparent: true, opacity: 0.9, depthWrite: false })
-  );
-  needlePivot.add(hub);
-  gaugeGroup.visible = false;
+  // Demo score is DOM-only — no Three.js needle (photo gauge already has a real brass needle)
 
   // Post
   const composer = new EffectComposer(renderer);
   composer.addPass(new RenderPass(scene, camera));
-  if (!isMobile) {
-    const bloom = new UnrealBloomPass(
-      new THREE.Vector2(window.innerWidth, window.innerHeight),
-      0.10, // strength — keep subtle so photos stay photographic
-      0.6,
-      0.88
-    );
-    composer.addPass(bloom);
-  }
+  // Bloom disabled — was blooming photo brass/gold into fake HUD streaks
   const grain = new ShaderPass(GrainShader);
   grain.uniforms.amount.value = isMobile ? 0.028 : 0.038;
   composer.addPass(grain);
@@ -333,27 +304,23 @@ export async function createWorld(canvas, opts = {}) {
     }
     dust.geometry.attributes.position.needsUpdate = true;
     dust.rotation.z = time * 0.01;
-    dustMat.opacity = 0.14 + Math.abs(mouseSmooth.x) * 0.06;
+    dustMat.opacity = 0.08 + Math.abs(mouseSmooth.x) * 0.04;
 
     // Cursor glow
     glow.position.x = mouseSmooth.x * 3.2;
     glow.position.y = mouseSmooth.y * 2.0;
-    glowMat.opacity = 0.05 + Math.hypot(mouse.x - mouseSmooth.x, mouse.y - mouseSmooth.y) * 0.25;
+    // Keep near-invisible so it never reads as a circle on the photo
+    const mouseDelta = Math.hypot(mouse.x - mouseSmooth.x, mouse.y - mouseSmooth.y);
+    glowMat.opacity = Math.min(0.04, mouseDelta * 0.08);
+    glow.visible = glowMat.opacity > 0.008;
 
-    // Gauge needle + live score on beat 1
+    // Demo score climb on beat 1 — DOM only (no second needle)
     const onGauge = progress < 0.18;
-    gaugeGroup.visible = onGauge && !isMobile;
     scoreEl.classList.toggle('on', onGauge);
     if (onGauge) {
       const climb = Math.min(1, progress / 0.16);
       const score = Math.round(580 + (760 - 580) * climb);
       scoreEl.querySelector('.ls-num').textContent = String(score);
-      // map score to needle angle (-120deg .. +120deg)
-      const ang = THREE.MathUtils.degToRad(-120 + 240 * climb);
-      needlePivot.rotation.z = -ang;
-      gaugeGroup.position.x = mouseSmooth.x * 0.15;
-      gaugeGroup.position.y = -0.15 + mouseSmooth.y * 0.08;
-      needleMat.opacity = 0.55 + climb * 0.35;
     }
 
     grain.uniforms.time.value = time;

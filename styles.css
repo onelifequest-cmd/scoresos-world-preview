@@ -145,7 +145,7 @@ h2{font-size:clamp(2.2rem, 5.5vw, 3.8rem)}
   background:rgba(255,255,255,0.22); border:1px solid rgba(47,212,106,0.35);
   transition:transform .25s, background .25s, box-shadow .25s;
 }
-.beat-dots i.on{background:var(--gold-soft); box-shadow:0 0 8px rgba(240,201,74,0.35); transform:scale(1.25)}
+.beat-dots i.on{background:var(--gold-soft); box-shadow:none; transform:scale(1.2)}
 
 .cursor{
   position:fixed; left:0; top:0; width:18px; height:18px; margin:-9px 0 0 -9px;
