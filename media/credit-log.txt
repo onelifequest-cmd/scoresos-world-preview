@@ -87,3 +87,10 @@ This-fix generations:
 Total this-fix Runway spend: ~85 credits
 Balance after (whoami): 424  (509−85=424 ✓)
 Face compare: media/cameos/compare/face-compare-final.png — PASS (not celebrity lookalike)
+
+[2026-11-01 20:02 ET] Maxine C (glamorous ~30, no holo text)
+- nano-banana-pro stills x2 (tasks 1c41f318, 726a0f58) ~40 cr — pick still-B
+- gen-4-turbo I2V 5s (task cf22ac71) ~25 cr
+- Total this Maxine pass ~65 cr (steer ~50; stills+clip required)
+- Face: original medium-brown/hazel, silver bob, white high-neck, chrome cheek+arm blue lights, bright office, NO readable text
+- Installed: media/cameos/maxine-still.jpg, media/clips/cameo-maxine{,-mobile}.mp4

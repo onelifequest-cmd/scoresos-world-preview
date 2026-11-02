@@ -1,4 +1,5 @@
 import { createWorld } from './world.js';
+import { createLumeaHero } from './lumea-hero.js';
 
 const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches || /[?&]static=1/.test(location.search);
 const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) || window.innerWidth < 720;
@@ -7,11 +8,12 @@ const loader = document.getElementById('loader');
 const loaderFill = document.getElementById('loader-fill');
 const loaderPct = document.getElementById('loader-pct');
 const canvas = document.getElementById('world');
+const heroCanvas = document.getElementById('hero-canvas');
 const cursor = document.getElementById('cursor');
 const hint = document.getElementById('scroll-hint');
 const dotsWrap = document.getElementById('beat-dots');
 
-const beats = [...document.querySelectorAll('.beat')];
+const beats = [...document.querySelectorAll('.beat[data-beat]')].filter((b) => b.dataset.beat !== 'hero');
 beats.forEach((_, i) => {
   const d = document.createElement('i');
   if (i === 0) d.classList.add('on');
@@ -25,28 +27,33 @@ function setLoad(p) {
   if (loaderPct) loaderPct.textContent = pct + '%';
 }
 
-setLoad(0.04);
+setLoad(0.03);
+
+// Lumea live WebGL hero first
+const hero = await createLumeaHero(heroCanvas, {
+  isMobile,
+  reduced,
+  onProgress: (p) => setLoad(0.03 + p * 0.35),
+});
+setLoad(0.4);
 
 const world = await createWorld(canvas, {
   isMobile,
   reduced,
-  onProgress: (p) => setLoad(0.04 + p * 0.9),
+  onProgress: (p) => setLoad(0.4 + p * 0.55),
 });
-setLoad(0.96);
+setLoad(0.98);
 
-
-// ——— Quick cameos (robot opening, Maxine on dispute beat) ———
-const isMobileCameo = isMobile;
+// Cameos: robot right after hero flight; Maxine on dispute beat
 const robotVid = document.getElementById('cameo-robot');
 const maxineVid = document.getElementById('cameo-maxine');
-if (robotVid && isMobileCameo) robotVid.src = './media/clips/cameo-robot-mobile.mp4';
-if (maxineVid && isMobileCameo) maxineVid.src = './media/clips/cameo-maxine-mobile.mp4';
+if (robotVid && isMobile) robotVid.src = './media/clips/cameo-robot-mobile.mp4';
+if (maxineVid && isMobile) maxineVid.src = './media/clips/cameo-maxine-mobile.mp4';
 
+// Progress windows remapped: hero ~0–0.14, then runway beats
 const cameos = [
-  // Robot: brief hero entrance early in beat 1 — few seconds only
-  { el: robotVid, start: 0.015, end: 0.075, played: false, name: 'robot' },
-  // Maxine: brief AI dispute-engine cameo mid beat 2 — few seconds only
-  { el: maxineVid, start: 0.20, end: 0.26, played: false, name: 'maxine' },
+  { el: robotVid, start: 0.12, end: 0.18, played: false, name: 'robot' },
+  { el: maxineVid, start: 0.28, end: 0.36, played: false, name: 'maxine' },
 ];
 
 function updateCameos(progress) {
@@ -69,12 +76,10 @@ function updateCameos(progress) {
       if (c.el.paused === false) {
         try { c.el.pause(); } catch (_) {}
       }
-      // Allow replay if user scrolls back into the window
       if (progress < c.start - 0.02) c.played = false;
     }
   });
 }
-
 
 const gsap = window.gsap;
 const ScrollTrigger = window.ScrollTrigger;
@@ -102,34 +107,53 @@ function progressFromScroll() {
   return Math.min(1, Math.max(0, y / Math.max(1, totalHeight())));
 }
 
-beats.forEach((sec) => {
-  const ov = sec.querySelector('.overlay');
-  ScrollTrigger.create({
-    trigger: sec,
-    start: 'top 65%',
-    end: 'bottom 35%',
-    onEnter: () => ov?.classList.add('on'),
-    onEnterBack: () => ov?.classList.add('on'),
-    onLeave: () => { if (!sec.classList.contains('finale')) ov?.classList.remove('on'); },
-    onLeaveBack: () => { if (!sec.classList.contains('finale')) ov?.classList.remove('on'); },
-  });
+/** Map full-page progress → hero flight (0–1) then Runway world progress (0–1). */
+function remapProgress(p) {
+  const heroEnd = 0.14;
+  if (p <= heroEnd) {
+    return { heroFlight: p / heroEnd, worldProgress: 0, inHero: true };
+  }
+  return {
+    heroFlight: 1,
+    worldProgress: (p - heroEnd) / (1 - heroEnd),
+    inHero: false,
+  };
+}
+
+document.querySelectorAll('.beat .overlay, .calm-section').forEach((el) => {
+  const ov = el.classList?.contains('overlay') ? el : null;
+  if (ov) {
+    ScrollTrigger.create({
+      trigger: ov.closest('.beat'),
+      start: 'top 65%',
+      end: 'bottom 35%',
+      onEnter: () => ov.classList.add('on'),
+      onEnterBack: () => ov.classList.add('on'),
+      onLeave: () => { if (!ov.closest('.finale')) ov.classList.remove('on'); },
+      onLeaveBack: () => { if (!ov.closest('.finale')) ov.classList.remove('on'); },
+    });
+  }
 });
-beats[0]?.querySelector('.overlay')?.classList.add('on');
+document.querySelector('#beat-1 .overlay')?.classList.add('on');
 
 ScrollTrigger.create({
   trigger: scrollRoot,
   start: 'top top',
   end: 'bottom bottom',
   onUpdate: (self) => {
-    world.setProgress(self.progress);
+    const { heroFlight, worldProgress, inHero } = remapProgress(self.progress);
+    hero.setFlight(heroFlight);
+    world.setProgress(inHero ? 0 : worldProgress);
     updateCameos(self.progress);
-    const idx = Math.min(beats.length - 1, Math.floor(self.progress * beats.length));
-    dots.forEach((d, i) => d.classList.toggle('on', i === idx));
+    document.body.classList.toggle('world-visible', !inHero || heroFlight > 0.55);
+    document.body.classList.toggle('hero-done', heroFlight > 0.92);
+    hero.setVisible(heroFlight < 0.98);
+    const idx = Math.min(beats.length - 1, Math.floor(worldProgress * beats.length));
+    dots.forEach((d, i) => d.classList.toggle('on', !inHero && i === idx));
     if (self.progress > 0.03) hint?.classList.add('hide');
   },
 });
 
-// ——— Cursor + world mouse (UV for ripple shader) ———
 let mx = window.innerWidth / 2;
 let my = window.innerHeight / 2;
 let cx = mx, cy = my;
@@ -140,28 +164,28 @@ window.addEventListener('pointermove', (e) => {
   const ny = -((e.clientY / window.innerHeight) * 2 - 1);
   const uvx = e.clientX / window.innerWidth;
   const uvy = 1 - e.clientY / window.innerHeight;
+  hero.setMouse(nx, ny);
   world.setMouse(nx, ny, uvx, uvy);
   const hot = e.target.closest && e.target.closest('a, button, [data-magnetic]');
   cursor?.classList.toggle('hot', !!hot);
 }, { passive: true });
 
-window.addEventListener('pointerdown', (e) => {
+window.addEventListener('pointerdown', () => {
   world.setPointerDown(true);
   world.pulseRipple(0.9);
 }, { passive: true });
 window.addEventListener('pointerup', () => world.setPointerDown(false), { passive: true });
 window.addEventListener('pointerleave', () => world.setPointerDown(false), { passive: true });
 
-// Touch: feed first touch into mouse so mobile still reacts
 window.addEventListener('touchmove', (e) => {
   const t = e.touches[0];
   if (!t) return;
   const nx = (t.clientX / window.innerWidth) * 2 - 1;
   const ny = -((t.clientY / window.innerHeight) * 2 - 1);
+  hero.setMouse(nx, ny);
   world.setMouse(nx, ny, t.clientX / window.innerWidth, 1 - t.clientY / window.innerHeight);
 }, { passive: true });
 
-// ——— Magnetic buttons ———
 const magnets = [...document.querySelectorAll('[data-magnetic]')].filter((el) => !el.classList.contains('price-card') && !el.closest('.price-card'));
 const magState = magnets.map((el) => ({ el, x: 0, y: 0, tx: 0, ty: 0 }));
 
@@ -187,7 +211,6 @@ function updateMagnets() {
   });
 }
 
-// Smooth cursor lag
 function updateCursor() {
   if (!cursor) return;
   cx += (mx - cx) * 0.28;
@@ -200,9 +223,15 @@ function frame(now) {
   const dt = Math.min(0.05, (now - last) / 1000);
   last = now;
   const prog = progressFromScroll();
-  world.setProgress(prog);
+  const { heroFlight, worldProgress, inHero } = remapProgress(prog);
+  hero.setFlight(heroFlight);
+  world.setProgress(inHero ? 0 : worldProgress);
   updateCameos(prog);
-  document.body.classList.toggle('beat-pricing-active', prog > 0.78);
+  document.body.classList.toggle('beat-pricing-active', prog > 0.82);
+  document.body.classList.toggle('world-visible', !inHero || heroFlight > 0.55);
+  document.body.classList.toggle('hero-done', heroFlight > 0.92);
+  hero.setVisible(heroFlight < 0.98);
+  hero.update(reduced ? 0 : dt);
   world.update(reduced ? 0 : dt);
   updateCursor();
   if (!isMobile && !reduced) updateMagnets();
@@ -215,6 +244,8 @@ setTimeout(() => loader?.classList.add('done'), 320);
 
 if (reduced) {
   world.setProgress(0.08);
+  hero.setFlight(1);
+  document.body.classList.add('world-visible', 'hero-done');
   document.querySelectorAll('.overlay').forEach((o) => o.classList.add('on'));
   hint?.classList.add('hide');
 }

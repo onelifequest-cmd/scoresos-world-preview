@@ -9,8 +9,8 @@
   <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="./styles.css?v=v3f" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./styles.css?v=v3g" />
   <script type="importmap">
   { "imports": { "three": "./vendor/three.module.min.js" } }
   </script>
@@ -28,6 +28,8 @@
     </div>
   </div>
 
+  <!-- Live WebGL Lumea hero (extruded emblem) — sits above Runway world until scroll flight -->
+  <canvas id="hero-canvas" aria-hidden="true"></canvas>
   <canvas id="world" aria-hidden="true"></canvas>
 
   <div class="cameo-layer" id="cameo-layer" aria-hidden="true">
@@ -40,28 +42,41 @@
   </div>
 
   <header class="topbar">
-    <a class="brand magnetic" href="#beat-1" data-magnetic>
+    <a class="brand magnetic" href="#hero" data-magnetic>
       <img src="./media/logo.png" width="32" height="32" alt="" />
       <span>Score OS</span>
     </a>
     <nav class="nav" aria-label="Beats">
+      <a href="#hero" data-magnetic class="magnetic">Open</a>
       <a href="#beat-1" data-magnetic class="magnetic">Emblem</a>
       <a href="#beat-2" data-magnetic class="magnetic">Maxine</a>
-      <a href="#beat-3" data-magnetic class="magnetic">Bureaus</a>
-      <a href="#beat-4" data-magnetic class="magnetic">Deck</a>
-      <a href="#beat-5" data-magnetic class="magnetic">Funding</a>
+      <a href="#features" data-magnetic class="magnetic">Features</a>
+      <a href="#proof" data-magnetic class="magnetic">Proof</a>
       <a href="#beat-6" data-magnetic class="magnetic">Pricing</a>
       <a class="nav-cta magnetic" data-magnetic href="https://checkout.square.site/merchant/MLGEBVXJC0JRS/checkout/6A2Q2LWRQHPQDXV3LPI3BSBZ">Get Started</a>
     </nav>
   </header>
 
   <main id="scroll-root">
+    <!-- HERO: massive headline sits partly BEHIND the monolith (z-index under canvas stack via depth layer) -->
+    <section class="beat hero-beat" id="hero" data-beat="hero">
+      <div class="hero-depth" aria-hidden="true">
+        <p class="hero-headline-behind">SCORE&nbsp;OS</p>
+      </div>
+      <div class="hero-copy">
+        <p class="eyebrow">THE OPERATING SYSTEM FOR CREDIT REPAIR AGENCIES</p>
+        <h1 class="hero-title">Score OS</h1>
+        <p class="hero-sub">Move to part the debris. Scroll to fly into the filmed world.</p>
+        <p class="demo-note">Demo gauge · sample climb 580→760 · not a result or guarantee.</p>
+      </div>
+    </section>
+
+    <!-- Runway cinematic beats -->
     <section class="beat" id="beat-1" data-beat="0">
       <div class="overlay left">
-        <p class="eyebrow">THE OPERATING SYSTEM FOR CREDIT REPAIR AGENCIES</p>
-        <h1>Score OS</h1>
-        <p class="lede">Scroll through a continuous filmed world — move to feel it react.</p>
-        <p class="demo-note">Demo gauge · sample climb 580→760 · not a result or guarantee.</p>
+        <p class="eyebrow">LIVE EMBLEM · FILMED WORLD</p>
+        <h2>Enter the system.</h2>
+        <p class="lede">The gold gauge becomes the continuous filmed world — move to feel it react.</p>
       </div>
     </section>
 
@@ -100,6 +115,68 @@
       </div>
     </section>
 
+    <!-- CALMER post-opener: precise near-black grid + whitespace -->
+    <section class="calm-section" id="features">
+      <div class="calm-inner">
+        <p class="eyebrow">WHAT YOU RUN</p>
+        <h2 class="calm-h">Everything an agency needs.<br/>Nothing it doesn’t.</h2>
+        <div class="feature-grid">
+          <article class="feature-cell">
+            <h3>Maxine drafts</h3>
+            <p>AI dispute letters ready for human review — never auto-sent.</p>
+          </article>
+          <article class="feature-cell">
+            <h3>3-bureau view</h3>
+            <p>Equifax, Experian, TransUnion in one calm command surface.</p>
+          </article>
+          <article class="feature-cell">
+            <h3>White-label portal</h3>
+            <p>Your brand on the client experience. Your agency, your trust.</p>
+          </article>
+          <article class="feature-cell">
+            <h3>Automations</h3>
+            <p>Status, reminders, and workflows without the spreadsheet maze.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Dashboard proof: glass bento over warm green/gold gradients -->
+    <section class="calm-section proof-section" id="proof">
+      <div class="calm-inner">
+        <p class="eyebrow">PROOF · DASHBOARD</p>
+        <h2 class="calm-h">Glass-clear ops.<br/>Warm, trustworthy light.</h2>
+        <div class="bento">
+          <article class="bento-card bento-hero">
+            <p class="bento-label">Agency command</p>
+            <p class="bento-metric">124 <span>active clients</span></p>
+            <p class="bento-note">Illustrative demo data · not a live account</p>
+          </article>
+          <article class="bento-card">
+            <p class="bento-label">Dispute queue</p>
+            <p class="bento-metric">38</p>
+            <p class="bento-note">Drafts awaiting review</p>
+          </article>
+          <article class="bento-card">
+            <p class="bento-label">Bureau sync</p>
+            <p class="bento-metric">3/3</p>
+            <p class="bento-note">Towers connected</p>
+          </article>
+          <article class="bento-card">
+            <p class="bento-label">Portal</p>
+            <p class="bento-metric">White-label</p>
+            <p class="bento-note">Your brand forward</p>
+          </article>
+          <article class="bento-card">
+            <p class="bento-label">Readiness</p>
+            <p class="bento-metric">Stories ready</p>
+            <p class="bento-note">No funding promised</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pricing finale — KEEP v3f two-card layout -->
     <section class="beat finale" id="beat-6" data-beat="5">
       <div class="overlay center pricing-overlay" id="pricing">
         <p class="eyebrow">Enter the system</p>
@@ -140,6 +217,6 @@
   <script src="./vendor/gsap.min.js"></script>
   <script src="./vendor/ScrollTrigger.min.js"></script>
   <script src="./vendor/lenis.min.js"></script>
-  <script type="module" src="./js/main.js?v=v3f"></script>
+  <script type="module" src="./js/main.js?v=v3g"></script>
 </body>
 </html>

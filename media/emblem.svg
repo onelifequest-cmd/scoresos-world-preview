@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180" width="180" height="180">
+  <!-- Score OS gauge emblem — filled shapes for ExtrudeGeometry -->
+  <circle id="jewel" cx="90" cy="78" r="12" fill="#F4D96B"/>
+  <!-- outer ring as thick annulus via evenodd -->
+  <path id="ring" fill="#D4AF37" fill-rule="evenodd" d="M90 30 A60 60 0 1 1 89.9 30 Z M90 42 A48 48 0 1 0 90.1 42 Z"/>
+  <!-- score arc (thick) -->
+  <path id="arc" fill="#1A6B3C" d="M52 112 A50 50 0 0 1 128 112 A12 12 0 0 1 116 118 A38 38 0 0 0 64 118 A12 12 0 0 1 52 112 Z"/>
+  <!-- needle base -->
+  <circle id="hub" cx="90" cy="90" r="6" fill="#D4AF37"/>
+</svg>
